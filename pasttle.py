@@ -16,7 +16,6 @@ from pygments import lexers
 import sqlalchemy
 from sqlalchemy import func
 from sqlalchemy.ext import declarative
-import sys
 
 
 cfg_file = os.environ.get('PASTTLECONF', 'pasttle.conf')
@@ -26,11 +25,12 @@ debug = CONF.get('debug', False)
 format = '%(asctime)s %(levelname)s %(name)s %(message)s'
 
 LOGGER = logging.getLogger('pasttle.web')
-if debug:
-    LOGGER.setLevel(logging.DEBUG)
-else:
-    LOGGER.setLevel(logging.INFO)
+LOGGER.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
+if debug:
+    ch.setLevel(logging.DEBUG)
+else:
+    ch.setLevel(logging.INFO)
 formatter = logging.Formatter(format)
 ch.setFormatter(formatter)
 LOGGER.addHandler(ch)
@@ -66,15 +66,15 @@ engine = sqlalchemy.create_engine(CONF['dsn'], echo=debug,
     convert_unicode=True, logging_name='pasttle.db')
 Base.metadata.create_all(engine)
 db_plugin = sqlaplugin.SQLAlchemyPlugin(engine, Base.metadata, create=True)
+app.install(db_plugin)
 mc_plugin = mcplugin.MemcachePlugin(servers=CONF.get('memcache',
     ['localhost:11211']))
-app.install(db_plugin)
 app.install(mc_plugin)
 
 
 @app.route('/')
 def index():
-    return """<style> a { text-decoration: none } </style>
+    return u"""<style> a { text-decoration: none } </style>
 <pre>
 pasttle(1)                          PASTTLE                          pasttle(1)
 
@@ -82,10 +82,11 @@ NAME
     pasttle: simple pastebin:
 
 SYNOPSIS
-    &lt;command&gt; | curl -F '%s=&lt;-' %s
-
+    &lt;command&gt; | curl -F 'upload=@-' %(url)s
 </pre>
-    """
+    """ % {
+        'url': bottle.request.url,
+    }
 
 
 @app.route('/recent')
@@ -96,7 +97,7 @@ def recent(db):
     ul = u'<ul>%s</ul>'
     li = []
     for paste in pastes:
-        LOGGER.info(paste)
+        LOGGER.debug(paste)
         li.append(u'<li><a href="/%s">Paste #%d, %s(%s) %s</a></li>' %
             (paste.id, paste.id, paste.filename or u'',
             paste.mimetype, paste.created, ))
@@ -114,32 +115,48 @@ def post(db):
             filename = upload.filename
             try:
                 lexer = lexers.guess_lexer_for_filename(upload.filename, raw)
-            except lexers.ClassNotFound as cnf:
+            except lexers.ClassNotFound:
                 lexer = lexers.get_lexer_by_name('text')
         else:
             lexer = lexers.guess_lexer(raw)
-        mime = lexer.mimetypes[0]
+        LOGGER.debug(lexer.mimetypes)
+        if lexer.mimetypes:
+            mime = lexer.mimetypes[0]
+        else:
+            mime = u'text/plain'
         paste = Paste(content=raw, mimetype=mime,
             filename=filename, password=password)
         logging.debug(paste)
         db.add(paste)
-        return u'%s/%s' % (bottle.request.url, paste.id, )
+        db.commit()
+        (scheme, host, path, qs, fragment) = bottle.request.urlparts
+        return u'%s://%s/%s' % (scheme, host, paste.id, )
     else:
         return bottle.HTTPError(400, output='No paste provided')
 
 
+def _get_paste(db, id):
+    paste = db.query(Paste).filter_by(id=id).one()
+    return paste
+
 @app.route('/<id:int>')
 def showpaste(db, id):
-    bottle.response.content_type = 'text/html'
-    paste = db.query(Paste).filter_by(id=id).one()
+    paste = _get_paste(db, id)
     lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     title = u'%s (%s), created on %s' % (paste.filename or u'',
         paste.mimetype, paste.created, )
-    LOGGER.info(lexer)
+    LOGGER.debug(lexer)
+    bottle.response.content_type = 'text/html'
     return pygments.highlight(paste.content, lexer,
         formatters.HtmlFormatter(full=True, linenos='table',
             encoding='utf-8', lineanchors='ln', title=title))
 
+@app.route('/raw/<id:int>')
+def showraw(db, mc, id):
+    paste = _get_paste(db, id)
+    bottle.response.content_type = 'text/plain'
+    return paste.content
 
-bottle.run(app, host='localhost', port=CONF.get('port', 9669), reloader=True)
+bottle.run(app, host=CONF.get('bind', 'localhost'),
+    port=CONF.get('port', 9669), reloader=True)
 
