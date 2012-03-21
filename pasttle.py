@@ -23,14 +23,17 @@ cfg_file = os.environ.get('PASTTLECONF', 'pasttle.conf')
 CONF = json.load(open(cfg_file))
 
 debug = CONF.get('debug', False)
-format = '%(levelname)s %(asctime)s: %(message)s'
+format = '%(asctime)s %(levelname)s %(name)s %(message)s'
 
+LOGGER = logging.getLogger('pasttle.web')
 if debug:
-    logging.basicConfig(level=logging.DEBUG, format=format,
-        datefmt='%m/%d/%Y %I:%M:%S %p')
+    LOGGER.setLevel(logging.DEBUG)
 else:
-    logging.basicConfig(level=logging.INFO, format=format,
-        datefmt='%m/%d/%Y %I:%M:%S %p')
+    LOGGER.setLevel(logging.INFO)
+ch = logging.StreamHandler()
+formatter = logging.Formatter(format)
+ch.setFormatter(formatter)
+LOGGER.addHandler(ch)
 
 Base = declarative.declarative_base()
 
@@ -40,21 +43,23 @@ class Paste(Base):
     __tablename__ = 'paste'
 
     id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
-    content = sqlalchemy.Column(sqlalchemy.Text)
+    content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
+    filename = sqlalchemy.Column(sqlalchemy.String(128))
     password = sqlalchemy.Column(sqlalchemy.String(64))
-    mimetype = sqlalchemy.Column(sqlalchemy.String(64))
-    created = sqlalchemy.Column(sqlalchemy.DateTime,
-        default=func.now())
+    mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
+    created = sqlalchemy.Column(sqlalchemy.DateTime)
 
-    def __init__(self, content, mimetype, password=None):
+    def __init__(self, content, mimetype, filename=None, password=None):
         self.content = content
         self.mimetype = mimetype
+        if filename:
+            self.filename = filename.strip()[:128]
         self.password = password
         self.created = func.now()
 
     def __repr__(self):
-        return u'<Paste "%s", "%s", locked=%s>' % (self.mimetype,
-            self.content[:16], bool(self.password))
+        return u'<Paste "%s" (%s), locked=%s>' % (self.filename,
+            self.mimetype, bool(self.password))
 
 app = bottle.Bottle()
 engine = sqlalchemy.create_engine(CONF['dsn'], echo=debug,
@@ -85,13 +90,16 @@ SYNOPSIS
 
 @app.route('/recent')
 def recent(db):
-    pastes = db.query(Paste.id, Paste.created, Paste.password).\
+    pastes = db.query(Paste.id, Paste.filename, Paste.mimetype,
+        Paste.created, Paste.password).\
         order_by(Paste.id.desc()).limit(20).all()
     ul = u'<ul>%s</ul>'
     li = []
     for paste in pastes:
-        li.append(u'<li><a href="/%s">Paste #%d, %s</a></li>' %
-            (paste.id, paste.id, paste.created, ))
+        LOGGER.info(paste)
+        li.append(u'<li><a href="/%s">Paste #%d, %s(%s) %s</a></li>' %
+            (paste.id, paste.id, paste.filename or u'',
+            paste.mimetype, paste.created, ))
     return ul % ''.join(li)
 
 
@@ -101,7 +109,9 @@ def post(db):
     password = bottle.request.forms.password
     if upload.file:
         raw = upload.file.read()
+        filename = None
         if upload.filename != '-':
+            filename = upload.filename
             try:
                 lexer = lexers.guess_lexer_for_filename(upload.filename, raw)
             except lexers.ClassNotFound as cnf:
@@ -109,7 +119,8 @@ def post(db):
         else:
             lexer = lexers.guess_lexer(raw)
         mime = lexer.mimetypes[0]
-        paste = Paste(content=raw, mimetype=mime, password=password)
+        paste = Paste(content=raw, mimetype=mime,
+            filename=filename, password=password)
         logging.debug(paste)
         db.add(paste)
         return u'%s/%s' % (bottle.request.url, paste.id, )
@@ -119,9 +130,12 @@ def post(db):
 
 @app.route('/<id:int>')
 def showpaste(db, id):
+    bottle.response.content_type = 'text/html'
     paste = db.query(Paste).filter_by(id=id).one()
     lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
-    title = u'%s, created on %s' % (paste.mimetype, paste.created, )
+    title = u'%s (%s), created on %s' % (paste.filename or u'',
+        paste.mimetype, paste.created, )
+    LOGGER.info(lexer)
     return pygments.highlight(paste.content, lexer,
         formatters.HtmlFormatter(full=True, linenos='table',
             encoding='utf-8', lineanchors='ln', title=title))
