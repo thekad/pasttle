@@ -6,7 +6,7 @@
 
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
-from bottle.ext import memcache as mcplugin
+import cgi
 import hashlib
 import json
 import logging
@@ -59,7 +59,8 @@ class Paste(Base):
         self.mimetype = mimetype
         if filename and filename.strip():
             self.filename = filename.strip()[:128]
-        self.password = hashlib.sha1(password).hexdigest()
+        if password:
+            self.password = hashlib.sha1(password).hexdigest()
 
     def __repr__(self):
         return u'<Paste "%s" (%s), protected=%s>' % (self.filename,
@@ -71,32 +72,52 @@ engine = sqlalchemy.create_engine(CONF['dsn'], echo=debug,
 # Create all metadata on loading, if something blows we need to know asap
 Base.metadata.create_all(engine)
 
-# Install sqlalchemy and memcache plugins
+# Install sqlalchemy plugin
 db_plugin = sqlaplugin.SQLAlchemyPlugin(engine, Base.metadata, create=True)
 app.install(db_plugin)
-mc_plugin = mcplugin.MemcachePlugin(servers=CONF.get('memcache',
-    ['localhost:11211']))
-app.install(mc_plugin)
 
 
 @app.route('/')
 def index():
-    return u"""<style> a { text-decoration: none } </style>
-<pre>
+    (scheme, host, path, qs, fragment) = bottle.request.urlparts
+    return u"""<html>
+    <head>
+        <title>Pasttle: Simple Pastebin</title>
+        <style> a { text-decoration: none } </style>
+    </head>
+    <body>
+        <pre>
 pasttle(1)                          PASTTLE                          pasttle(1)
 
 NAME
-    pasttle: simple pastebin:
+    pasttle: simple pastebin
 
 SYNOPSIS
-    &lt;command&gt; | curl -F 'upload=@-' %(url)s
 
-    curl -F 'upload=@filename.ext' %(url)s
+    To post the output of a given command:
 
-    curl -F 'upload=@filename.ext' -F 'password=humptydumpty' %(url)s
-</pre>
+        &lt;command&gt; | curl -F 'upload=@-' %(url)s/post
+
+    To post the contents of a file:
+
+        curl -F 'upload=@filename.ext' %(url)s/post
+
+    To post the contents of a file and password protect it:
+
+        curl -F 'upload=@filename.ext' -F 'password=humptydumpty' %(url)s/post
+
+    To get the raw contents of a paste (i.e. paste #6):
+
+        curl %(url)s/raw/6
+
+    To get the raw contents of a password-protected paste (i.e. paste #7):
+
+        curl -d password=foo %(url)s/raw/7
+        </pre>
+    </body>
+</html>
     """ % {
-        'url': bottle.request.url,
+        'url': '%s://%s' % (scheme, host, ),
     }
 
 
@@ -119,7 +140,7 @@ def recent(db):
 def post(db):
     upload = bottle.request.files.upload
     password = bottle.request.forms.password
-    if upload.file:
+    if isinstance(upload, cgi.FieldStorage) and upload.file:
         raw = upload.file.read()
         filename = None
         if upload.filename != '-':
@@ -151,9 +172,22 @@ def _get_paste(db, id):
     return paste
 
 
-@app.route('/<id:int>')
-def showpaste(db, id, lang=None):
-    paste = _get_paste(db, id)
+def _password_protect_form(url):
+    return u"""<html>
+    <head>
+    </head>
+    <body>
+        <p>This entry is password protected, write in your password:</p>
+        <form method="post" action="%s">
+            <input type="password" name="password" id="password" />
+            <input type="submit" />
+        </form>
+    </body>
+</html>
+    """ % (url, )
+
+
+def _pygmentize(paste, lang):
     if lang:
         try:
             lexer = lexers.get_lexer_by_name(lang)
@@ -164,22 +198,56 @@ def showpaste(db, id, lang=None):
     title = u'%s (%s), created on %s' % (paste.filename or u'',
         paste.mimetype, paste.created, )
     LOGGER.debug(lexer)
-    bottle.response.content_type = 'text/html'
     return pygments.highlight(paste.content, lexer,
         formatters.HtmlFormatter(full=True, linenos='table',
             encoding='utf-8', lineanchors='ln', title=title))
 
 
+@app.route('/<id:int>')
+@app.post('/<id:int>')
+def showpaste(db, id, lang=None):
+    paste = _get_paste(db, id)
+    password = bottle.request.forms.password
+    LOGGER.debug('%s == %s ? %s' % (hashlib.sha1(password).hexdigest(),
+        paste.password,
+        hashlib.sha1(password).hexdigest() == paste.password, ))
+    if paste.password:
+        if not password:
+            return _password_protect_form(bottle.request.url)
+        if hashlib.sha1(password).hexdigest() == paste.password:
+            bottle.response.content_type = 'text/html'
+            return _pygmentize(paste, lang)
+        else:
+            return bottle.HTTPError(401, output='Wrong password provided')
+    else:
+        return _pygmentize(paste, lang)
+
+
 @app.route('/<id:int>/<lang>')
+@app.post('/<id:int>/<lang>')
 def forcehighlight(db, id, lang):
     return showpaste(db, id, lang)
 
 
-@app.route('/raw/<id:int>', apply=[db_plugin, mc_plugin])
+@app.route('/raw/<id:int>')
+@app.post('/raw/<id:int>')
 def showraw(db, id):
     paste = _get_paste(db, id)
-    bottle.response.content_type = 'text/plain'
-    return paste.content
+    password = bottle.request.forms.password
+    LOGGER.debug('%s == %s ? %s' % (hashlib.sha1(password).hexdigest(),
+        paste.password,
+        hashlib.sha1(password).hexdigest() == paste.password, ))
+    if paste.password:
+        if not password:
+            return _password_protect_form(bottle.request.url)
+        if hashlib.sha1(password).hexdigest() == paste.password:
+            bottle.response.content_type = 'text/plain'
+            return paste.content
+        else:
+            return bottle.HTTPError(401, output='Wrong password provided')
+    else:
+        bottle.response.content_type = 'text/plain'
+        return paste.content
 
 bottle.run(app, host=CONF.get('bind', 'localhost'),
     port=CONF.get('port', 9669), reloader=True)
