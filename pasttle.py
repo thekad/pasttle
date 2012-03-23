@@ -53,14 +53,19 @@ class Paste(Base):
     mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
     created = sqlalchemy.Column(sqlalchemy.DateTime, default=func.now(),
         nullable=False)
+    source = sqlalchemy.Column(sqlalchemy.String(45))
 
-    def __init__(self, content, mimetype, filename=None, password=None):
+    def __init__(self, content, mimetype, filename=None,
+        password=None, source=None):
+
         self.content = content
         self.mimetype = mimetype
         if filename and filename.strip():
             self.filename = filename.strip()[:128]
         if password:
             self.password = hashlib.sha1(password).hexdigest()
+        if source:
+            self.source = source
 
     def __repr__(self):
         return u'<Paste "%s" (%s), protected=%s>' % (self.filename,
@@ -156,8 +161,11 @@ def post(db):
             mime = lexer.mimetypes[0]
         else:
             mime = u'text/plain'
+        source = bottle.request.remote_route
+        if source:
+            source = source[0]
         paste = Paste(content=raw, mimetype=mime,
-            filename=filename, password=password)
+            filename=filename, password=password, source=source)
         LOGGER.debug(paste)
         db.add(paste)
         db.commit()
