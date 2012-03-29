@@ -43,6 +43,9 @@ Base = declarative.declarative_base()
 
 
 class Paste(Base):
+    """
+    Main paste sqlalchemy construct for database storage
+    """
 
     __tablename__ = 'paste'
 
@@ -56,14 +59,17 @@ class Paste(Base):
     source = sqlalchemy.Column(sqlalchemy.String(45))
 
     def __init__(self, content, mimetype, filename=None,
-        password=None, source=None):
+        password=None, encrypt=True, source=None):
 
         self.content = content
         self.mimetype = mimetype
         if filename and filename.strip():
             self.filename = filename.strip()[:128]
         if password:
-            self.password = hashlib.sha1(password).hexdigest()
+            if encrypt:
+                self.password = hashlib.sha1(password).hexdigest()
+            else:
+                self.password = password
         if source:
             self.source = source
 
@@ -84,32 +90,42 @@ app.install(db_plugin)
 
 @app.route('/')
 def index():
+    """
+    Main index
+    """
+
     (scheme, host, path, qs, fragment) = bottle.request.urlparts
     return u"""<html>
     <head>
-        <title>Pasttle: Simple Pastebin</title>
-        <style> a { text-decoration: none } </style>
+        <title>%(title)s</title>
     </head>
     <body>
         <pre>
 pasttle(1)                          PASTTLE                          pasttle(1)
 
-NAME
+<strong>NAME</strong>
     pasttle: simple pastebin
 
-SYNOPSIS
+<strong>EXAMPLES</strong>
 
     To post the output of a given command:
 
-        &lt;command&gt; | curl -F 'upload=@-' %(url)s/post
+        &lt;command&gt; | curl -F "upload=@-" %(url)s/post && echo
 
     To post the contents of a file:
 
-        curl -F 'upload=@filename.ext' %(url)s/post
+        curl -F "upload=@filename.ext" %(url)s/post && echo
 
     To post the contents of a file and password protect it:
 
-        curl -F 'upload=@filename.ext' -F 'password=humptydumpty' %(url)s/post
+        curl -F "upload=@filename.ext" -F "password=humptydumpty" \\
+            %(url)s/post && echo
+
+    You don't like sending plain-text passwords:
+
+        curl -F "upload=@filename.ext" \\
+            -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+            -F "is_encrypted=yes" %(url)s/post && echo
 
     To get the raw contents of a paste (i.e. paste #6):
 
@@ -117,17 +133,28 @@ SYNOPSIS
 
     To get the raw contents of a password-protected paste (i.e. paste #7):
 
-        curl -d password=foo %(url)s/raw/7
+        curl -d "password=foo" %(url)s/raw/7
+
+    Again you don't like sending plain-text passwords:
+
+        curl -d "is_encrypted=yes" \\
+            -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+            %(url)s/raw/7
         </pre>
     </body>
 </html>
     """ % {
         'url': '%s://%s' % (scheme, host, ),
+        'title': CONF.get('title', 'Pasttle: Simple Pastebin'),
     }
 
 
 @app.route('/recent')
 def recent(db):
+    """
+    Shows an unordered list of most recent pasted items
+    """
+
     pastes = db.query(Paste.id, Paste.filename, Paste.mimetype,
         Paste.created, Paste.password).\
         order_by(Paste.id.desc()).limit(20).all()
@@ -143,8 +170,15 @@ def recent(db):
 
 @app.post('/post')
 def post(db):
+    """
+    Main upload interface. Users can password-protect an entry if they so
+    desire. You can send an already SHA1 cyphered text to this endpoint so
+    your intended password does not fly insecure through the internet
+    """
+
     upload = bottle.request.files.upload
     password = bottle.request.forms.password
+    encrypt = not bool(bottle.request.forms.is_encrypted)
     if isinstance(upload, cgi.FieldStorage) and upload.file:
         raw = upload.file.read()
         filename = None
@@ -164,7 +198,7 @@ def post(db):
         source = bottle.request.remote_route
         if source:
             source = source[0]
-        paste = Paste(content=raw, mimetype=mime,
+        paste = Paste(content=raw, mimetype=mime, encrypt=encrypt,
             filename=filename, password=password, source=source)
         LOGGER.debug(paste)
         db.add(paste)
@@ -176,11 +210,22 @@ def post(db):
 
 
 def _get_paste(db, id):
-    paste = db.query(Paste).filter_by(id=id).one()
+    """
+    Queries the database for the given paste, or returns False is not found
+    """
+
+    try:
+        paste = db.query(Paste).filter_by(id=id).one()
+    except:
+        paste = False
     return paste
 
 
 def _password_protect_form(url):
+    """
+    Really simple password-protect form
+    """
+
     return u"""<html>
     <head>
     </head>
@@ -196,6 +241,10 @@ def _password_protect_form(url):
 
 
 def _pygmentize(paste, lang):
+    """
+    Guess (or force if lang is given) highlight on a given paste via pygments
+    """
+
     if lang:
         try:
             lexer = lexers.get_lexer_by_name(lang)
@@ -214,7 +263,15 @@ def _pygmentize(paste, lang):
 @app.route('/<id:int>')
 @app.post('/<id:int>')
 def showpaste(db, id, lang=None):
+    """
+    Shows the highlighted entry on the browser. If the entry is protected
+    with a password it will display a password entry and will compare against
+    the database for a match
+    """
+
     paste = _get_paste(db, id)
+    if not paste:
+        return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
     LOGGER.debug('%s == %s ? %s' % (hashlib.sha1(password).hexdigest(),
         paste.password,
@@ -234,21 +291,35 @@ def showpaste(db, id, lang=None):
 @app.route('/<id:int>/<lang>')
 @app.post('/<id:int>/<lang>')
 def forcehighlight(db, id, lang):
+    """Forces a certain highlight against an entry"""
+
     return showpaste(db, id, lang)
 
 
 @app.route('/raw/<id:int>')
 @app.post('/raw/<id:int>')
 def showraw(db, id):
+    """
+    Returns the plain-text version of the entry. If the entry is protected
+    with a password it will display a simple password entry form until the
+    password is a match in the database
+    """
+
     paste = _get_paste(db, id)
+    if not paste:
+        return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
-    LOGGER.debug('%s == %s ? %s' % (hashlib.sha1(password).hexdigest(),
-        paste.password,
-        hashlib.sha1(password).hexdigest() == paste.password, ))
+    is_encrypted = bool(bottle.request.forms.is_encrypted)
+    if not is_encrypted:
+        match = hashlib.sha1(password).hexdigest()
+    else:
+        match = password
+    LOGGER.debug('%s == %s ? %s' % (match, paste.password,
+        match == paste.password, ))
     if paste.password:
         if not password:
             return _password_protect_form(bottle.request.url)
-        if hashlib.sha1(password).hexdigest() == paste.password:
+        if match == paste.password:
             bottle.response.content_type = 'text/plain'
             return paste.content
         else:
