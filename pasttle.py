@@ -98,6 +98,21 @@ def index():
     return u"""<html>
     <head>
         <title>%(title)s</title>
+        <style>
+            body {
+                font-family: Courier;
+                font-size: 12px;
+            }
+
+            p {
+                margin: 20px;
+            }
+
+            a {
+                text-decoration: none;
+                font-weight: bold;
+            }
+        </style>
     </head>
     <body>
         <pre>
@@ -140,7 +155,20 @@ pasttle(1)                          PASTTLE                          pasttle(1)
         curl -d "is_encrypted=yes" \\
             -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
             %(url)s/raw/7
+
+<strong>HELPERS</strong>
+
+    There are a couple of helper functions in the link below for pasting and
+    getting pastes. Import it from your ~/.bash_profile and you should be able
+    to use these functions. Creating a ~/.pasttlerc helps you type less too.
+
+    <a href="%(url)s/pasttle.bashrc">Link</a>
+
         </pre>
+        <p>Copyright &copy; Jorge Gallegos, 2012</p>
+        <p>
+            <a href="https://github.com/thekad/pasttle">Get the source code</a>
+        </p>
     </body>
 </html>
     """ % {
