@@ -17,6 +17,7 @@ from pygments import lexers
 import sqlalchemy
 from sqlalchemy import func
 from sqlalchemy.ext import declarative
+import sys
 
 
 # Load configuration, or default
@@ -355,6 +356,18 @@ def showraw(db, id):
     else:
         bottle.response.content_type = 'text/plain'
         return paste.content
+
+
+@app.route('/pasttle.bashrc')
+def serve_bash_helper_script():
+    """
+    Serves the static file pasttle.bashrc
+    """
+
+    root = os.path.realpath(sys.path[0])
+    bottle.response.content_type = 'text/plain'
+    return bottle.static_file('pasttle.bashrc', root)
+
 
 bottle.run(app, host=CONF.get('bind', 'localhost'),
     port=CONF.get('port', 9669), reloader=True)
