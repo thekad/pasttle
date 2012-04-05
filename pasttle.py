@@ -78,7 +78,7 @@ class Paste(Base):
         return u'<Paste "%s" (%s), protected=%s>' % (self.filename,
             self.mimetype, bool(self.password))
 
-app = bottle.Bottle()
+application = bottle.app()
 engine = sqlalchemy.create_engine(CONF['dsn'], echo=debug,
     convert_unicode=True, logging_name='pasttle.db')
 # Create all metadata on loading, if something blows we need to know asap
@@ -86,10 +86,10 @@ Base.metadata.create_all(engine)
 
 # Install sqlalchemy plugin
 db_plugin = sqlaplugin.SQLAlchemyPlugin(engine, Base.metadata, create=True)
-app.install(db_plugin)
+application.install(db_plugin)
 
 
-@app.route('/')
+@bottle.route('/')
 def index():
     """
     Main index
@@ -178,7 +178,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
     }
 
 
-@app.route('/recent')
+@bottle.route('/recent')
 def recent(db):
     """
     Shows an unordered list of most recent pasted items
@@ -197,7 +197,7 @@ def recent(db):
     return ul % ''.join(li)
 
 
-@app.post('/post')
+@bottle.post('/post')
 def post(db):
     """
     Main upload interface. Users can password-protect an entry if they so
@@ -289,8 +289,8 @@ def _pygmentize(paste, lang):
             encoding='utf-8', lineanchors='ln', title=title))
 
 
-@app.route('/<id:int>')
-@app.post('/<id:int>')
+@bottle.route('/<id:int>')
+@bottle.post('/<id:int>')
 def showpaste(db, id, lang=None):
     """
     Shows the highlighted entry on the browser. If the entry is protected
@@ -317,16 +317,16 @@ def showpaste(db, id, lang=None):
         return _pygmentize(paste, lang)
 
 
-@app.route('/<id:int>/<lang>')
-@app.post('/<id:int>/<lang>')
+@bottle.route('/<id:int>/<lang>')
+@bottle.post('/<id:int>/<lang>')
 def forcehighlight(db, id, lang):
     """Forces a certain highlight against an entry"""
 
     return showpaste(db, id, lang)
 
 
-@app.route('/raw/<id:int>')
-@app.post('/raw/<id:int>')
+@bottle.route('/raw/<id:int>')
+@bottle.post('/raw/<id:int>')
 def showraw(db, id):
     """
     Returns the plain-text version of the entry. If the entry is protected
@@ -358,7 +358,7 @@ def showraw(db, id):
         return paste.content
 
 
-@app.route('/pasttle.bashrc')
+@bottle.route('/pasttle.bashrc')
 def serve_bash_helper_script():
     """
     Serves the static file pasttle.bashrc
@@ -369,6 +369,8 @@ def serve_bash_helper_script():
     return bottle.static_file('pasttle.bashrc', root)
 
 
-bottle.run(app, host=CONF.get('bind', 'localhost'),
-    port=CONF.get('port', 9669), reloader=True)
+if __name__ == '__main__':
+    bottle.run(application, host=CONF.get('bind', 'localhost'),
+        port=CONF.get('port', 9669), reloader=True,
+        server=CONF.get('server', 'wsgiref'))
 
