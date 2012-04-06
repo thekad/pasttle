@@ -7,6 +7,7 @@
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
 import cgi
+import ConfigParser
 import hashlib
 import json
 import logging
@@ -21,10 +22,23 @@ import sys
 
 
 # Load configuration, or default
-cfg_file = os.environ.get('PASTTLECONF', 'pasttle.conf')
-CONF = json.load(open(cfg_file))
+defaults = {
+    'debug': True,
+    'bind': 'localhost',
+    'port': 9669,
+    'title': 'Simple pastebin',
+    'wsgi': 'wsgiref',
+}
 
-debug = CONF.get('debug', False)
+cfg = os.environ.get('PASTTLECONF', 'pasttle.ini').split(':')
+if len(cfg) < 2:
+    cfg.append('main')
+
+cfg_file, cfg_section = cfg[0], cfg[1]
+CONF = ConfigParser.SafeConfigParser(defaults)
+CONF.read(os.path.realpath(cfg_file))
+
+debug = CONF.getboolean(cfg_section, 'debug')
 format = '%(asctime)s %(levelname)s %(name)s %(message)s'
 
 # Set up logging
@@ -79,7 +93,7 @@ class Paste(Base):
             self.mimetype, bool(self.password))
 
 application = bottle.app()
-engine = sqlalchemy.create_engine(CONF['dsn'], echo=debug,
+engine = sqlalchemy.create_engine(CONF.get(cfg_section, 'dsn'), echo=debug,
     convert_unicode=True, logging_name='pasttle.db')
 # Create all metadata on loading, if something blows we need to know asap
 Base.metadata.create_all(engine)
@@ -174,7 +188,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
 </html>
     """ % {
         'url': '%s://%s' % (scheme, host, ),
-        'title': CONF.get('title', 'Pasttle: Simple Pastebin'),
+        'title': CONF.get(cfg_section, 'title'),
     }
 
 
@@ -370,7 +384,7 @@ def serve_bash_helper_script():
 
 
 if __name__ == '__main__':
-    bottle.run(application, host=CONF.get('bind', 'localhost'),
-        port=CONF.get('port', 9669), reloader=True,
-        server=CONF.get('server', 'wsgiref'))
+    bottle.run(application, host=CONF.get(cfg_section, 'bind'),
+        port=CONF.get(cfg_section, 'port'), reloader=debug,
+        server=CONF.get(cfg_section, 'wsgi'))
 
