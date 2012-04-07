@@ -24,7 +24,7 @@ if sys.version_info >= (3,):
 
 setup(
     name = 'pasttle',
-    version = '0.4',
+    version = '0.4.1',
     url = 'http://github.com/thekad/pasttle/',
     description = 'Simple pastebin on top of bottle.',
     author = 'Jorge Gallegos',

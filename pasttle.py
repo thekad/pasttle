@@ -22,9 +22,9 @@ import sys
 
 # Load configuration, or default
 defaults = {
-    'debug': True,
+    'debug': 'yes',
     'bind': 'localhost',
-    'port': 9669,
+    'port': '9669',
     'title': 'Simple pastebin',
     'wsgi': 'wsgiref',
 }
