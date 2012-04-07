@@ -63,7 +63,7 @@ class Paste(Base):
 
     __tablename__ = 'paste'
 
-    id = sqlalchemy.Column(sqlalchemy.BigInteger, primary_key=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     filename = sqlalchemy.Column(sqlalchemy.String(128))
     password = sqlalchemy.Column(sqlalchemy.String(40))
@@ -243,7 +243,7 @@ def upload_file():
         </style>
     </head>
     <body>
-        <form method="post" action="%(url)s/post">
+        <form method="post" action="%(url)s/post" enctype="multipart/form-data">
             <fieldset>
             <legend>Upload information</legend>
                 <label for="upload">File: </label>
