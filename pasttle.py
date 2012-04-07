@@ -9,7 +9,6 @@ from bottle.ext import sqlalchemy as sqlaplugin
 import cgi
 import ConfigParser
 import hashlib
-import json
 import logging
 import os
 import pygments
@@ -103,13 +102,20 @@ db_plugin = sqlaplugin.SQLAlchemyPlugin(engine, Base.metadata, create=True)
 application.install(db_plugin)
 
 
+def get_url(path=False):
+    (scheme, host, q_path, qs, fragment) = bottle.request.urlparts
+    if path:
+        return u'%s://%s%s' % (scheme, host, q_path)
+    else:
+        return u'%s://%s' % (scheme, host)
+
+
 @bottle.route('/')
 def index():
     """
     Main index
     """
 
-    (scheme, host, path, qs, fragment) = bottle.request.urlparts
     return u"""<html>
     <head>
         <title>%(title)s</title>
@@ -187,7 +193,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
     </body>
 </html>
     """ % {
-        'url': '%s://%s' % (scheme, host, ),
+        'url': get_url(),
         'title': CONF.get(cfg_section, 'title'),
     }
 
@@ -209,6 +215,60 @@ def recent(db):
             (paste.id, paste.id, paste.filename or u'',
             paste.mimetype, paste.created, ))
     return ul % ''.join(li)
+
+
+@bottle.route('/post')
+def upload_file():
+    """
+    Frontend for simple posting via web interface
+    """
+
+    return u"""<html>
+    <head>
+        <title>Upload Form</title>
+        <style>
+            fieldset {
+                padding: 1em;
+            }
+            label {
+                float: left;
+                margin-right: 0.5em;
+                padding-top: 0.2em;
+                text-align: right;
+                font-weight: bold;
+            }
+            .note {
+                font-size: small;
+            }
+        </style>
+    </head>
+    <body>
+        <form method="post" action="%(url)s/post">
+            <fieldset>
+            <legend>Upload information</legend>
+                <label for="upload">File: </label>
+                <input id="upload" type="file" name="upload" />
+                <br/>
+                <label for="password">Password protect this paste: </label>
+                <input id="password" type="password" name="password" />
+                <br/>
+                <label for="is_encrypted">Is the password encrypted? </label>
+                <input type="checkbox" name="is_encrypted" check="false" id="is_encrypted" />
+                <br/>
+                <input type="submit" />
+            </fieldset>
+            <p class="note">
+                Keep in mind that passwords are transmitted in clear-text. The
+                password is not cyphered on the client-side because shipping a
+                SHA1 javascript library is perhaps too much, if you check the
+                "Is encrypted?" checkbox make sure your password is cyphered
+                with SHA1. Perhaps you better use the readily available
+                <a href="%(url)s/pasttle.bashrc">console helper</a>?
+            </p>
+        </form>
+    </body>
+</html>
+    """ % {'url': get_url()}
 
 
 @bottle.post('/post')
@@ -246,8 +306,7 @@ def post(db):
         LOGGER.debug(paste)
         db.add(paste)
         db.commit()
-        (scheme, host, path, qs, fragment) = bottle.request.urlparts
-        return u'%s://%s/%s' % (scheme, host, paste.id, )
+        return u'%s/%s' % (get_url(), paste.id, )
     else:
         return bottle.HTTPError(400, output='No paste provided')
 
