@@ -1,5 +1,7 @@
 #!/bin/bash
 
+SW_VERSION="0.4.1"
+
 function gettle() {
 #   default values
     encrypt="yes";
@@ -7,6 +9,7 @@ function gettle() {
     verbose="no";
     insecure="no";
 
+    version="gettle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
     test -f ~/.pasttlerc
     if [ 0 -eq $? ];
@@ -83,7 +86,7 @@ function gettle() {
         fi;
     fi;
 
-    command="curl "
+    command="curl -A '${version}'"
 
     if [ ! -z "$password" ];
     then
@@ -125,6 +128,7 @@ function pasttle() {
     verbose="no";
     insecure="no";
 
+    version="pasttle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
     test -f ~/.pasttlerc
     if [ 0 -eq $? ];
@@ -194,7 +198,7 @@ function pasttle() {
         fi;
     fi;
 
-    command="curl -F 'upload=@${filename}'"
+    command="curl -A '${version}' -F 'upload=@${filename}'"
 
     if [ ! -z "$password" ];
     then
