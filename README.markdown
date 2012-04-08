@@ -2,9 +2,10 @@ Overview
 ========
 
 Pasttle is based upon http://sprunge.us, born out of the necessity to:
-  - Have a lightweight pastebin software
-  - Not depend on Google AE
-  - Paste via CLI
+
+  * Have a lightweight pastebin software
+  * Not depend on Google AE
+  * Paste via CLI
 
 Also, I wanted to play more with bottlepy.org
 
