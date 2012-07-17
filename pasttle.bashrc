@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SW_VERSION="0.4.1"
+SW_VERSION="0.5"
 
 function gettle() {
 #   default values
@@ -153,7 +153,7 @@ function pasttle() {
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:np:f:hvi" flag;
+    while getopts ":a:s:np:f:hvi" flag;
     do
         case $flag in
             h)
@@ -162,6 +162,9 @@ function pasttle() {
                 ;;
             a) 
                 apiurl="$OPTARG"
+                ;;
+            s) 
+                syntax="$OPTARG"
                 ;;
             n)
                 encrypt="no"
@@ -198,7 +201,12 @@ function pasttle() {
         fi;
     fi;
 
-    command="curl -A '${version}' -F 'upload=@${filename}'"
+    if [ -z "$syntax" ];
+    then
+        syntax="${filename#*.}"
+    fi;
+
+    command="curl -A '${version}' -F 'upload=<${filename}' -F 'filename=${filename}' -F 'syntax=${syntax}'"
 
     if [ ! -z "$password" ];
     then

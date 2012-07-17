@@ -243,17 +243,22 @@ def upload_file():
         </style>
     </head>
     <body>
-        <form method="post" action="%(url)s/post" enctype="multipart/form-data">
+        <form method="post" action="%(url)s/post">
             <fieldset>
-            <legend>Upload information</legend>
+            <legend>Upload</legend>
                 <label for="upload">File: </label>
-                <input id="upload" type="file" name="upload" />
+                <textarea id="upload" name="upload" rows="25"
+                cols="80"></textarea>
+                <br/>
+                <label for="syntax">Force syntax: </label>
+                <input id="syntax" name="syntax" />
                 <br/>
                 <label for="password">Password protect this paste: </label>
                 <input id="password" type="password" name="password" />
                 <br/>
                 <label for="is_encrypted">Is the password encrypted? </label>
-                <input type="checkbox" name="is_encrypted" check="false" id="is_encrypted" />
+                <input type="checkbox" name="is_encrypted" check="false"
+                id="is_encrypted" />
                 <br/>
                 <input type="submit" />
             </fieldset>
@@ -279,20 +284,26 @@ def post(db):
     your intended password does not fly insecure through the internet
     """
 
-    upload = bottle.request.files.upload
+    upload = bottle.request.forms.upload
+    filename = bottle.request.forms.filename
+    syntax = bottle.request.forms.syntax
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
-    if isinstance(upload, cgi.FieldStorage) and upload.file:
-        raw = upload.file.read()
-        filename = None
-        if upload.filename != '-':
-            filename = upload.filename
+    LOGGER.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
+    if upload:
+        if syntax and syntax != '-':
             try:
-                lexer = lexers.guess_lexer_for_filename(upload.filename, raw)
+                lexer = lexers.get_lexer_by_name(syntax)
             except lexers.ClassNotFound:
-                lexer = lexers.get_lexer_by_name('text')
+                lexer = lexers.guess_lexer(upload)
         else:
-            lexer = lexers.guess_lexer(raw)
+            if filename and filename != '-':
+                try:
+                    lexer = lexers.guess_lexer_for_filename(filename, upload)
+                except lexers.ClassNotFound:
+                    lexer = lexers.guess_lexer(upload)
+            else:
+                lexer = lexers.guess_lexer(upload)
         LOGGER.debug(lexer.mimetypes)
         if lexer.mimetypes:
             mime = lexer.mimetypes[0]
@@ -301,8 +312,8 @@ def post(db):
         source = bottle.request.remote_route
         if source:
             source = source[0]
-        paste = Paste(content=raw, mimetype=mime, encrypt=encrypt,
-            filename=filename, password=password, source=source)
+        paste = Paste(content=upload, mimetype=mime, encrypt=encrypt,
+            password=password, source=source)
         LOGGER.debug(paste)
         db.add(paste)
         db.commit()
@@ -446,4 +457,3 @@ if __name__ == '__main__':
     bottle.run(application, host=CONF.get(cfg_section, 'bind'),
         port=CONF.get(cfg_section, 'port'), reloader=debug,
         server=CONF.get(cfg_section, 'wsgi'))
-
