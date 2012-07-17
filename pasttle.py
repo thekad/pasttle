@@ -146,20 +146,24 @@ pasttle(1)                          PASTTLE                          pasttle(1)
 
     To post the output of a given command:
 
-        &lt;command&gt; | curl -F "upload=@-" %(url)s/post && echo
+        &lt;command&gt; | curl -F "upload=<-" %(url)s/post && echo
 
     To post the contents of a file:
 
-        curl -F "upload=@filename.ext" %(url)s/post && echo
+        curl -F "upload=<filename.ext" %(url)s/post && echo
+
+    To post the contents of a file and force the syntax to be python:
+
+        curl -F "upload=<filename.ext" -F "syntax=python" %(url)s/post && echo
 
     To post the contents of a file and password protect it:
 
-        curl -F "upload=@filename.ext" -F "password=humptydumpty" \\
+        curl -F "upload=<filename.ext" -F "password=humptydumpty" \\
             %(url)s/post && echo
 
     You don't like sending plain-text passwords:
 
-        curl -F "upload=@filename.ext" \\
+        curl -F "upload=<filename.ext" \\
             -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
             -F "is_encrypted=yes" %(url)s/post && echo
 
