@@ -33,7 +33,7 @@ setup(
     platforms = 'any',
     zip_safe = False,
     scripts = [
-        'pasttle.py',
+        'pasttle-server.py',
     ],
     classifiers = [
         'Environment :: Web Environment',
