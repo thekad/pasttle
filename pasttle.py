@@ -6,7 +6,6 @@
 
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
-import cgi
 import ConfigParser
 import hashlib
 import logging
@@ -251,7 +250,7 @@ def upload_file():
         <form method="post" action="%(url)s/post">
             <fieldset>
             <legend>Upload</legend>
-                <label for="upload">File: </label>
+                <label for="upload">Contents: </label>
                 <textarea id="upload" name="upload" rows="25"
                 cols="80"></textarea>
                 <br/>
@@ -265,7 +264,7 @@ def upload_file():
                 <input type="checkbox" name="is_encrypted" check="false"
                 id="is_encrypted" />
                 <br/>
-                <input type="submit" />
+                <input type="submit" value="Submit" />
             </fieldset>
             <p class="note">
                 Keep in mind that passwords are transmitted in clear-text. The
