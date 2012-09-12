@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SW_VERSION="0.6"
+SW_VERSION="0.6.1"
 
 function gettle() {
 #   default values
