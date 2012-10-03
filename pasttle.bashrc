@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SW_VERSION="0.6.2"
+SW_VERSION="0.6.3"
 UPSTREAM_URL="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc"
 
 function gettle() {
