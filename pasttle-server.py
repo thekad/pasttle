@@ -192,7 +192,9 @@ pasttle(1)                          PASTTLE                          pasttle(1)
     getting pastes. Import it from your ~/.bash_profile and you should be able
     to use these functions. Creating a ~/.pasttlerc helps you type less too.
 
-    <a href="%(url)s/pasttle.bashrc">Link</a>
+    <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">
+        Link
+    </a>
 
         </pre>
         <p>Copyright &copy; Jorge Gallegos, 2012</p>
@@ -252,7 +254,7 @@ def upload_file():
         </style>
     </head>
     <body>
-        <form method="post" action="%(url)s/post">
+        <form method="post" action="%(url)s">
             <fieldset>
             <legend>Upload</legend>
                 <label for="upload">Contents: </label>
@@ -277,12 +279,14 @@ def upload_file():
                 SHA1 javascript library is perhaps too much, if you check the
                 "Is encrypted?" checkbox make sure your password is cyphered
                 with SHA1. Perhaps you better use the readily available
-                <a href="%(url)s/pasttle.bashrc">console helper</a>?
+            <a
+            href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">
+            console helper</a>?
             </p>
         </form>
     </body>
 </html>
-    """ % {'url': get_url()}
+    """ % {'url': get_url(path=True)}
 
 
 @bottle.post('/post')
@@ -400,7 +404,7 @@ def showpaste(db, id, lang=None):
         hashlib.sha1(password).hexdigest() == paste.password, ))
     if paste.password:
         if not password:
-            return _password_protect_form(bottle.request.url)
+            return _password_protect_form(get_url(path=True))
         if hashlib.sha1(password).hexdigest() == paste.password:
             bottle.response.content_type = 'text/html'
             return _pygmentize(paste, lang)
@@ -440,7 +444,7 @@ def showraw(db, id):
         match == paste.password, ))
     if paste.password:
         if not password:
-            return _password_protect_form(bottle.request.url)
+            return _password_protect_form(get_url(path=True))
         if match == paste.password:
             bottle.response.content_type = 'text/plain'
             return paste.content
