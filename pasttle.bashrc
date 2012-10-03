@@ -1,6 +1,7 @@
 #!/bin/bash
 
 SW_VERSION="0.6.2"
+UPSTREAM_URL="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc"
 
 function gettle() {
 #   default values
@@ -8,6 +9,9 @@ function gettle() {
     local filename="-";
     local verbose="no";
     local insecure="no";
+    local checkupdate="yes";
+    local command="";
+    local upstream_version="$SW_VERSION";
 
     version="gettle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
@@ -18,21 +22,22 @@ function gettle() {
         source ~/.pasttlerc;
     fi;
 
-    usage="\n
+    local usage="\n
     USAGE\n\n
     gettle [options] -e <entry number>\n\n
     OPTIONS\n\n
-        -a  API URL, this is, the root URL of the service\n\n
-        -n  Do not encrypt your password before sending it\n\n
-        -p 'PASSWORD' If the entry is password-protected\n\n
-        -f 'FILENAME' (OPTIONAL) Output the content to the given file\n\n
-        -i (OPTIONAL) If you want to skip on SSL errors\n\n
-        -v (OPTIONAL) Print verbose output\n\n
+        -a  API URL, this is, the root URL of the service (var: apiurl)\n\n
+        -n  Do not encrypt your password before sending it (var: encrypt)\n\n
+        -p 'PASSWORD' If the entry is password-protected (var: password)\n\n
+        -f 'FILENAME' (OPTIONAL) Output the content to the given file (ver: filename)\n\n
+        -i (OPTIONAL) If you want to skip on SSL errors (var: insecure)\n\n
+        -v (OPTIONAL) Print verbose output (var: verbose)\n\n
+        -C (OPTIONAL) Don't check for updates from upstream (var: checkupdate)\n\n
     "
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:np:f:hvie:" flag;
+    while getopts ":a:np:f:hviCe:" flag;
     do
         case $flag in
             h)
@@ -60,6 +65,9 @@ function gettle() {
             e)
                 entry="$OPTARG"
                 ;;
+            C)
+                checkupdate="no"
+                ;;
             \?)
                 echo "Invalid option: -${flag}"
                 ;;
@@ -84,6 +92,13 @@ function gettle() {
         then
             echo "API URL is ${apiurl}";
         fi;
+    fi;
+
+    if [ "yes" == "$checkupdate" ];
+    then
+        upstream_version="$(curl -s $UPSTREAM_URL | grep "^SW_VERSION" | cut -d\" -f2)";
+        diff <(echo "$SW_VERSION") <(echo "$upstream_version" ) > /dev/null ||
+        echo "The upstream version ($upstream_version from $UPSTREAM_URL) differs from your version ($SW_VERSION). Time to update?"
     fi;
 
     command="curl -A '${version}'"
@@ -127,6 +142,9 @@ function pasttle() {
     local filename="-";
     local verbose="no";
     local insecure="no";
+    local checkupdate="yes";
+    local command="";
+    local upstream_version="$SW_VERSION";
 
     version="pasttle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
@@ -137,23 +155,25 @@ function pasttle() {
         source ~/.pasttlerc;
     fi;
 
-    usage="\n
+    local usage="\n
     USAGE\n\n
     cat 'filename.ext' | pasttle [options]\n\n
     or\n\n
     pasttle -f 'filename.ext' [options]\n\n
     OPTIONS\n\n
-        -a  API URL, this is, the root URL of the service\n\n
-        -n  Do not encrypt your password before sending it\n\n
-        -p 'PASSWORD' If you want to protect this entry with a password\n\n
-        -f 'FILENAME' (OPTIONAL) Upload the given plain-text file\n\n
-        -i (OPTIONAL) If you want to skip on SSL errors\n\n
-        -v (OPTIONAL) Print verbose output\n\n
+        -a  API URL, this is, the root URL of the service (var: apiurl)\n\n
+        -n  Do not encrypt your password before sending it (var: encrypt)\n\n
+        -p 'PASSWORD' If you want to protect this entry with a password (var: password)\n\n
+        -f 'FILENAME' (OPTIONAL) Upload the given plain-text file (var: filename)\n\n
+        -i (OPTIONAL) If you want to skip on SSL errors (var: insecure)\n\n
+        -v (OPTIONAL) Print verbose output (var: verbose)\n\n
+        -s (OPTIONAL) Force the syntax of the paste (var: syntax)\n\n
+        -C (OPTIONAL) Don't check for updates from upstream (var: checkupdate)\n\n
     "
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:s:np:f:hvi" flag;
+    while getopts ":a:s:np:f:hvCi" flag;
     do
         case $flag in
             h)
@@ -181,6 +201,9 @@ function pasttle() {
             i)
                 insecure="yes"
                 ;;
+            C)
+                checkupdate="no"
+                ;;
             \?)
                 echo "Invalid option: -${flag}"
                 ;;
@@ -199,6 +222,13 @@ function pasttle() {
         then
             echo "API URL is ${apiurl}";
         fi;
+    fi;
+
+    if [ "yes" == "$checkupdate" ];
+    then
+        upstream_version="$(curl -s $UPSTREAM_URL | grep "^SW_VERSION" | cut -d\" -f2)";
+        diff <(echo "$SW_VERSION") <(echo "$upstream_version" ) > /dev/null ||
+        echo "The upstream version ($upstream_version from $UPSTREAM_URL) differs from your version ($SW_VERSION). Time to update?"
     fi;
 
     if [ -z "$syntax" ];
