@@ -1,13 +1,13 @@
 #!/bin/bash
 
-SW_VERSION="0.6.1"
+SW_VERSION="0.6.2"
 
 function gettle() {
 #   default values
-    encrypt="yes";
-    filename="-";
-    verbose="no";
-    insecure="no";
+    local encrypt="yes";
+    local filename="-";
+    local verbose="no";
+    local insecure="no";
 
     version="gettle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
@@ -123,10 +123,10 @@ function gettle() {
 
 function pasttle() {
 #   default values
-    encrypt="yes";
-    filename="-";
-    verbose="no";
-    insecure="no";
+    local encrypt="yes";
+    local filename="-";
+    local verbose="no";
+    local insecure="no";
 
     version="pasttle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
@@ -240,4 +240,3 @@ function pasttle() {
     eval $command;
     echo;
 }
-
