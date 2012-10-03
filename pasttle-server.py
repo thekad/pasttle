@@ -254,7 +254,7 @@ def upload_file():
         </style>
     </head>
     <body>
-        <form method="post" action="%(url)s">
+        <form method="post">
             <fieldset>
             <legend>Upload</legend>
                 <label for="upload">Contents: </label>
@@ -286,7 +286,7 @@ def upload_file():
         </form>
     </body>
 </html>
-    """ % {'url': get_url(path=True)}
+    """
 
 
 @bottle.post('/post')
@@ -347,7 +347,7 @@ def _get_paste(db, id):
     return paste
 
 
-def _password_protect_form(url):
+def _password_protect_form():
     """
     Really simple password-protect form
     """
@@ -357,13 +357,13 @@ def _password_protect_form(url):
     </head>
     <body>
         <p>This entry is password protected, write in your password:</p>
-        <form method="post" action="%s">
+        <form method="post">
             <input type="password" name="password" id="password" />
             <input type="submit" />
         </form>
     </body>
 </html>
-    """ % (url, )
+    """
 
 
 def _pygmentize(paste, lang):
@@ -404,7 +404,7 @@ def showpaste(db, id, lang=None):
         hashlib.sha1(password).hexdigest() == paste.password, ))
     if paste.password:
         if not password:
-            return _password_protect_form(get_url(path=True))
+            return _password_protect_form()
         if hashlib.sha1(password).hexdigest() == paste.password:
             bottle.response.content_type = 'text/html'
             return _pygmentize(paste, lang)
@@ -444,7 +444,7 @@ def showraw(db, id):
         match == paste.password, ))
     if paste.password:
         if not password:
-            return _password_protect_form(get_url(path=True))
+            return _password_protect_form()
         if match == paste.password:
             bottle.response.content_type = 'text/plain'
             return paste.content
