@@ -7,7 +7,7 @@ Pasttle is based upon http://sprunge.us, born out of the necessity to:
   * Not depend on Google AE
   * Paste via CLI
 
-Also, I wanted to play more with bottlepy.org
+Also, I wanted to play more with http://bottlepy.org
 
 Pasttle is split in server and client, it depends on what you are trying to 
 use to run one or the other.
