@@ -378,12 +378,12 @@ def _edit_paste_form(pastecontent):
         <p>Edit here your Paste:</p>
         <form method="post">
             <textarea id="editpastefrm" name="editpastefrm" rows="25"
-                cols="80">"""+pastecontent+"""</textarea>
+                cols="80">%s</textarea>
             <input type="submit" />
         </form>
     </body>
 </html>
-    """
+    """ % (pastecontent)
 
 
 def _pygmentize(paste, lang):
@@ -510,7 +510,7 @@ def postedit(db,id):
     paste = _get_paste(db,id)
     paste.content = upload
     db.commit()
-    bottle.redirect('/'+str(id))
+    bottle.redirect('/%s' % (str(id)))
 
 
 @bottle.route('/pasttle.bashrc')
