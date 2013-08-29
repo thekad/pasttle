@@ -196,6 +196,13 @@ pasttle(1)                          PASTTLE                          pasttle(1)
         Link
     </a>
 
+<strong>WEB FORM</strong>
+
+    You can also use this tiny web form to easily upload content.
+
+    <a href="%(url)s/post">
+        Link
+    </a>
         </pre>
         <p>Copyright &copy; Jorge Gallegos, 2012</p>
         <p>
@@ -222,7 +229,7 @@ def recent(db):
     li = []
     for paste in pastes:
         LOGGER.debug(paste)
-        li.append(u'<li><a href="/%s">Paste #%d, %s(%s) %s</a></li>' %
+        li.append(u'<li><a href="/%s">Paste #%d, %s (%s) %s</a></li>' %
             (paste.id, paste.id, paste.filename or u'',
             paste.mimetype, paste.created, ))
     return ul % ''.join(li)
@@ -298,19 +305,23 @@ def post(db):
     """
 
     upload = bottle.request.forms.upload
-    filename = bottle.request.forms.filename
-    syntax = bottle.request.forms.syntax
+    filename = None
+    if bottle.request.forms.filename != '-':
+        filename = bottle.request.forms.filename
+    syntax = None
+    if bottle.request.forms.syntax != '-':
+        syntax = bottle.request.forms.syntax
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
     LOGGER.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
     if upload:
-        if syntax and syntax != '-':
+        if syntax:
             try:
                 lexer = lexers.get_lexer_by_name(syntax)
             except lexers.ClassNotFound:
                 lexer = lexers.guess_lexer(upload)
         else:
-            if filename and filename != '-':
+            if filename:
                 try:
                     lexer = lexers.guess_lexer_for_filename(filename, upload)
                 except lexers.ClassNotFound:
@@ -326,7 +337,7 @@ def post(db):
         if source:
             source = source[0]
         paste = Paste(content=upload, mimetype=mime, encrypt=encrypt,
-            password=password, source=source)
+            password=password, source=source, filename=filename)
         LOGGER.debug(paste)
         db.add(paste)
         db.commit()
@@ -378,8 +389,10 @@ def _pygmentize(paste, lang):
             lexer = lexers.get_lexer_by_name('text')
     else:
         lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
-    title = u'%s (%s), created on %s' % (paste.filename or u'',
-        paste.mimetype, paste.created, )
+    if paste.filename:
+        title = u'%s, created on %s' % (paste.filename, paste.created, )
+    else:
+        title = u'created on %s' % (paste.created, )
     LOGGER.debug(lexer)
     return pygments.highlight(paste.content, lexer,
         formatters.HtmlFormatter(full=True, linenos='table',
