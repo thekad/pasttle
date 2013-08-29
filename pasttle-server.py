@@ -377,6 +377,26 @@ def _password_protect_form():
     """
 
 
+def _edit_paste_form(pastecontent):
+    """
+    Really simple edit-paste form
+    """
+
+    return u"""<html>
+    <head>
+    </head>
+    <body>
+        <p>Edit here your Paste:</p>
+        <form method="post">
+            <textarea id="editpastefrm" name="editpastefrm" rows="25"
+                cols="80">%s</textarea>
+            <input type="submit" />
+        </form>
+    </body>
+</html>
+    """ % (pastecontent)
+
+
 def _pygmentize(paste, lang):
     """
     Guess (or force if lang is given) highlight on a given paste via pygments
@@ -466,6 +486,44 @@ def showraw(db, id):
     else:
         bottle.response.content_type = 'text/plain'
         return paste.content
+
+
+@bottle.route('/edit/<id:int>')
+def editpaste(db, id):
+    """
+    Edits the entry. If the entry is protected with a password it will display
+    a simple password entry form until the password is a match in the database
+    """
+
+    paste = _get_paste(db, id)
+    if not paste:
+        return bottle.HTTPError(404, output='This paste does not exist')
+    password = bottle.request.forms.password
+    is_encrypted = bool(bottle.request.forms.is_encrypted)
+    if not is_encrypted:
+        match = hashlib.sha1(password).hexdigest()
+    else:
+        match = password
+    LOGGER.debug('%s == %s ? %s' % (match, paste.password,
+        match == paste.password, ))
+    if paste.password:
+        if not password:
+            return _password_protect_form()
+        if match == paste.password:
+            return _edit_paste_form(paste.content)
+        else:
+            return bottle.HTTPError(401, output='Wrong password provided')
+    else:
+        return _edit_paste_form(paste.content)
+
+
+@bottle.post ('/edit/<id:int>')
+def postedit(db,id):
+    upload = bottle.request.forms.get('editpastefrm')
+    paste = _get_paste(db,id)
+    paste.content = upload
+    db.commit()
+    bottle.redirect('/%s' % (str(id)))
 
 
 @bottle.route('/pasttle.bashrc')
