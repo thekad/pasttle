@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SW_VERSION="0.6.3"
+SW_VERSION="0.6.4"
 UPSTREAM_URL="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc"
 
 function gettle() {
@@ -10,6 +10,9 @@ function gettle() {
     local verbose="no";
     local insecure="no";
     local checkupdate="yes";
+    local clipboard="no";
+    local clipin="";
+    local clipargs="";
     local command="";
     local upstream_version="$SW_VERSION";
 
@@ -33,11 +36,12 @@ function gettle() {
         -i (OPTIONAL) If you want to skip on SSL errors (var: insecure)\n\n
         -v (OPTIONAL) Print verbose output (var: verbose)\n\n
         -C (OPTIONAL) Don't check for updates from upstream (var: checkupdate)\n\n
+        -x (OPTIONAL) Put contents in clipboard, requires xclip in linux (var: clipboard)\n\n
     "
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:np:f:hviCe:" flag;
+    while getopts ":a:np:f:hviCxe:" flag;
     do
         case $flag in
             h)
@@ -67,6 +71,9 @@ function gettle() {
                 ;;
             C)
                 checkupdate="no"
+                ;;
+            x)
+                clipboard="yes"
                 ;;
             \?)
                 echo "Invalid option: -${flag}"
@@ -132,6 +139,23 @@ function gettle() {
         echo $command;
     fi;
 
+    if [ "yes" == "$clipboard" ];
+    then
+        case "$( uname -s )" in
+            Linux)
+                clipin="xclip";
+                clipargs="-in -selection clipboard"
+                ;;
+            Darwin)
+                clipin="pbcopy";
+                ;;
+        esac;
+        if which $clipin &> /dev/null;
+        then
+            command="${command} | tee >(${clipin} ${clipargs})";
+        fi;
+    fi;
+
     eval $command;
     echo;
 }
@@ -143,6 +167,9 @@ function pasttle() {
     local verbose="no";
     local insecure="no";
     local checkupdate="yes";
+    local clipboard="no";
+    local clipin="";
+    local clipargs="";
     local command="";
     local upstream_version="$SW_VERSION";
 
@@ -169,11 +196,12 @@ function pasttle() {
         -v (OPTIONAL) Print verbose output (var: verbose)\n\n
         -s (OPTIONAL) Force the syntax of the paste (var: syntax)\n\n
         -C (OPTIONAL) Don't check for updates from upstream (var: checkupdate)\n\n
+        -x (OPTIONAL) Put resulting URL in clipboard, requires xclip in linux (var: clipboard)\n\n
     "
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:s:np:f:hvCi" flag;
+    while getopts ":a:s:np:f:hvCix" flag;
     do
         case $flag in
             h)
@@ -200,6 +228,9 @@ function pasttle() {
                 ;;
             i)
                 insecure="yes"
+                ;;
+            x)
+                clipboard="yes"
                 ;;
             C)
                 checkupdate="no"
@@ -267,6 +298,24 @@ function pasttle() {
         echo $command;
     fi;
 
+    if [ "yes" == "$clipboard" ];
+    then
+        case "$( uname -s )" in
+            Linux)
+                clipin="xclip";
+                clipargs="-in -selection clipboard"
+                ;;
+            Darwin)
+                clipin="pbcopy";
+                ;;
+        esac;
+        if which $clipin &> /dev/null;
+        then
+            command="${command} | tee >(${clipin} ${clipargs})";
+        fi;
+    fi;
+
     eval $command;
+
     echo;
 }
