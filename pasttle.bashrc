@@ -267,7 +267,7 @@ function pasttle() {
         syntax="${filename#*.}"
     fi;
 
-    command="curl -A '${version}' -F 'upload=<${filename}' -F 'filename=${filename}' -F 'syntax=${syntax}'"
+    command="curl -s -A '${version}' -F 'upload=<${filename}' -F 'filename=${filename}' -F 'syntax=${syntax}'"
 
     if [ ! -z "$password" ];
     then
@@ -295,7 +295,6 @@ function pasttle() {
     if [ "yes" == "$verbose" ];
     then
         command="${command} -v";
-        echo $command;
     fi;
 
     if [ "yes" == "$clipboard" ];
@@ -313,6 +312,11 @@ function pasttle() {
         then
             command="${command} | tee >(${clipin} ${clipargs})";
         fi;
+    fi;
+
+    if [ "yes" == "$verbose" ];
+    then
+        echo $command;
     fi;
 
     eval $command;
