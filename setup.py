@@ -4,6 +4,7 @@
 # vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
 #
 
+import os
 import sys
 from setuptools import setup
 
@@ -21,21 +22,23 @@ extra = {
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
+readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.markdown')
+
 
 setup(
-    name = 'pasttle',
-    version = '0.6.4',
-    url = 'http://github.com/thekad/pasttle/',
-    description = 'Simple pastebin on top of bottle.',
-    author = 'Jorge Gallegos',
-    author_email = 'kad@blegh.net',
-    license = 'MIT',
-    platforms = 'any',
-    zip_safe = False,
-    scripts = [
+    name='pasttle',
+    version='0.6.4',
+    url='http://github.com/thekad/pasttle/',
+    description='Simple pastebin on top of bottle.',
+    author='Jorge Gallegos',
+    author_email='kad@blegh.net',
+    license='MIT',
+    platforms='any',
+    zip_safe=False,
+    scripts=[
         'pasttle-server.py',
     ],
-    classifiers = [
+    classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -44,5 +47,7 @@ setup(
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
+    keywords=['pastebin', 'web', 'paste', 'bottlepy'],
+    long_description=open(readme, 'rb').read(),
     **extra
 )
