@@ -68,12 +68,15 @@ class Paste(Base):
     filename = sqlalchemy.Column(sqlalchemy.String(128))
     password = sqlalchemy.Column(sqlalchemy.String(40))
     mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
-    created = sqlalchemy.Column(sqlalchemy.DateTime, default=func.now(),
-        nullable=False)
+    created = sqlalchemy.Column(
+        sqlalchemy.DateTime, default=func.now(), nullable=False
+    )
     source = sqlalchemy.Column(sqlalchemy.String(45))
 
-    def __init__(self, content, mimetype, filename=None,
-        password=None, encrypt=True, source=None):
+    def __init__(
+        self, content, mimetype, filename=None,
+        password=None, encrypt=True, source=None
+    ):
 
         self.content = content
         self.mimetype = mimetype
@@ -88,17 +91,20 @@ class Paste(Base):
             self.source = source
 
     def __repr__(self):
-        return u'<Paste "%s" (%s), protected=%s>' % (self.filename,
-            self.mimetype, bool(self.password))
+        return u'<Paste "%s" (%s), protected=%s>' % (
+            self.filename, self.mimetype, bool(self.password))
 
 application = bottle.app()
-pool_recycle = int(CONF.get(cfg_section, 'pool_recycle'))
-LOGGER.info('Recycling pool connections every %s seconds' %
-    (pool_recycle,))
-engine = sqlalchemy.create_engine(CONF.get(cfg_section, 'dsn'), echo=debug,
+pool_recycle = CONF.getint(cfg_section, 'pool_recycle')
+LOGGER.info(
+    'Recycling pool connections every %s seconds' % (pool_recycle,)
+)
+engine = sqlalchemy.create_engine(
+    CONF.get(cfg_section, 'dsn'), echo=debug,
     convert_unicode=True, logging_name='pasttle.db', echo_pool=debug,
     pool_logging_name='pasttle.db.pool',
-    pool_recycle=pool_recycle)
+    pool_recycle=pool_recycle
+)
 # Create all metadata on loading, if something blows we need to know asap
 Base.metadata.create_all(engine)
 
@@ -223,16 +229,20 @@ def recent(db):
     Shows an unordered list of most recent pasted items
     """
 
-    pastes = db.query(Paste.id, Paste.filename, Paste.mimetype,
-        Paste.created, Paste.password).\
-        order_by(Paste.id.desc()).limit(20).all()
+    pastes = db.query(
+        Paste.id, Paste.filename, Paste.mimetype,
+        Paste.created, Paste.password
+    ).order_by(Paste.id.desc()).limit(20).all()
     ul = u'<ul>%s</ul>'
     li = []
     for paste in pastes:
         LOGGER.debug(paste)
-        li.append(u'<li><a href="/%s">Paste #%d, %s (%s) %s</a></li>' %
-            (paste.id, paste.id, paste.filename or u'',
-            paste.mimetype, paste.created, ))
+        li.append(
+            u'<li><a href="/%s">Paste #%d, %s (%s) %s</a></li>' %
+            (
+                paste.id, paste.id, paste.filename or u'',
+                paste.mimetype, paste.created, )
+            )
     return ul % ''.join(li)
 
 
@@ -337,8 +347,10 @@ def post(db):
         source = bottle.request.remote_route
         if source:
             source = source[0]
-        paste = Paste(content=upload, mimetype=mime, encrypt=encrypt,
-            password=password, source=source, filename=filename)
+        paste = Paste(
+            content=upload, mimetype=mime, encrypt=encrypt,
+            password=password, source=source, filename=filename
+        )
         LOGGER.debug(paste)
         db.add(paste)
         db.commit()
@@ -415,9 +427,11 @@ def _pygmentize(paste, lang):
     else:
         title = u'created on %s' % (paste.created, )
     LOGGER.debug(lexer)
-    return pygments.highlight(paste.content, lexer,
-        formatters.HtmlFormatter(full=True, linenos='table',
-            encoding='utf-8', lineanchors='ln', title=title))
+    return pygments.highlight(
+        paste.content, lexer, formatters.HtmlFormatter(
+            full=True, linenos='table',
+            encoding='utf-8', lineanchors='ln', title=title)
+        )
 
 
 @bottle.route('/<id:int>')
@@ -433,9 +447,12 @@ def showpaste(db, id, lang=None):
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
-    LOGGER.debug('%s == %s ? %s' % (hashlib.sha1(password).hexdigest(),
-        paste.password,
-        hashlib.sha1(password).hexdigest() == paste.password, ))
+    LOGGER.debug(
+        '%s == %s ? %s' % (
+            hashlib.sha1(password).hexdigest(), paste.password,
+            hashlib.sha1(password).hexdigest() == paste.password,
+        )
+    )
     if paste.password:
         if not password:
             return _password_protect_form()
@@ -474,8 +491,9 @@ def showraw(db, id):
         match = hashlib.sha1(password).hexdigest()
     else:
         match = password
-    LOGGER.debug('%s == %s ? %s' % (match, paste.password,
-        match == paste.password, ))
+    LOGGER.debug(
+        '%s == %s ? %s' % (match, paste.password, match == paste.password, )
+    )
     if paste.password:
         if not password:
             return _password_protect_form()
@@ -505,8 +523,12 @@ def editpaste(db, id):
         match = hashlib.sha1(password).hexdigest()
     else:
         match = password
-    LOGGER.debug('%s == %s ? %s' % (match, paste.password,
-        match == paste.password, ))
+    LOGGER.debug(
+        '%s == %s ? %s' % (
+            match, paste.password,
+            match == paste.password,
+        )
+    )
     if paste.password:
         if not password:
             return _password_protect_form()
@@ -518,27 +540,18 @@ def editpaste(db, id):
         return _edit_paste_form(paste.content)
 
 
-@bottle.post ('/edit/<id:int>')
-def postedit(db,id):
+@bottle.post('/edit/<id:int>')
+def postedit(db, id):
     upload = bottle.request.forms.get('editpastefrm')
-    paste = _get_paste(db,id)
+    paste = _get_paste(db, id)
     paste.content = upload
     db.commit()
     bottle.redirect('/%s' % (str(id)))
 
 
-@bottle.route('/pasttle.bashrc')
-def serve_bash_helper_script():
-    """
-    Serves the static file pasttle.bashrc
-    """
-
-    root = os.path.realpath(sys.path[0])
-    bottle.response.content_type = 'text/plain'
-    return bottle.static_file('pasttle.bashrc', root)
-
-
 if __name__ == '__main__':
-    bottle.run(application, host=CONF.get(cfg_section, 'bind'),
-        port=int(CONF.get(cfg_section, 'port')), reloader=debug,
-        server=CONF.get(cfg_section, 'wsgi'))
+    bottle.run(
+        application, host=CONF.get(cfg_section, 'bind'),
+        port=CONF.getint(cfg_section, 'port'), reloader=debug,
+        server=CONF.get(cfg_section, 'wsgi')
+    )
