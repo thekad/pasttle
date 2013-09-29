@@ -6,7 +6,10 @@
 
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
-import ConfigParser
+try:
+    import ConfigParser as configparser
+except ImportError:
+    import configparser
 import hashlib
 import logging
 import os
@@ -16,25 +19,29 @@ from pygments import lexers
 import sqlalchemy
 from sqlalchemy import func
 from sqlalchemy.ext import declarative
+import StringIO
 import sys
 
-
-# Load configuration, or default
-defaults = {
-    'debug': 'yes',
-    'bind': 'localhost',
-    'port': '9669',
-    'title': 'Simple pastebin',
-    'wsgi': 'wsgiref',
-    'pool_recycle': '3600',
-}
 
 cfg = os.environ.get('PASTTLECONF', 'pasttle.ini').split(':')
 if len(cfg) < 2:
     cfg.append('main')
 
 cfg_file, cfg_section = cfg[0], cfg[1]
-CONF = ConfigParser.SafeConfigParser(defaults)
+
+# Load configuration, or default
+default_ini = StringIO.StringIO("""
+[%s]
+debug: true
+bind: localhost
+port: 9669
+title: Simple paste bin
+wsgi: wsgiref
+pool_recycle: 3600
+""" % (cfg_section,))
+
+CONF = configparser.SafeConfigParser()
+CONF.readfp(default_ini)
 CONF.read(os.path.realpath(cfg_file))
 
 debug = CONF.getboolean(cfg_section, 'debug')

@@ -48,6 +48,6 @@ setup(
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     keywords=['pastebin', 'web', 'paste', 'bottlepy'],
-    long_description=open(readme, 'rb').read(),
+    long_description=open(readme).read(),
     **extra
 )
