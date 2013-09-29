@@ -44,14 +44,14 @@ CONF = configparser.SafeConfigParser()
 CONF.readfp(default_ini)
 CONF.read(os.path.realpath(cfg_file))
 
-debug = CONF.getboolean(cfg_section, 'debug')
+DEBUG = CONF.getboolean(cfg_section, 'debug')
 format = '%(asctime)s %(levelname)s %(name)s %(message)s'
 
 # Set up logging
 LOGGER = logging.getLogger('pasttle.web')
 LOGGER.setLevel(logging.DEBUG)
 ch = logging.StreamHandler()
-if debug:
+if DEBUG:
     ch.setLevel(logging.DEBUG)
 else:
     ch.setLevel(logging.INFO)
@@ -107,8 +107,8 @@ LOGGER.info(
     'Recycling pool connections every %s seconds' % (pool_recycle,)
 )
 engine = sqlalchemy.create_engine(
-    CONF.get(cfg_section, 'dsn'), echo=debug,
-    convert_unicode=True, logging_name='pasttle.db', echo_pool=debug,
+    CONF.get(cfg_section, 'dsn'), echo=DEBUG,
+    convert_unicode=True, logging_name='pasttle.db', echo_pool=DEBUG,
     pool_logging_name='pasttle.db.pool',
     pool_recycle=pool_recycle
 )
@@ -556,9 +556,13 @@ def postedit(db, id):
     bottle.redirect('/%s' % (str(id)))
 
 
-if __name__ == '__main__':
+def main():
+    LOGGER.info('Using Python %s' % (sys.version, ))
     bottle.run(
         application, host=CONF.get(cfg_section, 'bind'),
-        port=CONF.getint(cfg_section, 'port'), reloader=debug,
+        port=CONF.getint(cfg_section, 'port'), reloader=DEBUG,
         server=CONF.get(cfg_section, 'wsgi')
     )
+
+if __name__ == '__main__':
+    sys.exit(main())

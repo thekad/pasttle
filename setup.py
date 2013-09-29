@@ -27,6 +27,9 @@ readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.markdown')
 
 setup(
     name='pasttle',
+    packages=[
+        'pasttle',
+    ],
     version='0.6.4',
     url='http://github.com/thekad/pasttle/',
     description='Simple pastebin on top of bottle.',
@@ -35,9 +38,11 @@ setup(
     license='MIT',
     platforms='any',
     zip_safe=False,
-    scripts=[
-        'pasttle-server.py',
-    ],
+    entry_points={
+        'console_scripts': [
+            'pasttle-server.py=pasttle.pasttled:main'
+        ],
+    },
     classifiers=[
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
