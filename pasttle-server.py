@@ -92,12 +92,13 @@ class Paste(Base):
             self.mimetype, bool(self.password))
 
 application = bottle.app()
+pool_recycle = int(CONF.get(cfg_section, 'pool_recycle'))
 LOGGER.info('Recycling pool connections every %s seconds' %
-    (CONF.get(cfg_section, 'pool_recycle')))
+    (pool_recycle,))
 engine = sqlalchemy.create_engine(CONF.get(cfg_section, 'dsn'), echo=debug,
     convert_unicode=True, logging_name='pasttle.db', echo_pool=debug,
     pool_logging_name='pasttle.db.pool',
-    pool_recycle=CONF.get(cfg_section, 'pool_recycle'))
+    pool_recycle=pool_recycle)
 # Create all metadata on loading, if something blows we need to know asap
 Base.metadata.create_all(engine)
 
@@ -539,5 +540,5 @@ def serve_bash_helper_script():
 
 if __name__ == '__main__':
     bottle.run(application, host=CONF.get(cfg_section, 'bind'),
-        port=CONF.get(cfg_section, 'port'), reloader=debug,
+        port=int(CONF.get(cfg_section, 'port')), reloader=debug,
         server=CONF.get(cfg_section, 'wsgi'))
