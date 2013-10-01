@@ -109,7 +109,6 @@ LOGGER.info(
 engine = sqlalchemy.create_engine(
     CONF.get(cfg_section, 'dsn'), echo=DEBUG,
     convert_unicode=True, logging_name='pasttle.db', echo_pool=DEBUG,
-    pool_logging_name='pasttle.db.pool',
     pool_recycle=pool_recycle
 )
 # Create all metadata on loading, if something blows we need to know asap
