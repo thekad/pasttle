@@ -93,7 +93,7 @@ class Paste(Base):
             if encrypt:
                 self.password = hashlib.sha1(password).hexdigest()
             else:
-                self.password = password
+                self.password = password[:40]
         if source:
             self.source = source
 
@@ -253,15 +253,16 @@ def recent(db):
     return ul % ''.join(li)
 
 
-@bottle.route('/post')
-def upload_file():
-    """
-    Frontend for simple posting via web interface
-    """
-
+def _edit_form(
+    legend='paste new',
+    content=None,
+    password=None,
+    syntax=None,
+):
+    LOGGER.debug('%s, %s, %s' % (legend, password, syntax))
     return u"""<html>
     <head>
-        <title>Upload Form</title>
+        <title>%s</title>
         <style>
             fieldset {
                 padding: 1em;
@@ -279,21 +280,23 @@ def upload_file():
         </style>
     </head>
     <body>
-        <form method="post">
+        <form method="post" action="/post">
             <fieldset>
-            <legend>Upload</legend>
+            <legend>%s</legend>
                 <label for="upload">Contents: </label>
                 <textarea id="upload" name="upload" rows="25"
-                cols="80"></textarea>
+                cols="80">%s</textarea>
                 <br/>
                 <label for="syntax">Force syntax: </label>
-                <input id="syntax" name="syntax" />
+                <input id="syntax" name="syntax" value="%s" />
                 <br/>
-                <label for="password">Password protect this paste: </label>
-                <input id="password" type="password" name="password" />
+                <label for="password">Password protect this paste (40char max):
+                </label>
+                <input id="password" type="password" name="password"
+                    maxlength="40" value="%s" />
                 <br/>
                 <label for="is_encrypted">Is the password encrypted? </label>
-                <input type="checkbox" name="is_encrypted" check="false"
+                <input type="checkbox" name="is_encrypted" %s
                 id="is_encrypted" />
                 <br/>
                 <input type="submit" value="Submit" />
@@ -311,7 +314,19 @@ def upload_file():
         </form>
     </body>
 </html>
+    """ % (
+        legend.capitalize(), legend.capitalize(),
+        content or u'', syntax or u'', password or u'',
+        u'checked="checked"' if password else u'',
+    )
+
+
+@bottle.route('/post')
+def upload_file():
     """
+    Frontend for simple posting via web interface
+    """
+    return _edit_form()
 
 
 @bottle.post('/post')
@@ -397,26 +412,6 @@ def _password_protect_form():
     """
 
 
-def _edit_paste_form(pastecontent):
-    """
-    Really simple edit-paste form
-    """
-
-    return u"""<html>
-    <head>
-    </head>
-    <body>
-        <p>Edit here your Paste:</p>
-        <form method="post">
-            <textarea id="editpastefrm" name="editpastefrm" rows="25"
-                cols="80">%s</textarea>
-            <input type="submit" />
-        </form>
-    </body>
-</html>
-    """ % (pastecontent)
-
-
 def _pygmentize(paste, lang):
     """
     Guess (or force if lang is given) highlight on a given paste via pygments
@@ -429,10 +424,12 @@ def _pygmentize(paste, lang):
             lexer = lexers.get_lexer_by_name('text')
     else:
         lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
+    a = '<small><a href="/edit/%s">edit</a></small>' % (paste.id,)
     if paste.filename:
         title = u'%s, created on %s' % (paste.filename, paste.created, )
     else:
         title = u'created on %s' % (paste.created, )
+    title = '%s %s (%s)' % (paste.mimetype, title, a,)
     LOGGER.debug(lexer)
     return pygments.highlight(
         paste.content, lexer, formatters.HtmlFormatter(
@@ -514,8 +511,9 @@ def showraw(db, id):
         return paste.content
 
 
+@bottle.post('/edit/<id:int>')
 @bottle.route('/edit/<id:int>')
-def editpaste(db, id):
+def edit(db, id):
     """
     Edits the entry. If the entry is protected with a password it will display
     a simple password entry form until the password is a match in the database
@@ -536,24 +534,20 @@ def editpaste(db, id):
             match == paste.password,
         )
     )
+    kwargs = {
+        'password': paste.password,
+        'content': paste.content,
+        'syntax': lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
+    }
     if paste.password:
         if not password:
             return _password_protect_form()
         if match == paste.password:
-            return _edit_paste_form(paste.content)
+            return _edit_form('edit entry #%s' % (paste.id,), **kwargs)
         else:
             return bottle.HTTPError(401, output='Wrong password provided')
     else:
-        return _edit_paste_form(paste.content)
-
-
-@bottle.post('/edit/<id:int>')
-def postedit(db, id):
-    upload = bottle.request.forms.get('editpastefrm')
-    paste = _get_paste(db, id)
-    paste.content = upload
-    db.commit()
-    bottle.redirect('/%s' % (str(id)))
+        return _edit_form('edit entry #%s' % (paste.id, ), **kwargs)
 
 
 def main():
