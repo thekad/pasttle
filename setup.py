@@ -13,7 +13,7 @@ extra = {}
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
-readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.markdown')
+readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.rst')
 requirements = os.path.join(os.path.dirname(sys.argv[0]), 'requirements.txt')
 
 
@@ -22,7 +22,7 @@ setup(
     packages=[
         'pasttle',
     ],
-    version='0.6.4',
+    version='0.7',
     url='http://github.com/thekad/pasttle/',
     description='Simple pastebin on top of bottle.',
     author='Jorge Gallegos',
