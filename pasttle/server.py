@@ -32,7 +32,7 @@ def get_url(path=False):
         return u'%s://%s' % (scheme, host)
 
 
-@bottle.route('/')
+@bottle.get('/')
 def index():
     """
     Main index
@@ -134,7 +134,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
     }
 
 
-@bottle.route('/recent')
+@bottle.get('/recent')
 def recent(db):
     """
     Shows an unordered list of most recent pasted items
@@ -236,7 +236,7 @@ def _edit_form(
     )
 
 
-@bottle.route('/post')
+@bottle.get('/post')
 def upload_file():
     """
     Frontend for simple posting via web interface
@@ -353,7 +353,7 @@ def _pygmentize(paste, lang):
         )
 
 
-@bottle.route('/<id:int>')
+@bottle.get('/<id:int>')
 @bottle.post('/<id:int>')
 def showpaste(db, id, lang=None):
     """
@@ -384,7 +384,7 @@ def showpaste(db, id, lang=None):
         return _pygmentize(paste, lang)
 
 
-@bottle.route('/<id:int>/<lang>')
+@bottle.get('/<id:int>/<lang>')
 @bottle.post('/<id:int>/<lang>')
 def forcehighlight(db, id, lang):
     """Forces a certain highlight against an entry"""
@@ -392,7 +392,7 @@ def forcehighlight(db, id, lang):
     return showpaste(db, id, lang)
 
 
-@bottle.route('/raw/<id:int>')
+@bottle.get('/raw/<id:int>')
 @bottle.post('/raw/<id:int>')
 def showraw(db, id):
     """
@@ -427,7 +427,7 @@ def showraw(db, id):
 
 
 @bottle.post('/edit/<id:int>')
-@bottle.route('/edit/<id:int>')
+@bottle.get('/edit/<id:int>')
 def edit(db, id):
     """
     Edits the entry. If the entry is protected with a password it will display
