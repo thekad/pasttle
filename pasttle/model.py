@@ -30,11 +30,11 @@ class Paste(Base):
     created = sqlalchemy.Column(
         sqlalchemy.DateTime, default=func.now(), nullable=False
     )
-    source = sqlalchemy.Column(sqlalchemy.String(45))
+    ip = sqlalchemy.Column(sqlalchemy.BigInteger)
 
     def __init__(
         self, content, mimetype, filename=None,
-        password=None, encrypt=True, source=None
+        password=None, encrypt=True, ip=None
     ):
 
         self.content = content
@@ -46,8 +46,7 @@ class Paste(Base):
                 self.password = hashlib.sha1(password).hexdigest()
             else:
                 self.password = password[:40]
-        if source:
-            self.source = source
+        self.ip = ip
 
     def __repr__(self):
         return u'<Paste "%s" (%s), protected=%s>' % (

@@ -7,6 +7,7 @@
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
 import hashlib
+import IPy
 import model
 import pygments
 from pygments import formatters
@@ -281,12 +282,12 @@ def post(db):
             mime = lexer.mimetypes[0]
         else:
             mime = u'text/plain'
-        source = bottle.request.remote_route
-        if source:
-            source = source[0]
+        ip = bottle.request.remote_addr
+        if ip:
+            ip = IPy.IP(ip).int()
         paste = model.Paste(
             content=upload, mimetype=mime, encrypt=encrypt,
-            password=password, source=source, filename=filename
+            password=password, ip=ip, filename=filename
         )
         util.log.debug(paste)
         db.add(paste)
