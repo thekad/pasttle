@@ -168,6 +168,17 @@ def _edit_form(
     <head>
         <title>%s</title>
         <style>
+            body {
+                font-family: Courier;
+                font-size: 12px;
+            }
+            p {
+                margin: 20px;
+            }
+            a {
+                text-decoration: none;
+                font-weight: bold;
+            }
             fieldset {
                 padding: 1em;
             }
@@ -179,7 +190,7 @@ def _edit_form(
                 font-weight: bold;
             }
             .note {
-                font-size: small;
+                font-size: x-small;
             }
         </style>
     </head>
