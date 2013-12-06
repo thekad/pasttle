@@ -3,3 +3,4 @@ Pygments==1.6
 SQLAlchemy==0.8.3
 bottle-sqlalchemy==0.4
 bottle-sqlite==0.1.2
+IPy==0.81
