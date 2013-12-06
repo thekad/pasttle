@@ -5,6 +5,7 @@
 #
 
 import os
+import pasttle
 import sys
 from setuptools import setup
 
@@ -22,7 +23,7 @@ setup(
     packages=[
         'pasttle',
     ],
-    version='0.7',
+    version=pasttle.__version__,
     url='http://github.com/thekad/pasttle/',
     description='Simple pastebin on top of bottle.',
     author='Jorge Gallegos',
