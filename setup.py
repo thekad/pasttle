@@ -33,7 +33,7 @@ setup(
     zip_safe=False,
     entry_points={
         'console_scripts': [
-            'pasttle-server.py=pasttle.pasttled:main'
+            'pasttle-server.py=pasttle.server:main'
         ],
     },
     classifiers=[
