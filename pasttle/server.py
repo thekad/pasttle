@@ -9,6 +9,7 @@ from bottle.ext import sqlalchemy as sqlaplugin
 import hashlib
 import IPy
 import model
+import pasttle
 import pygments
 from pygments import formatters
 from pygments import lexers
@@ -41,7 +42,7 @@ def index():
 
     return u"""<html>
     <head>
-        <title>%(title)s</title>
+        <title>%(title)s (running pasttle v%(version)s)</title>
         <style>
             body {
                 font-family: Courier;
@@ -123,7 +124,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
         Link
     </a>
         </pre>
-        <p>Copyright &copy; Jorge Gallegos, 2012</p>
+        <p>Copyright &copy; Jorge Gallegos, 2012-2013</p>
         <p>
             <a href="https://github.com/thekad/pasttle">Get the source code</a>
         </p>
@@ -132,6 +133,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
     """ % {
         'url': get_url(),
         'title': util.conf.get(util.cfg_section, 'title'),
+        'version': pasttle.__version__,
     }
 
 
