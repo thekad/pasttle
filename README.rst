@@ -65,7 +65,7 @@ After that:
     pasttle-server.py
 
 Should start the server. If you want to use a different config file, just set 
-the environment variable PASTTLECONF to the file you want to read before 
+the environment variable ``PASTTLECONF`` to the file you want to read before 
 starting the server.
 
 
@@ -75,4 +75,4 @@ Running the client
 Running the client just requires 2 steps:
 
 * Source pasttle.bashrc
-* Run pasttle -h or gettle -h to check usage
+* Run ``pasttle -h`` or ``gettle -h`` to check usage
