@@ -51,6 +51,6 @@ log.addHandler(ch)
 
 # This needs to be loaded eagerly
 pool_recycle = conf.getint(cfg_section, 'pool_recycle')
-log.info(
+log.debug(
     'Recycling pool connections every %s seconds' % (pool_recycle,)
 )
