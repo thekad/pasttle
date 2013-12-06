@@ -24,7 +24,7 @@ Installing pasttle-server
 
 Pasttle is part of PyPI, you can just:
 
-..code:: bash
+.. code:: bash
 
     pip install pasttle
 
@@ -35,7 +35,7 @@ to you.
 If you instead want to try from source code (i.e. by cloning the git repo) 
 then I suggest you execute:
 
-..code:: bash
+.. code:: bash
 
     python setup.py install
 
@@ -60,7 +60,7 @@ environment.
 
 After that:
 
-..code:: bash
+.. code:: bash
 
     pasttle-server.py
 
@@ -73,5 +73,6 @@ Running the client
 ==================
 
 Running the client just requires 2 steps:
+
 * Source pasttle.bashrc
 * Run pasttle -h or gettle -h to check usage
