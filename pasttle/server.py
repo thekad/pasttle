@@ -6,116 +6,21 @@
 
 import bottle
 from bottle.ext import sqlalchemy as sqlaplugin
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
 import hashlib
-import logging
-import os
+import model
 import pygments
 from pygments import formatters
 from pygments import lexers
-import sqlalchemy
-from sqlalchemy import func
-from sqlalchemy.ext import declarative
-import StringIO
 import sys
+import util
 
-
-cfg = os.environ.get('PASTTLECONF', 'pasttle.ini').split(':')
-if len(cfg) < 2:
-    cfg.append('main')
-
-cfg_file, cfg_section = cfg[0], cfg[1]
-
-# Load configuration, or default
-default_ini = StringIO.StringIO("""
-[%s]
-debug: true
-bind: localhost
-port: 9669
-title: Simple paste bin
-wsgi: wsgiref
-pool_recycle: 3600
-""" % (cfg_section,))
-
-CONF = configparser.SafeConfigParser()
-CONF.readfp(default_ini)
-CONF.read(os.path.realpath(cfg_file))
-
-DEBUG = CONF.getboolean(cfg_section, 'debug')
-format = '%(asctime)s %(levelname)s %(name)s %(message)s'
-
-# Set up logging
-LOGGER = logging.getLogger('pasttle.web')
-LOGGER.setLevel(logging.DEBUG)
-ch = logging.StreamHandler()
-if DEBUG:
-    ch.setLevel(logging.DEBUG)
-else:
-    ch.setLevel(logging.INFO)
-formatter = logging.Formatter(format)
-ch.setFormatter(formatter)
-LOGGER.addHandler(ch)
-
-# Subclass declarative base for sqla objects
-Base = declarative.declarative_base()
-
-
-class Paste(Base):
-    """
-    Main paste sqlalchemy construct for database storage
-    """
-
-    __tablename__ = 'paste'
-
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
-    content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
-    filename = sqlalchemy.Column(sqlalchemy.String(128))
-    password = sqlalchemy.Column(sqlalchemy.String(40))
-    mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
-    created = sqlalchemy.Column(
-        sqlalchemy.DateTime, default=func.now(), nullable=False
-    )
-    source = sqlalchemy.Column(sqlalchemy.String(45))
-
-    def __init__(
-        self, content, mimetype, filename=None,
-        password=None, encrypt=True, source=None
-    ):
-
-        self.content = content
-        self.mimetype = mimetype
-        if filename and filename.strip():
-            self.filename = filename.strip()[:128]
-        if password:
-            if encrypt:
-                self.password = hashlib.sha1(password).hexdigest()
-            else:
-                self.password = password[:40]
-        if source:
-            self.source = source
-
-    def __repr__(self):
-        return u'<Paste "%s" (%s), protected=%s>' % (
-            self.filename, self.mimetype, bool(self.password))
 
 application = bottle.app()
-pool_recycle = CONF.getint(cfg_section, 'pool_recycle')
-LOGGER.info(
-    'Recycling pool connections every %s seconds' % (pool_recycle,)
-)
-engine = sqlalchemy.create_engine(
-    CONF.get(cfg_section, 'dsn'), echo=DEBUG,
-    convert_unicode=True, logging_name='pasttle.db', echo_pool=DEBUG,
-    pool_recycle=pool_recycle
-)
-# Create all metadata on loading, if something blows we need to know asap
-Base.metadata.create_all(engine)
 
 # Install sqlalchemy plugin
-db_plugin = sqlaplugin.SQLAlchemyPlugin(engine, Base.metadata, create=True)
+db_plugin = sqlaplugin.SQLAlchemyPlugin(
+    model.engine, model.Base.metadata, create=True
+)
 application.install(db_plugin)
 
 
@@ -225,7 +130,7 @@ pasttle(1)                          PASTTLE                          pasttle(1)
 </html>
     """ % {
         'url': get_url(),
-        'title': CONF.get(cfg_section, 'title'),
+        'title': util.conf.get(util.cfg_section, 'title'),
     }
 
 
@@ -236,15 +141,15 @@ def recent(db):
     """
 
     pastes = db.query(
-        Paste.id, Paste.filename, Paste.mimetype,
-        Paste.created, Paste.password
-    ).order_by(Paste.id.desc()).limit(20).all()
+        model.Paste.id, model.Paste.filename, model.Paste.mimetype,
+        model.Paste.created, model.Paste.password
+    ).order_by(model.Paste.id.desc()).limit(20).all()
     ul = u'<ul>%s</ul>'
     li = []
     for paste in pastes:
-        LOGGER.debug(paste)
+        util.log.debug(paste)
         li.append(
-            u'<li><a href="/%s">Paste #%d, %s (%s) %s</a></li>' %
+            u'<li><a href="/%s">model.Paste #%d, %s (%s) %s</a></li>' %
             (
                 paste.id, paste.id, paste.filename or u'',
                 paste.mimetype, paste.created, )
@@ -258,7 +163,7 @@ def _edit_form(
     password=None,
     syntax=None,
 ):
-    LOGGER.debug('%s, %s, %s' % (legend, password, syntax))
+    util.log.debug('%s, %s, %s' % (legend, password, syntax))
     return u"""<html>
     <head>
         <title>%s</title>
@@ -345,7 +250,7 @@ def post(db):
         syntax = bottle.request.forms.syntax
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
-    LOGGER.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
+    util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
     if upload:
         if syntax:
             try:
@@ -360,7 +265,7 @@ def post(db):
                     lexer = lexers.guess_lexer(upload)
             else:
                 lexer = lexers.guess_lexer(upload)
-        LOGGER.debug(lexer.mimetypes)
+        util.log.debug(lexer.mimetypes)
         if lexer.mimetypes:
             mime = lexer.mimetypes[0]
         else:
@@ -368,11 +273,11 @@ def post(db):
         source = bottle.request.remote_route
         if source:
             source = source[0]
-        paste = Paste(
+        paste = model.Paste(
             content=upload, mimetype=mime, encrypt=encrypt,
             password=password, source=source, filename=filename
         )
-        LOGGER.debug(paste)
+        util.log.debug(paste)
         db.add(paste)
         db.commit()
         return u'%s/%s' % (get_url(), paste.id, )
@@ -386,7 +291,7 @@ def _get_paste(db, id):
     """
 
     try:
-        paste = db.query(Paste).filter_by(id=id).one()
+        paste = db.query(model.Paste).filter_by(id=id).one()
     except:
         paste = False
     return paste
@@ -429,7 +334,7 @@ def _pygmentize(paste, lang):
     else:
         title = u'created on %s' % (paste.created, )
     title = '%s %s (%s)' % (paste.mimetype, title, a,)
-    LOGGER.debug(lexer)
+    util.log.debug(lexer)
     return pygments.highlight(
         paste.content, lexer, formatters.HtmlFormatter(
             full=True, linenos='table',
@@ -450,7 +355,7 @@ def showpaste(db, id, lang=None):
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
-    LOGGER.debug(
+    util.log.debug(
         '%s == %s ? %s' % (
             hashlib.sha1(password).hexdigest(), paste.password,
             hashlib.sha1(password).hexdigest() == paste.password,
@@ -494,7 +399,7 @@ def showraw(db, id):
         match = hashlib.sha1(password).hexdigest()
     else:
         match = password
-    LOGGER.debug(
+    util.log.debug(
         '%s == %s ? %s' % (match, paste.password, match == paste.password, )
     )
     if paste.password:
@@ -527,7 +432,7 @@ def edit(db, id):
         match = hashlib.sha1(password).hexdigest()
     else:
         match = password
-    LOGGER.debug(
+    util.log.debug(
         '%s == %s ? %s' % (
             match, paste.password,
             match == paste.password,
@@ -550,11 +455,12 @@ def edit(db, id):
 
 
 def main():
-    LOGGER.info('Using Python %s' % (sys.version, ))
+    util.log.info('Using Python %s' % (sys.version, ))
     bottle.run(
-        application, host=CONF.get(cfg_section, 'bind'),
-        port=CONF.getint(cfg_section, 'port'), reloader=DEBUG,
-        server=CONF.get(cfg_section, 'wsgi')
+        application, host=util.conf.get(util.cfg_section, 'bind'),
+        port=util.conf.getint(util.cfg_section, 'port'),
+        reloader=util.is_debug,
+        server=util.conf.get(util.cfg_section, 'wsgi')
     )
 
 if __name__ == '__main__':
