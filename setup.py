@@ -8,21 +8,13 @@ import os
 import sys
 from setuptools import setup
 
-extra = {
-    'install_requires': [
-        'distribute',
-        'bottle>=0.9',
-        'Pygments',
-        'SQLAlchemy',
-        'bottle-sqlalchemy',
-        'bottle-sqlite',
-    ]
-}
+extra = {}
 
 if sys.version_info >= (3,):
     extra['use_2to3'] = True
 
 readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.markdown')
+requirements = os.path.join(os.path.dirname(sys.argv[0]), 'requirements.txt')
 
 
 setup(
@@ -54,5 +46,6 @@ setup(
     ],
     keywords=['pastebin', 'web', 'paste', 'bottlepy'],
     long_description=open(readme).read(),
+    install_requires=open(requirements).readlines(),
     **extra
 )
