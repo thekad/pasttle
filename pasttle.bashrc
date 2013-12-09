@@ -1,6 +1,6 @@
 #!/bin/bash
 
-SW_VERSION="0.6.5"
+SW_VERSION="0.7"
 UPSTREAM_URL="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc"
 
 function gettle() {
@@ -15,14 +15,15 @@ function gettle() {
     local clipargs="";
     local command="";
     local upstream_version="$SW_VERSION";
+#   You can override this via environment variable
+    local rcfile=${PASTTLERC:-~/.pasttlerc}
 
     version="gettle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
-    test -f ~/.pasttlerc
-    if [ 0 -eq $? ];
+    if [ -f $rcfile ];
     then
-        echo "Loading ~/.pasttlerc" >> /dev/stderr
-        source ~/.pasttlerc;
+        echo "Loading ${rcfile}" > /dev/stderr
+        source $rcfile;
     fi;
 
     local usage="\n
@@ -172,14 +173,15 @@ function pasttle() {
     local clipargs="";
     local command="";
     local upstream_version="$SW_VERSION";
+#   You can override this via environment variable
+    local rcfile=${PASTTLERC:-~/.pasttlerc}
 
     version="pasttle/${SW_VERSION}/curl/$( curl --version | head -1 | cut -d\  -f2- )";
 #   load user preferences
-    test -f ~/.pasttlerc
-    if [ 0 -eq $? ];
+    if [ -f $rcfile ];
     then
-        echo "Loading ~/.pasttlerc" >> /dev/stderr
-        source ~/.pasttlerc;
+        echo "Loading ${rcfile}" > /dev/stderr
+        source $rcfile;
     fi;
 
     local usage="\n
