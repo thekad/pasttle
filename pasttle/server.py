@@ -286,7 +286,14 @@ def post(db):
             mime = u'text/plain'
         ip = bottle.request.remote_addr
         if ip:
-            ip = IPy.IP(ip).int()
+#           Try not to store crap in the database if it's not a valid IP
+            try:
+                ip = bin(IPy.IP(ip).int())
+            except Exception as ex:
+                util.log.warn(
+                    'Impossible to store the source IP address: %s' % (ex,)
+                )
+                ip = None
         paste = model.Paste(
             content=upload, mimetype=mime, encrypt=encrypt,
             password=password, ip=ip, filename=filename
@@ -358,6 +365,9 @@ def _pygmentize(paste, lang):
     else:
         lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     a = '<small><a href="/edit/%s">edit</a></small>' % (paste.id,)
+    if paste.ip:
+        ip = IPy.IP(long(paste.ip, 2))
+        util.log.debug('Originally pasted from %s' % (ip,))
     if paste.filename:
         title = u'%s, created on %s' % (paste.filename, paste.created, )
     else:

@@ -30,7 +30,7 @@ class Paste(Base):
     created = sqlalchemy.Column(
         sqlalchemy.DateTime, default=func.now(), nullable=False
     )
-    ip = sqlalchemy.Column(sqlalchemy.BigInteger)
+    ip = sqlalchemy.Column(sqlalchemy.LargeBinary(16))
 
     def __init__(
         self, content, mimetype, filename=None,
