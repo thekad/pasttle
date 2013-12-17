@@ -265,12 +265,13 @@ def post(db):
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
     util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
+    default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
         if syntax:
             try:
                 lexer = lexers.get_lexer_by_name(syntax)
             except lexers.ClassNotFound:
-                lexer = lexers.guess_lexer(upload)
+                lexer = default_lexer
         else:
             if filename:
                 try:
@@ -278,7 +279,7 @@ def post(db):
                 except lexers.ClassNotFound:
                     lexer = lexers.guess_lexer(upload)
             else:
-                lexer = lexers.guess_lexer(upload)
+                lexer = default_lexer
         util.log.debug(lexer.mimetypes)
         if lexer.mimetypes:
             mime = lexer.mimetypes[0]
