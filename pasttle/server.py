@@ -217,6 +217,7 @@ def _edit_form(
                 <input type="checkbox" name="is_encrypted" %s
                 id="is_encrypted" />
                 <br/>
+                <input type="hidden" name="redirect" value="yes" />
                 <input type="submit" value="Submit" />
             </fieldset>
             <p class="note">
@@ -264,6 +265,7 @@ def post(db):
         syntax = bottle.request.forms.syntax
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
+    redirect = bool(bottle.request.forms.redirect)
     util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
@@ -302,7 +304,10 @@ def post(db):
         util.log.debug(paste)
         db.add(paste)
         db.commit()
-        return u'%s/%s' % (get_url(), paste.id, )
+        if redirect:
+            bottle.redirect('%s/%s' % (get_url(), paste.id, ))
+        else:
+            return u'%s/%s' % (get_url(), paste.id, )
     else:
         return bottle.HTTPError(400, output='No paste provided')
 
