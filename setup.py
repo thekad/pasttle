@@ -23,6 +23,11 @@ setup(
     packages=[
         'pasttle',
     ],
+    package_data={
+        'pasttle': [
+            'views/*.tpl',
+        ],
+    },
     version=pasttle.__version__,
     url='http://github.com/thekad/pasttle/',
     description='Simple pastebin on top of bottle.',
