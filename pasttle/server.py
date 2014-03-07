@@ -10,6 +10,7 @@ from bottle.ext import sqlalchemy as sqlaplugin
 import hashlib
 import IPy
 import model
+import os
 import pasttle
 import pygments
 from pygments import formatters
@@ -19,6 +20,17 @@ import util
 
 
 application = bottle.app()
+
+# Load an alternate template directory if specified in pasttle.ini
+if util.conf.has_option(util.cfg_section, 'templates'):
+    tpl_path = util.conf.get(util.cfg_section, 'templates')
+    tpl_path = os.path.expanduser(tpl_path)
+    bottle.TEMPLATE_PATH.append(os.path.realpath(tpl_path))
+
+# Load the templates shipped with the package
+tpl_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'views')
+bottle.TEMPLATE_PATH.append(tpl_path)
+print bottle.TEMPLATE_PATH
 
 # Install sqlalchemy plugin
 db_plugin = sqlaplugin.SQLAlchemyPlugin(
