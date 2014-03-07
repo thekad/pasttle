@@ -28,7 +28,7 @@ Pasttle is part of PyPI, you can just:
 
     pip install pasttle
 
-and it should pull all the necessary components. Wether you want to install
+and it should pull all the necessary components. Whether you want to install
 it in a virtual environment (which I recommend) or system-wide is totally up
 to you.
 
