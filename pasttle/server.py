@@ -311,7 +311,7 @@ def main():
     bottle.run(
         application, host=util.conf.get(util.cfg_section, 'bind'),
         port=util.conf.getint(util.cfg_section, 'port'),
-        reloader=True,
+        reloader=util.is_debug,
         server=util.conf.get(util.cfg_section, 'wsgi')
     )
 
