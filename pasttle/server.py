@@ -141,7 +141,7 @@ def post(db):
         db.add(paste)
         db.commit()
         if redirect:
-            bottle.redirect('/%s' % paste.id)
+            bottle.redirect('%s/%s' % (get_url(), paste.id, ))
         else:
             return u'%s/%s' % (get_url(), paste.id, )
     else:
