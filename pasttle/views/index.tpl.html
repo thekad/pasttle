@@ -90,33 +90,35 @@
 </g>
 </svg>
     </div><!--end of tittle-->
-    <div class="example">
-          <h2>EXAMPLES</h2>
-    </div><!--example-->
-    <div class="container">
-        <h3>To post the output of a given command:</h3>
-          <p>&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
-        <h3>To post the contents of a file:</h3>
-          <p>curl -F "upload=&lt;filename.ext" {{url}}/post && echo,</p>
-        <h3>To post the contents of a file and force the syntax to be python:</h3>
-          <p>curl -F "upload=&lt;filename.ext" -F "syntax=python" \\
+  <div class="wrap">
+      <div class="example">
+            <h2>EXAMPLES</h2>
+      </div><!--example-->
+      <div class="container">
+          <h3>To post the output of a given command:</h3>
+            <p>&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
+          <h3>To post the contents of a file:</h3>
+            <p>curl -F "upload=&lt;filename.ext" {{url}}/post && echo,</p>
+          <h3>To post the contents of a file and force the syntax to be python:</h3>
+            <p>curl -F "upload=&lt;filename.ext" -F "syntax=python" \\
+            {{url}}/post && echo</p>
+          <h3>To post the contents of a file and password protect it:</h3>
+            <p>curl -F "upload=&lt;filename.ext" -F "password=humptydumpty" \\
           {{url}}/post && echo</p>
-        <h3>To post the contents of a file and password protect it:</h3>
-          <p>curl -F "upload=&lt;filename.ext" -F "password=humptydumpty" \\
-        {{url}}/post && echo</p>
-        <h3>You don't like sending plain-text passwords:</h3>
-          <p>curl -F "upload=&lt;filename.ext" \\
-          -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
-          -F "is_encrypted=yes" {{url}}/post && echo</p>
-        <h3>To get the raw contents of a paste (i.e. paste #6):</h3>
-          <p>curl {{url}}/raw/6</p>
-        <h3>To get the raw contents of a password-protected paste (i.e. paste #7):</h3>
-          <p>curl -d "password=foo" {{url}}/raw/7</p>
-        <h3>Again you don't like sending plain-text passwords:</h3>
-          <p>curl -d "is_encrypted=yes" \\
-          -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
-          {{url}}/raw/7</p>
-  </div><!--end of container-->
+          <h3>You don't like sending plain-text passwords:</h3>
+            <p>curl -F "upload=&lt;filename.ext" \\
+            -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+            -F "is_encrypted=yes" {{url}}/post && echo</p>
+          <h3>To get the raw contents of a paste (i.e. paste #6):</h3>
+            <p>curl {{url}}/raw/6</p>
+          <h3>To get the raw contents of a password-protected paste (i.e. paste #7):</h3>
+            <p>curl -d "password=foo" {{url}}/raw/7</p>
+          <h3>Again you don't like sending plain-text passwords:</h3>
+            <p>curl -d "is_encrypted=yes" \\
+            -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+            {{url}}/raw/7</p>
+    </div><!--end of container-->
+  </div><!--wrap-->
   <div class="helpers">
         <h2>HELPERS</h2>
         <p>There are a couple of helper functions in the link below for pasting and

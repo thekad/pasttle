@@ -8,6 +8,9 @@
      height: 0;
      }
 
+
+
+
 .main {
   width: 100%;
   min-height: 100%;
@@ -18,5 +21,37 @@
   width: 40%;
   height: 20%;
   position: relative;
+/*  padding:50px  50px;*/
   margin: auto;
+}
+
+.wrap {
+   width: 60%;
+   min-height: 80%;
+   background-color: white;
+   margin: auto;
+   border-radius: 40px;
+   padding: 20px;
+}
+
+.helpers {
+   width: 60%;
+   margin: auto;
+   min-height: 30%;
+   background-color: white;
+   border-radius: 40px;
+   padding: 20px;
+   position: relative;
+   top: 20px;
+}
+
+.wform {
+  width: 30%;
+  margin: auto;
+  min-height: 20%;
+  background-color: white;
+  border-radius: 40px;
+  padding: 10px;
+  position: relative;
+  top: 40px;
 }
