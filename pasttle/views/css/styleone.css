@@ -1,0 +1,96 @@
+.clearfix:after {
+     visibility: hidden;
+     display: block;
+     font-size: 0;
+     content: " ";
+     clear: both;
+     height: 0;
+}
+
+html,body {
+
+  -webkit-font-smoothing: antialiased;
+   height: 100%;
+   font-family: 'Roboto', sans-serif;
+   font-weight: 500;
+   font-size: 23px;
+    color:#ecf0f1;
+}
+
+.main {
+  width: 100%;
+/*  height: 100%;*/
+  background-color: #27ae60;
+  overflow: hidden;
+}
+
+/* tittle */
+
+.tittle {
+  width: 60%;
+  height: 200px;
+  position: relative;
+  padding-top: 1%;
+  padding-bottom:40px;
+  margin: auto;
+  text-align: center;
+}
+
+.tittle h1 {
+font-family: 'Roboto', sans-serif;
+font-weight: 500;
+font-size: 100px;
+letter-spacing: -.04em;
+color:#ecf0f1;
+text-shadow: -.035em .040em #34495e;
+
+}
+
+.aftertittle {
+  position: relative;
+  font-family: 'Nunito', sans-serif;
+  font-size: 20px;
+  bottom: 80px;
+}
+
+
+.container {
+  width: 50%;
+  height: auto;
+  margin: auto;
+}
+
+
+/* form */
+
+label{
+
+  position:relative;
+  padding-bottom: 10px;
+
+}
+
+.forma {
+  background-color: #ecf0f1;
+  border-radius:20px;
+  border: none;
+
+}
+
+
+input {
+  background-color: #ecf0f1;
+  border: none;
+  width: 180px;
+  height: 30px;
+  border-radius: 15px;
+}
+
+
+.button {
+  position: relative;
+  float: right;
+  width: 180px;
+  height: 40px;
+  right: 50px;
+}

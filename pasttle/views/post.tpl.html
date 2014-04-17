@@ -6,41 +6,48 @@
     <link rel="stylesheet" href="css/styleone.css"/>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Nunito:700,400' rel='stylesheet' type='text/css'>
-
   </head>
   <body>
-    <form method="post" action="/post">
-      <fieldset>
-        <legend>{{title}}</legend>
-        <label for="upload">Contents: </label>
-        <textarea id="upload" name="upload" rows="25"
-                  cols="80">{{content}}</textarea>
-        <br/>
-        <label for="syntax">Force syntax: </label>
-        <input id="syntax" name="syntax" value="{{syntax}}" />
-        <br/>
-        <label for="password">Password protect this paste (40char max):
-        </label>
-        <input id="password" type="password" name="password"
-               maxlength="40" value="{{password}}" />
-        <br/>
-        <label for="is_encrypted">Is the password encrypted? </label>
-        <input type="checkbox" name="is_encrypted" checked="{{checked}}"
-               id="is_encrypted" />
-        <br/>
-        <input type="hidden" name="redirect" value="yes" />
-        <input type="submit" value="Submit" />
-      </fieldset>
-      <p class="note">
-        Keep in mind that passwords are transmitted in clear-text. The
-        password is not cyphered on the client-side because shipping a
-        SHA1 javascript library is perhaps too much, if you check the
-        "Is encrypted?" checkbox make sure your password is cyphered
-        with SHA1. Perhaps you better use the readily available
-        <a
-           href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">
-          console helper</a>?
-      </p>
-    </form>
+    <div class="main">
+      <div class="tittle">
+        <h1>Pasttle</h1>
+        <p class="aftertittle">a simple paste bin</p>
+      </div><!--end of tittle-->
+      <div class="container">
+      <form  method="post" action="/post">
+          <label for="upload">Contents: </label>
+          <textarea class="forma" id="upload" name="upload" rows="25"
+                    cols="80">{{content}}</textarea>
+          <br/>
+          <label for="syntax">Force syntax: </label>
+          <input class="field" id="syntax" name="syntax" value="{{syntax}}" />
+          <br/>
+          <label for="password">Password protect this paste:
+          </label>
+          <input  class="field" id="password" type="password" name="password"
+                 maxlength="40" value="{{password}}" />
+          <br/>
+          <label for="is_encrypted">Is the password encrypted? </label>
+          <input type="checkbox" name="is_encrypted" checked="{{checked}}"
+                 id="is_encrypted" />
+          <br/>
+          <input type="hidden" name="redirect" value="yes" />
+          <a href="#"><input class="button" type="submit" value="Submit" /></a>
+          </form>
+
+          <div class="footer">
+          <p class="note">
+          Keep in mind that passwords are transmitted in clear-text. The
+          password is not cyphered on the client-side because shipping a
+          SHA1 javascript library is perhaps too much, if you check the
+          "Is encrypted?" checkbox make sure your password is cyphered
+          with SHA1. Perhaps you better use the readily available
+          <a
+             href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">
+            console helper</a>?
+        </p>
+      </div><!--end of footer-->
+    </div><!--end of container-->
+  </div><!--end of main-->
   </body>
 </html>
