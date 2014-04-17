@@ -55,6 +55,14 @@ text-shadow: -.035em .040em #34495e;
    padding: 40px;
 }
 
+
+.container {
+
+  width: 80%;
+  height: auto;
+  margin: auto;
+}
+
 .helpers {
    width: 60%;
    margin: auto;
@@ -75,13 +83,16 @@ text-shadow: -.035em .040em #34495e;
   padding: 40px;
   position: relative;
   top: 40px;
+
 }
 
-.wform p {
-  position: relative;
-  bottom: 20px;
-  margin: 0;
 
+.paragr {
+
+  position:relative;
+  bottom: 30px;
+  width: 80%;
+  margin:auto;
 }
 
 
