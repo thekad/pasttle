@@ -22,13 +22,17 @@ import util
 application = bottle.app()
 
 # Load an alternate template directory if specified in pasttle.ini
+STATIC_CONTENT = None
 if util.conf.has_option(util.cfg_section, 'templates'):
     tpl_path = util.conf.get(util.cfg_section, 'templates')
     tpl_path = os.path.expanduser(tpl_path)
     bottle.TEMPLATE_PATH.append(os.path.realpath(tpl_path))
+    STATIC_CONTENT = tpl_path
 
 # Load the templates shipped with the package
 tpl_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'views')
+STATIC_CONTENT = STATIC_CONTENT or tpl_path
+print STATIC_CONTENT
 bottle.TEMPLATE_PATH.append(tpl_path)
 
 # Install sqlalchemy plugin
@@ -61,6 +65,18 @@ def index():
     )
 
 
+@bottle.get('/<filetype:re:(css|images)>/<path:path>')
+def serve_static(filetype, path):
+    "Serve static files if not configured on the web server"
+
+    return bottle.static_file(os.path.join(filetype, path), STATIC_CONTENT)
+
+
+@bottle.get('/favicon.ico')
+def serve_icon():
+    return serve_static('images', 'icon.png')
+
+
 @bottle.get('/recent')
 def recent(db):
     """
@@ -74,7 +90,10 @@ def recent(db):
                 model.Paste.created, model.Paste.password
             ).order_by(
                 model.Paste.id.desc()
-            ).limit(20).all()
+            ).limit(20).all(),
+            url=get_url(),
+            title=util.conf.get(util.cfg_section, 'title'),
+            version=pasttle.__version__,
         )
     )
 
@@ -87,7 +106,7 @@ def upload_file():
     """
     return dict(
         title=u'Paste New', content=u'', password=u'',
-        checked=u'', syntax=u''
+        checked=u'', syntax=u'', url=get_url(),
     )
 
 
@@ -294,11 +313,12 @@ def edit(db, id):
     )
 
     post_args = dict(
-        title='edit entry #%s' % (paste.id),
-        password=paste.password,
+        title='Edit entry #%s' % (paste.id),
+        password=paste.password or u'',
         content=paste.content,
         checked=u'',
         syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
+        url=get_url(),
     )
 
     if paste.password:
