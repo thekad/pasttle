@@ -25,7 +25,7 @@ setup(
     ],
     package_data={
         'pasttle': [
-            'views/*.tpl',
+            'views/*.html',
         ],
     },
     version=pasttle.__version__,

@@ -30,7 +30,6 @@ if util.conf.has_option(util.cfg_section, 'templates'):
 # Load the templates shipped with the package
 tpl_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'views')
 bottle.TEMPLATE_PATH.append(tpl_path)
-print bottle.TEMPLATE_PATH
 
 # Install sqlalchemy plugin
 db_plugin = sqlaplugin.SQLAlchemyPlugin(
@@ -59,7 +58,7 @@ def index():
         url=get_url(),
         title=util.conf.get(util.cfg_section, 'title'),
         version=pasttle.__version__,
-        )
+    )
 
 
 @bottle.get('/recent')
@@ -68,10 +67,16 @@ def recent(db):
     Shows an unordered list of most recent pasted items
     """
 
-    return template('recent', dict(pastes=db.query(
-            model.Paste.id, model.Paste.filename, model.Paste.mimetype,
-            model.Paste.created, model.Paste.password
-            ).order_by(model.Paste.id.desc()).limit(20).all()))
+    return template(
+        'recent', dict(
+            pastes=db.query(
+                model.Paste.id, model.Paste.filename, model.Paste.mimetype,
+                model.Paste.created, model.Paste.password
+            ).order_by(
+                model.Paste.id.desc()
+            ).limit(20).all()
+        )
+    )
 
 
 @bottle.get('/post')
@@ -80,8 +85,10 @@ def upload_file():
     """
     Frontend for simple posting via web interface
     """
-    return dict(title=u'Paste New', content=u'', password=u'',
-                checked=u'', syntax=u'')
+    return dict(
+        title=u'Paste New', content=u'', password=u'',
+        checked=u'', syntax=u''
+    )
 
 
 @bottle.post('/post')
