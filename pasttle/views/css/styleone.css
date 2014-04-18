@@ -110,6 +110,14 @@ input {
 }
 
 
+ .textcont p {
+  text-align:left;
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 29px;
+
+}
+
 .field {
 
   width: 50%;
@@ -145,5 +153,21 @@ input {
   margin: auto;
   font-size: 14px;
   padding-top: 20px;
+  line-height: 23px;
 
+}
+
+
+a {
+
+  font-size: 18px;
+  font-family: 'Roboto', sans-serif;
+  line-height: 28px;
+  font-weight: 700;
+  color:#34495e;
+}
+
+a:hover {
+
+  color:#9b59b6;
 }
