@@ -1,28 +1,27 @@
-
 <!DOCTYPE html>
 <html>
   <head>
     <title>{{title}}</title>
-    <link rel="stylesheet" href="css/styleone.css"/>
+    <link rel="stylesheet" href="{{url}}/css/style.css"/>
     <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,700' rel='stylesheet' type='text/css'>
     <link href='http://fonts.googleapis.com/css?family=Nunito:700,400' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <div class="main">
-      <div class="tittle">
+      <div class="title">
         <h1>Pasttle</h1>
-        <p class="aftertittle">a simple paste bin</p>
-      </div><!--end of tittle-->
-      <div class="container">
+        <p class="aftertitle">{{title}}</p>
+      </div><!--end of title-->
+      <div class="form">
       <form  method="post" action="/post">
         <div class="textcont">
             <label class="nodisplay">Contents: </label>
             <p class"content">Contents:</p>
-          <textarea class="forma" id="upload" name="upload" rows="25"cols="80"></textarea>
+          <textarea class="forma" id="upload" name="upload" rows="25"cols="80">{{content}}</textarea>
         </div><!--en of textcon-->
           <div class="sintax">
           <label class="nodisplay" for="syntax">Force syntax: </label>
-            <input class="field" placeholder="Force syntax" id="syntax" name="syntax" value="{{syntax}}" />
+            <input class="field" placeholder="Force syntax (default: text/plain)" id="syntax" name="syntax" value="{{syntax}}" />
           </div><!--end of sintax-->
           <div class="sintax">
             <label class="nodisplay" for="password">Password protect this paste:</label>
@@ -31,8 +30,7 @@
            </div><!--end of password-->
            <div class="sintaxone">
           <label for="is_encrypted">Is the password encrypted? </label>
-          <input type="checkbox" name="is_encrypted" checked="{{checked}}"
-                 id="is_encrypted" />
+          <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
            </div><!--end -->
           <input type="hidden" name="redirect" value="yes"/>
           <button class="button" type="submit" value="Submit">Submit</button>

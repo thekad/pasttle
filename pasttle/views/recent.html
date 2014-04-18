@@ -1,12 +1,28 @@
+<!DOCTYPE html>
 <html>
   <head>
-    <title>Pasttle</title>
+    <title>{{title}} (running pasttle v{{version}})</title>
+    <link rel="stylesheet" href="{{url}}/css/style.css"/>
+    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,700' rel='stylesheet' type='text/css'>
+    <link href='http://fonts.googleapis.com/css?family=Nunito:700,400' rel='stylesheet' type='text/css'>
   </head>
   <body>
+    <div class="main clearfix">
+      <div class="container">
+      <div class="title">
+        <h1>Pasttle</h1>
+        <p class="aftertitle">{{title}}</p>
+      </div><!--end of title-->
+    <div class="wrap">
+      <div class="example">
+            <h2>Recent Items:</h2>
+      </div><!--example-->
     <ul>
       % for paste in pastes:
       <li><a href="{{paste.id}}">Paste #{{paste.id}}, {{paste.filename or u''}} ({{paste.mimetype}}) {{paste.created}}</a></li>
       % end
     </ul>
+    </div>
+    </div>
   </body>
 </html>
