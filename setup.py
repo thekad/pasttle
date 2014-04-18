@@ -26,6 +26,8 @@ setup(
     package_data={
         'pasttle': [
             'views/*.html',
+            'views/css/*.css',
+            'views/images/*',
         ],
     },
     version=pasttle.__version__,
