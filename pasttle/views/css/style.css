@@ -183,13 +183,12 @@ a:hover {
 
 .footer {
   position: relative;
-  top: 40px;
-  width: 25%;
+  top: 10px;
+  width: 55%;
   height: 150px;
   color:#ecf0f1;
   margin: auto;
-  padding-bottom: 50px;
-  margin: auto;
+  padding: 20px;
 
 }
 
