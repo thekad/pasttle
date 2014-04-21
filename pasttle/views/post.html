@@ -15,8 +15,8 @@
       <div class="form">
       <form  method="post" action="/post">
         <div class="textcont">
-            <label class="nodisplay">Contents: </label>
-            <p class"content">Contents:</p>
+            <label class="left">Contents: </label>
+<!--             <p class"content">Contents:</p> -->
           <textarea class="forma" id="upload" name="upload" rows="25"cols="80">{{content}}</textarea>
         </div><!--en of textcon-->
           <div class="sintax">
@@ -29,7 +29,7 @@
                    maxlength="40" value="{{password}}" />
            </div><!--end of password-->
            <div class="sintaxone">
-          <label for="is_encrypted">Is the password encrypted? </label>
+          <label class="left" for="is_encrypted">Is the password encrypted? </label>
           <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
            </div><!--end -->
           <input type="hidden" name="redirect" value="yes"/>
