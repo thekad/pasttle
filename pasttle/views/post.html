@@ -14,28 +14,27 @@
       </div><!--end of title-->
       <div class="form">
       <form  method="post" action="/post">
-        <div class="textcont">
             <label class="left">Contents: </label>
-<!--             <p class"content">Contents:</p> -->
           <textarea class="forma" id="upload" name="upload" rows="25"cols="80">{{content}}</textarea>
-        </div><!--en of textcon-->
-          <div class="sintax">
-          <label class="nodisplay" for="syntax">Force syntax: </label>
-            <input class="field" placeholder="Force syntax (default: text/plain)" id="syntax" name="syntax" value="{{syntax}}" />
-          </div><!--end of sintax-->
-          <div class="sintax">
-            <label class="nodisplay" for="password">Password protect this paste:</label>
-            <input  placeholder="Password" class="field" id="password" type="password" name="password"
-                   maxlength="40" value="{{password}}" />
-           </div><!--end of password-->
-           <div class="sintaxone">
-          <label class="left" for="is_encrypted">Is the password encrypted? </label>
-          <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
-           </div><!--end -->
-          <input type="hidden" name="redirect" value="yes"/>
-          <button class="button" type="submit" value="Submit">Submit</button>
-          </form>
-        </div><!--end of container-->
+        <div class="wrapfields">
+            <div class="sintax">
+            <label class="nodisplay" for="syntax">Force syntax: </label>
+              <input class="field" placeholder="Force syntax (default: text/plain)" id="syntax" name="syntax" value="{{syntax}}" />
+            </div><!--end of sintax-->
+            <div class="sintax">
+              <label class="nodisplay" for="password">Password protect this paste:</label>
+              <input  placeholder="Password" class="field" id="password" type="password" name="password"
+                     maxlength="40" value="{{password}}" />
+             </div><!--end of password-->
+             <div class="sintaxone">
+            <label class="left" for="is_encrypted">Is the password encrypted? </label>
+            <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
+             </div><!--end -->
+            <input type="hidden" name="redirect" value="yes"/>
+            <button class="button" type="submit" value="Submit">Submit</button>
+            </form>
+          </div><!--end of wrapfields-->
+        </div><!--end of form-->
 
           <div class="footer">
           <p class="note">
@@ -44,8 +43,7 @@
           SHA1 javascript library is perhaps too much, if you check the
           "Is encrypted?" checkbox make sure your password is cyphered
           with SHA1. Perhaps you better use the readily available
-          <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">
-            Console helper?</a>
+          <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">Console helper?</a>
         </p>
       </div><!--end of footer-->
   </div><!--end of main-->

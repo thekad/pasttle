@@ -57,7 +57,7 @@ html,body {
   text-shadow: -.035em .040em #34495e;
 }
 
-.example h2,  {
+.example h2{
   font-family: 'Roboto', sans-serif;
   font-weight: 500;
   font-size: 29px;
@@ -65,6 +65,19 @@ html,body {
   position:relative;
   top: 60px;
 }
+
+
+ .left  {
+  font-family: 'Roboto', sans-serif;
+  font-weight: 500;
+  font-size: 29px;
+  color:#ecf0f1;
+  position:relative;
+  margin-bottom: 100px;
+}
+
+
+
 
 h3 {
   font-size: 23px;
@@ -170,16 +183,23 @@ a:hover {
 
 .footer {
   position: relative;
-  top: 10px;
-  width: 40%;
+  top: 40px;
+  width: 25%;
   height: 150px;
   color:#ecf0f1;
   margin: auto;
-  padding: 20px;
-  text-align: center;
-  border-radius: 20px;
-  margin-bottom: 20px;
-  font-size: smaller;
+  padding-bottom: 50px;
+  margin: auto;
+
+}
+
+
+.note {
+
+  text-align: left;
+  font-size: 14px;
+  line-height: 19px;
+
 }
 
 /* post form */
@@ -191,23 +211,29 @@ a:hover {
   height: 100%;
   position:relative;
   margin: auto;
-  margin-top: 20px;
+  margin-top: 30px;
+}
+
+
+.sintaxone {
+  width: 30%;
+  position: relative;
+   margin: auto;
 }
 
 .sintaxone label {
-  width: 40%;
   height: 300px;
   margin: auto;
   font-size: 14px;
-  padding: 15px;
   position: relative;
-  text-align: left;
 }
-
-
-
 .nodisplay {
   display:none;
+}
+
+.sintaxone .left {
+
+  text-align: left;
 }
 
 textarea {
@@ -222,6 +248,13 @@ input {
   padding-left: 15px;
   background-color: #ecf0f1;
   border: none;
+}
+
+
+.wrapfields {
+
+   margin: auto;
+   text-align: center;
 }
 
 
@@ -248,9 +281,4 @@ input {
 
 .button:hover {
   background-color: #9b59b6;
-}
-
-.note {
-
-  text-align: left;
 }
