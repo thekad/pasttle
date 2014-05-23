@@ -215,7 +215,7 @@ def _pygmentize(paste, lang):
         except lexers.ClassNotFound:
             lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     util.log.debug('Lexer is %s' % (lexer,))
-    a = '<small><a href="/edit/%s">edit</a></small>' % (paste.id,)
+    a = '<small><a href="/edit/%s">edit as new paste</a></small>' % (paste.id,)
     if paste.ip:
         ip = IPy.IP(long(paste.ip, 2))
         util.log.debug('Originally pasted from %s' % (ip,))
