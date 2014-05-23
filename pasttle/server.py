@@ -32,7 +32,6 @@ if util.conf.has_option(util.cfg_section, 'templates'):
 # Load the templates shipped with the package
 tpl_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'views')
 STATIC_CONTENT = STATIC_CONTENT or tpl_path
-print STATIC_CONTENT
 bottle.TEMPLATE_PATH.append(tpl_path)
 
 # Install sqlalchemy plugin
@@ -132,26 +131,36 @@ def post(db):
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
         if syntax:
+            util.log.debug('Guessing lexer for explicit syntax %s' % (syntax,))
             try:
                 lexer = lexers.get_lexer_by_name(syntax)
             except lexers.ClassNotFound:
                 lexer = default_lexer
         else:
             if filename:
+                util.log.debug('Guessing lexer for filename %s' % (filename,))
                 try:
                     lexer = lexers.guess_lexer_for_filename(filename, upload)
                 except lexers.ClassNotFound:
                     lexer = lexers.guess_lexer(upload)
             else:
-                lexer = default_lexer
+                util.log.debug('Best guess of lexer based on content')
+                try:
+                    lexer = lexers.guess_lexer(upload)
+                    util.log.debug(lexer)
+                except lexers.ClassNotFound:
+                    lexer = default_lexer
         util.log.debug(lexer.mimetypes)
+        lx = None
         if lexer.mimetypes:
             mime = lexer.mimetypes[0]
         else:
+            if lexer.aliases:
+                lx = lexer.aliases[0]
             mime = u'text/plain'
         ip = bottle.request.remote_addr
         if ip:
-#           Try not to store crap in the database if it's not a valid IP
+            # Try not to store crap in the database if it's not a valid IP
             try:
                 ip = bin(IPy.IP(ip).int())
             except Exception as ex:
@@ -161,7 +170,8 @@ def post(db):
                 ip = None
         paste = model.Paste(
             content=upload, mimetype=mime, encrypt=encrypt,
-            password=password, ip=ip, filename=filename
+            password=password, ip=ip, filename=filename,
+            lexer=lx
         )
         util.log.debug(paste)
         db.add(paste)
@@ -191,13 +201,20 @@ def _pygmentize(paste, lang):
     Guess (or force if lang is given) highlight on a given paste via pygments
     """
 
+    util.log.debug(paste)
     if lang:
         try:
             lexer = lexers.get_lexer_by_name(lang)
         except lexers.ClassNotFound:
             lexer = lexers.get_lexer_by_name('text')
     else:
-        lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
+        try:
+            util.log.debug(paste.lexer)
+            lexer = lexers.get_lexer_by_name(paste.lexer)
+            util.log.debug(lexer)
+        except lexers.ClassNotFound:
+            lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
+    util.log.debug('Lexer is %s' % (lexer,))
     a = '<small><a href="/edit/%s">edit</a></small>' % (paste.id,)
     if paste.ip:
         ip = IPy.IP(long(paste.ip, 2))
