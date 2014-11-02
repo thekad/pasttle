@@ -53,13 +53,11 @@ a:hover {
 }
 
 .section {
-  border-bottom: 1px solid #ccc;
   margin: 20px;
   padding-bottom: 10px;
 }
 
 .field {
-  border-bottom: 1px solid #ccc;
   vertical-align: middle;
   margin: 10px;
   padding-left: 10px;
@@ -79,6 +77,10 @@ a:hover {
   padding: 5px;
   margin: 5px;
   color: #0f0;
+}
+
+.separator {
+  border-bottom: 1px solid;
 }
 
 .footer {

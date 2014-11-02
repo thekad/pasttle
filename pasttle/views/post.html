@@ -10,7 +10,7 @@ vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
     <link rel="stylesheet" href="css/style.css"/>
   </head>
   <body>
-    <div class="main clearfix">
+    <div class="main">
       <div class="title">
         <h1><a href="{{url}}">Pasttle</a></h1>
         <h2>{{title}}</h2>
@@ -33,7 +33,7 @@ vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
           <label for="is_encrypted">Is the password encrypted? </label>
           <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
         </div>
-        <div class="field">
+        <div class="field separator">
           <input type="hidden" name="redirect" value="yes"/>
           <button class="button bigtext" type="submit" value="Submit">Submit</button>
         </div>
