@@ -1,3 +1,8 @@
+.useless {
+  # -*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
+  # vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
+}
+
 html,body {
   -webkit-font-smoothing: antialiased;
   font-family: 'Inconsolata', monospace;
@@ -11,16 +16,20 @@ body {
 
 textarea {
   background-color: #ecf0f1;
-  width: 100%;
-  border-radius:20px;
+  border-radius: 5px;
+  width: 95%;
   border: none;
   padding: 7px;
 }
 
 input {
-  padding-left: 15px;
+  font-family: 'Inconsolata', monospace;
+  padding-top: 6px;
+  padding-bottom: 5px;
+  padding-left: 10px;
   background-color: #ecf0f1;
   border: none;
+  vertical-align: middle;
 }
 
 a {
@@ -33,18 +42,35 @@ a:hover {
   text-decoration: none;
 }
 
-a:visited {
-  color: #000;
-}
-
 .title {
   text-align: center;
+}
+
+.main {
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
 }
 
 .section {
   border-bottom: 1px solid #ccc;
   margin: 20px;
   padding-bottom: 10px;
+}
+
+.field {
+  border-bottom: 1px solid #ccc;
+  vertical-align: middle;
+  margin: 10px;
+  padding-left: 10px;
+  padding-bottom: 10px;
+}
+
+.form {
+  width: 70%;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 10px;
 }
 
 .terminal {
@@ -56,8 +82,9 @@ a:visited {
 }
 
 .footer {
-  padding-right: 50px;
-  text-align: right;
+  padding-right: 10px;
+  padding-left: 10px;
+  text-align: justify;
 }
 
 .smalltext {
@@ -69,19 +96,16 @@ a:visited {
 }
 
 .button {
-  top: 10px;
-  position: relative;
   margin: auto;
-  width: 52%;
-  height: 40px;
-  font-size: 18px;
-  color:#ecf0f1;
-  background-color: #8e44ad;
   cursor: pointer;
   border: none;
-  border-radius: 15px;
+  font-weight: bold;
+  border-radius: 5px;
+  padding-left: 15px;
+  padding-right: 15px;
 }
 
 .button:hover {
-  background-color: #9b59b6;
+  color: #ecf0f1;
+  background-color: #000;
 }
