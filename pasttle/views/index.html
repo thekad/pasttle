@@ -1,69 +1,76 @@
 <!DOCTYPE html>
+<!--
+-*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
+vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
+-->
 <html>
   <head>
     <title>{{title}} (running pasttle v{{version}})</title>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/style.css"/>
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Nunito:700,400' rel='stylesheet' type='text/css'>
   </head>
   <body>
-    <div class="main clearfix">
+    <div class="main">
       <div class="title">
-        <h1>Pasttle</h1>
-        <p class="aftertitle">{{title}}</p>
-      </div><!--end of title-->
-    <div class="wrap">
-      <div class="example">
-            <h2>Examples:</h2>
-      </div><!--example-->
-      <div class="container darktext">
-          <h3>To post the output of a given command:</h3>
-            <p>&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
-          <h3>To post the contents of a file:</h3>
-            <p>curl -F "upload=&lt;filename.ext" {{url}}/post && echo,</p>
-          <h3>To post the contents of a file and force the syntax to be python:</h3>
-            <p>curl -F "upload=&lt;filename.ext" -F "syntax=python" \\
-            {{url}}/post && echo</p>
-          <h3>To post the contents of a file and password protect it:</h3>
-            <p>curl -F "upload=&lt;filename.ext" -F "password=humptydumpty" \\
-          {{url}}/post && echo</p>
-          <h3>You don't like sending plain-text passwords:</h3>
-            <p>curl -F "upload=&lt;filename.ext" \\
-            -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
-            -F "is_encrypted=yes" {{url}}/post && echo</p>
-          <h3>To get the raw contents of a paste (i.e. paste #6):</h3>
-            <p>curl {{url}}/raw/6</p>
-          <h3>To get the raw contents of a password-protected paste (i.e. paste #7):</h3>
-            <p>curl -d "password=foo" {{url}}/raw/7</p>
-          <h3>Again you don't like sending plain-text passwords:</h3>
-            <p>curl -d "is_encrypted=yes" \\
-            -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
-            {{url}}/raw/7</p>
-    </div><!--end of container-->
-  </div><!--wrap-->
-  <div class="helpers darktext">
-    <div class="example">
-        <h2>Helpers</h2>
-    </div><!--end of example-->
-    <div class="paragr">
-        <p>There are a couple of helper functions in the link below for pasting and
-        getting pastes. Import it from your ~/.bash_profile and you should be able
-        to use these functions. Creating a ~/.pasttlerc helps you type less too.</p>
-        <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">Link</a>
-      </div><!--end of paragraph-->
-  </div><!--end of helpers-->
-  <div class="wform darktext">
-    <div class="example">
+        <h1><a href="{{url}}">Pasttle</a></h1>
+        <h2>{{title}}</h2>
+      </div>
+      <div class="section separator">
         <h2>Web Form</h2>
-    </div><!--end of example-->
-    <div class="paragr">
         <p>You can also use this tiny web form to easily upload content.</p>
         <a href="{{url}}/post">Link</a>
-    </div><!--end of paragr-->
-  </div><!--end of web form-->
+      </div><!--end of section-->
+      <div class="section separator">
+        <h2>Recent Items</h2>
+        <p>There is a list showing recent items as well:</p>
+        <a href="{{url}}/recent">Link</a>
+      </div><!--end of section-->
+      <div class="section separator">
+        <h2>CLI Examples:</h2>
+        <div>
+          <h3>To post the output of a given command:</h3>
+          <p class="terminal">&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
+          <h3>To post the contents of a file:</h3>
+          <p class="terminal">curl -F "upload=&lt;filename.ext" {{url}}/post && echo,</p>
+          <h3>To post the contents of a file and force the syntax to be python:</h3>
+          <p class="terminal">curl -F "upload=&lt;filename.ext" -F "syntax=python" \\
+          {{url}}/post && echo</p>
+          <h3>To post the contents of a file and password protect it:</h3>
+          <p class="terminal">curl -F "upload=&lt;filename.ext" -F "password=humptydumpty" \\
+          {{url}}/post && echo</p>
+          <h3>You don't like sending plain-text passwords:</h3>
+          <p class="terminal">curl -F "upload=&lt;filename.ext" \\
+          -F "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+          -F "is_encrypted=yes" {{url}}/post && echo</p>
+          <h3>To get the raw contents of a paste (i.e. paste #6):</h3>
+          <p class="terminal">curl {{url}}/raw/6</p>
+          <h3>To get the raw contents of a password-protected paste (i.e. paste #7):</h3>
+          <p class="terminal">curl -d "password=foo" {{url}}/raw/7</p>
+          <h3>Again you don't like sending plain-text passwords:</h3>
+          <p class="terminal">curl -d "is_encrypted=yes" \\
+          -d "password=$( echo -n 'bootcat' | sha1sum | cut -c 1-40 )" \\
+          {{url}}/raw/7</p>
+        </div><!--end of examples-->
+      </div><!--end of section-->
+      <div class="section separator">
+        <h2>Helpers</h2>
+        <p>There are a couple of helper functions in the link below for pasting and
+        getting pastes. Import it from your <tt class="terminal">~/.bash_profile</tt>
+        and you should be able to use these functions. Creating a
+        <tt class="terminal">~/.pasttlerc</tt> helps you type less too.</p>
+        <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">Link</a>
+        <p>An example of a <tt class="terminal">~/.pasttlerc</tt> is here:</p>
+        <pre class="terminal bigtext">
+#!/bin/bash
+checkupdate="no"
+apiurl="https://blegh.net"
+insecure=yes
+verbose=yes</pre>
+      </div><!--end of section-->
+    </div><!--end of main section-->
     <div class="footer">
-      <p class="smallertext">Copyright &copy; Jorge Gallegos, 2012-2014</p>
-        <a href="https://github.com/thekad/pasttle">Get the source code</a>
+      <p class="smalltext">Copyright &copy; Jorge Gallegos, 2012-2014</p>
+      <a class="smalltext" href="https://github.com/thekad/pasttle">Get the source code</a>
     </div><!--end of footer-->
   </div><!--end of container-->
   </body>

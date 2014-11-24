@@ -1,52 +1,54 @@
 <!DOCTYPE html>
+<!--
+-*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
+vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
+-->
 <html>
   <head>
     <title>{{title}}</title>
+    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
     <link rel="stylesheet" href="css/style.css"/>
-    <link href='http://fonts.googleapis.com/css?family=Roboto:400,300,100,700' rel='stylesheet' type='text/css'>
-    <link href='http://fonts.googleapis.com/css?family=Nunito:700,400' rel='stylesheet' type='text/css'>
   </head>
   <body>
     <div class="main">
       <div class="title">
-        <h1>Pasttle</h1>
-        <p class="aftertitle">{{title}}</p>
-      </div><!--end of title-->
+        <h1><a href="{{url}}">Pasttle</a></h1>
+        <h2>{{title}}</h2>
+      </div>
       <div class="form">
       <form  method="post" action="/post">
-            <label class="left">Contents: </label>
-          <textarea class="forma" id="upload" name="upload" rows="25"cols="80">{{content}}</textarea>
-        <div class="wrapfields">
-            <div class="sintax">
-            <label class="nodisplay" for="syntax">Force syntax: </label>
-              <input class="field" placeholder="Force syntax (default: text/plain)" id="syntax" name="syntax" value="{{syntax}}" />
-            </div><!--end of sintax-->
-            <div class="sintax">
-              <label class="nodisplay" for="password">Password protect this paste:</label>
-              <input  placeholder="Password" class="field" id="password" type="password" name="password"
-                     maxlength="40" value="{{password}}" />
-             </div><!--end of password-->
-             <div class="sintaxone">
-            <label class="left" for="is_encrypted">Is the password encrypted? </label>
-            <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
-             </div><!--end -->
-            <input type="hidden" name="redirect" value="yes"/>
-            <button class="button" type="submit" value="Submit">Submit</button>
-            </form>
-          </div><!--end of wrapfields-->
-          <div class="footer">
+        <div class="field">
+          <label for="upload">Contents: </label>
+          <textarea id="upload" name="upload" rows="24" autofocus="autofocus">{{content}}</textarea>
+        </div>
+        <div class="field">
+          <label for="syntax">Force syntax: </label>
+          <input class="field" placeholder="text/plain" id="syntax" name="syntax" value="{{syntax}}" />
+        </div>
+        <div class="field">
+          <label for="password">Password protect this paste:</label>
+          <input class="field" placeholder="Password" id="password" type="password" name="password" maxlength="40" value="{{password}}" />
+        </div>
+        <div class="field">
+          <label for="is_encrypted">Is the password encrypted? </label>
+          <input type="checkbox" name="is_encrypted" "{{checked}}" id="is_encrypted" />
+        </div>
+        <div class="field separator">
+          <input type="hidden" name="redirect" value="yes"/>
+          <button class="button bigtext" type="submit" value="Submit">Submit</button>
+        </div>
+        <div class="footer smalltext">
           <p class="note">
-          Keep in mind that passwords are transmitted in clear-text. The
-          password is not cyphered on the client-side because shipping a
-          SHA1 javascript library is perhaps too much, if you check the
-          "Is encrypted?" checkbox make sure your password is cyphered
-          with SHA1. Perhaps you better use the readily available
-          <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">Console helper?</a>
-        </p>
-      </div><!--end of footer-->
-        </div><!--end of form-->
-
-
+            Keep in mind that passwords are transmitted in clear-text. The
+            password is not cyphered on the client-side because shipping a
+            SHA1 javascript library is perhaps too much, if you check the
+            "Is encrypted?" checkbox make sure your password is cyphered
+            with SHA1. Perhaps you better use the readily available
+            <a href="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc">Console helper</a>?
+          </p>
+        </div><!--end of footer-->
+      </form>
+      </div><!--end of form-->
   </div><!--end of main-->
   </body>
 </html>

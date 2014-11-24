@@ -82,6 +82,7 @@ def recent(db):
     Shows an unordered list of most recent pasted items
     """
 
+    items = util.conf.get(util.cfg_section, 'recent_items')
     return template(
         'recent', dict(
             pastes=db.query(
@@ -89,9 +90,10 @@ def recent(db):
                 model.Paste.created, model.Paste.password
             ).order_by(
                 model.Paste.id.desc()
-            ).limit(20).all(),
+            ).limit(items).all(),
             url=get_url(),
             title=util.conf.get(util.cfg_section, 'title'),
+            recent=items,
             version=pasttle.__version__,
         )
     )

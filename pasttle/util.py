@@ -28,6 +28,7 @@ port: 9669
 title: Simple paste bin
 wsgi: wsgiref
 pool_recycle: 3600
+recent_items: 20
 """ % (cfg_section,))
 
 conf = configparser.SafeConfigParser()
@@ -51,6 +52,7 @@ log.addHandler(ch)
 
 # This needs to be loaded eagerly
 pool_recycle = conf.getint(cfg_section, 'pool_recycle')
+log.debug('Running with configuration: %s' % (conf.items(cfg_section),))
 log.debug(
     'Recycling pool connections every %s seconds' % (pool_recycle,)
 )
