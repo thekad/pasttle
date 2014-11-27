@@ -10,5 +10,5 @@ python:
 install:
   - "pip install -r test-requirements.txt"
 script:
-  - "( python --version 2>&1 | grep -q '^Python 2' ) || python -m lib2to3 -w tests/"
+  - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
   - "python setup.py test"
