@@ -11,12 +11,15 @@ from setuptools import setup
 
 extra = {}
 
-if sys.version_info >= (3,):
-    extra['use_2to3'] = True
-
 readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.rst')
 requirements = os.path.join(os.path.dirname(sys.argv[0]), 'requirements.txt')
 
+install_requires = open(requirements).readlines(),
+
+if sys.version_info >= (3,):
+    extra['use_2to3'] = True
+else:
+    pass
 
 setup(
     name='pasttle',
@@ -44,8 +47,11 @@ setup(
         ],
     },
     classifiers=[
-        'Programming Language :: Python :: 2',
-        'Programming Language :: Python :: 3',
+        'Programming Language :: Python :: 2.6',
+        'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.2',
+        'Programming Language :: Python :: 3.3',
+        'Programming Language :: Python :: 3.4',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -55,7 +61,7 @@ setup(
     ],
     keywords=['pastebin', 'web', 'paste', 'bottlepy'],
     long_description=open(readme).read(),
-    install_requires=open(requirements).readlines(),
+    install_requires=install_requires,
     test_suite='tests.all.test_suites',
     **extra
 )
