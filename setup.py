@@ -44,16 +44,18 @@ setup(
         ],
     },
     classifiers=[
+        'Programming Language :: Python :: 2',
+        'Programming Language :: Python :: 3',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
         'Operating System :: OS Independent',
-        'Programming Language :: Python',
         'Topic :: Internet :: WWW/HTTP :: Dynamic Content',
         'Topic :: Software Development :: Libraries :: Python Modules'
     ],
     keywords=['pastebin', 'web', 'paste', 'bottlepy'],
     long_description=open(readme).read(),
     install_requires=open(requirements).readlines(),
+    test_suite='tests.all.test_suites',
     **extra
 )
