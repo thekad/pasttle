@@ -243,7 +243,9 @@ def _pygmentize(paste, lang):
     content = pygments.highlight(
         paste.content, lexer, formatters.HtmlFormatter(
             linenos='table',
-            encoding='utf-8', lineanchors='ln', title=title
+            encoding='utf-8',
+            lineanchors='ln',
+            anchorlinenos=True,
         )
     )
     return template(

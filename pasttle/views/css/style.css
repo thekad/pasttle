@@ -105,6 +105,21 @@ a:hover {
   overflow: auto;
 }
 
+.pygmentized a {
+  color: #666;
+  text-decoration: none;
+  font-weight: normal;
+}
+
+.pygmentized .linenodiv {
+  padding-right: 5px;
+  border-right: 1px dotted;
+}
+
+.pygmentized .code {
+  padding-left: 5px;
+}
+
 .button {
   margin: auto;
   cursor: pointer;
