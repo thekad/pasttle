@@ -136,7 +136,7 @@ def post(db):
     upload = bottle.request.forms.upload
     filename = None
     if bottle.request.forms.filename != '-':
-        filename = bottle.request.forms.filename
+        filename = os.path.basename(bottle.request.forms.filename)
     syntax = None
     if bottle.request.forms.syntax != '-':
         syntax = bottle.request.forms.syntax
