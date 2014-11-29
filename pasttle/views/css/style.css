@@ -97,6 +97,14 @@ a:hover {
   font-size: larger;
 }
 
+.pygmentized {
+  color: #000;
+  width: 90%;
+  margin-left: auto;
+  margin-right: auto;
+  overflow: auto;
+}
+
 .button {
   margin: auto;
   cursor: pointer;

@@ -29,6 +29,7 @@ title: Simple paste bin
 wsgi: wsgiref
 pool_recycle: 3600
 recent_items: 20
+pygments_style: tango
 """ % (cfg_section,))
 
 conf = configparser.SafeConfigParser()

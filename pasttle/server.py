@@ -64,6 +64,19 @@ def index():
     )
 
 
+@bottle.get('/pygments/<style>.css')
+def serve_language_css(style):
+    try:
+        fmt = formatters.get_formatter_by_name('html', style=style)
+    except:
+        util.log.warn(
+            'Style "%s" cannot be found, falling back to default' % (style,)
+        )
+        fmt = formatters.get_formatter_by_name('html')
+    bottle.response.content_type = 'text/css'
+    return fmt.get_style_defs(['.pygmentized'])
+
+
 @bottle.get('/<filetype:re:(css|images)>/<path:path>')
 def serve_static(filetype, path):
     "Serve static files if not configured on the web server"
@@ -218,7 +231,6 @@ def _pygmentize(paste, lang):
         except lexers.ClassNotFound:
             lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     util.log.debug('Lexer is %s' % (lexer,))
-    a = '<small><a href="/edit/%s">edit as new paste</a></small>' % (paste.id,)
     if paste.ip:
         ip = IPy.IP(long(paste.ip, 2))
         util.log.debug('Originally pasted from %s' % (ip,))
@@ -226,13 +238,23 @@ def _pygmentize(paste, lang):
         title = u'%s, created on %s' % (paste.filename, paste.created, )
     else:
         title = u'created on %s' % (paste.created, )
-    title = '%s %s (%s)' % (paste.mimetype, title, a,)
+    title = '%s %s' % (paste.mimetype, title,)
     util.log.debug(lexer)
-    return pygments.highlight(
+    content = pygments.highlight(
         paste.content, lexer, formatters.HtmlFormatter(
-            full=True, linenos='table',
-            encoding='utf-8', lineanchors='ln', title=title)
+            linenos='table',
+            encoding='utf-8', lineanchors='ln', title=title
         )
+    )
+    return template(
+        'pygmentize.html',
+        pygmentized=content,
+        title=title,
+        version=pasttle.__version__,
+        url=get_url(),
+        id=paste.id,
+        pygments_style=util.conf.get(util.cfg_section, 'pygments_style'),
+    )
 
 
 @bottle.get('/<id:int>')
