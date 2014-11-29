@@ -1,30 +1,12 @@
-<!DOCTYPE html>
-<!--
--*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
-vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
--->
-<html>
-  <head>
-    <title>{{title}} (running pasttle v{{version}})</title>
-    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="css/style.css"/>
-  </head>
-  <body>
-    <div class="main">
-      <div class="title">
-        <h1><a href="{{url}}">Pasttle</a></h1>
-        <h2>{{title}}</h2>
-      </div><!--end of title-->
+% rebase('base.html')
       <div class="section">
         <h3>Showing the most recent {{recent}} items:</h3>
         <div class="section">
           <ul>
           % for paste in pastes:
-            <li><a href="{{paste.id}}">Paste #{{paste.id}}, {{paste.filename or u''}} ({{paste.mimetype}}) {{paste.created}}</a></li>
+            <li><a href="{{paste.id}}">Paste #{{paste.id}}, {{paste.filename or u''}} ({{paste.mimetype}}) {{paste.created}} (Protected: {{bool(paste.password)}})</a></li>
           % end
           </ul>
         </div>
       </div>
     </div><!-- main -->
-  </body>
-</html>

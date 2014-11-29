@@ -1,20 +1,4 @@
-<!DOCTYPE html>
-<!--
--*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
-vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
--->
-<html>
-  <head>
-    <title>{{title}} (running pasttle v{{version}})</title>
-    <link href='http://fonts.googleapis.com/css?family=Inconsolata' rel='stylesheet' type='text/css'>
-    <link rel="stylesheet" href="css/style.css"/>
-  </head>
-  <body>
-    <div class="main">
-      <div class="title">
-        <h1><a href="{{url}}">Pasttle</a></h1>
-        <h2>{{title}}</h2>
-      </div>
+% rebase('base.html')
       <div class="section separator">
         <h2>Web Form</h2>
         <p>You can also use this tiny web form to easily upload content.</p>
@@ -67,11 +51,3 @@ apiurl="https://blegh.net"
 insecure=yes
 verbose=yes</pre>
       </div><!--end of section-->
-    </div><!--end of main section-->
-    <div class="footer">
-      <p class="smalltext">Copyright &copy; Jorge Gallegos, 2012-2014</p>
-      <a class="smalltext" href="https://github.com/thekad/pasttle">Get the source code</a>
-    </div><!--end of footer-->
-  </div><!--end of container-->
-  </body>
-</html>

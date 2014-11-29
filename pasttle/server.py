@@ -108,6 +108,7 @@ def upload_file():
     return dict(
         title=u'Paste New', content=u'', password=u'',
         checked=u'', syntax=u'', url=get_url(),
+        version=pasttle.__version__,
     )
 
 
@@ -255,7 +256,12 @@ def showpaste(db, id, lang=None):
     )
     if paste.password:
         if not password:
-            return template('password_protect')
+            return template(
+                'password_protect',
+                url=get_url(),
+                title=util.conf.get(util.cfg_section, 'title'),
+                version=pasttle.__version__,
+            )
         if hashlib.sha1(password).hexdigest() == paste.password:
             bottle.response.content_type = 'text/html'
             return _pygmentize(paste, lang)
@@ -296,7 +302,12 @@ def showraw(db, id):
     )
     if paste.password:
         if not password:
-            return template('password_protect')
+            return template(
+                'password_protect',
+                url=get_url(),
+                title=util.conf.get(util.cfg_section, 'title'),
+                version=pasttle.__version__,
+            )
         if match == paste.password:
             bottle.response.content_type = 'text/plain'
             return paste.content
@@ -338,11 +349,17 @@ def edit(db, id):
         checked=u'',
         syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
         url=get_url(),
+        version=pasttle.__version__,
     )
 
     if paste.password:
         if not password:
-            return template('password_protect')
+            return template(
+                'password_protect',
+                url=get_url(),
+                title=util.conf.get(util.cfg_section, 'title'),
+                version=pasttle.__version__,
+            )
         if match == paste.password:
             post_args['checked'] = 'checked'
             return template('post', post_args)
