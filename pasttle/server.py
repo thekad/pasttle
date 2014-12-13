@@ -148,7 +148,10 @@ def post(db):
     as_html = bool(bottle.request.forms.as_html)
     print as_html
     if upload:
-        if not as_html:
+        if as_html:
+            mime = 'text/html'
+            lx = None
+        else:
             if syntax:
                 util.log.debug(
                     'Guessing lexer for explicit syntax %s' % (syntax,)
@@ -183,9 +186,6 @@ def post(db):
                 if lexer.aliases:
                     lx = lexer.aliases[0]
                 mime = u'text/plain'
-        else:
-            mime = 'text/html'
-            lx = None
         ip = bottle.request.remote_addr
         if ip:
             # Try not to store crap in the database if it's not a valid IP
