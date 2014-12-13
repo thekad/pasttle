@@ -146,7 +146,6 @@ def post(db):
     util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     as_html = bool(bottle.request.forms.as_html)
-    print as_html
     if upload:
         if as_html:
             mime = 'text/html'
