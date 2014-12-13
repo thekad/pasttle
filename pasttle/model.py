@@ -27,16 +27,19 @@ class Paste(Base):
     filename = sqlalchemy.Column(sqlalchemy.String(128))
     password = sqlalchemy.Column(sqlalchemy.String(40))
     mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
-    lexer = sqlalchemy.Column(sqlalchemy.String(64))
+    lexer = sqlalchemy.Column(sqlalchemy.String(64), nullable=True)
     created = sqlalchemy.Column(
         sqlalchemy.DateTime, default=func.now(), nullable=False
     )
     ip = sqlalchemy.Column(sqlalchemy.LargeBinary(16))
+    as_html = sqlalchemy.Column(
+        sqlalchemy.Boolean, default=False, nullable=False
+    )
 
     def __init__(
         self, content, mimetype, filename=None,
         password=None, encrypt=True, ip=None,
-        lexer=None,
+        lexer=None, as_html=False
     ):
 
         self.content = content
@@ -50,6 +53,7 @@ class Paste(Base):
                 self.password = password[:40]
         self.ip = ip
         self.lexer = lexer
+        self.as_html = as_html
 
     def __repr__(self):
         return u'<Paste "%s" (%s), protected=%s>' % (

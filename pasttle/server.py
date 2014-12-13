@@ -120,7 +120,7 @@ def upload_file():
     """
     return dict(
         title=u'Paste New', content=u'', password=u'',
-        checked=u'', syntax=u'', url=get_url(),
+        checked=u'', syntax=u'', url=get_url(), as_html=False,
         version=pasttle.__version__,
     )
 
@@ -145,35 +145,47 @@ def post(db):
     redirect = bool(bottle.request.forms.redirect)
     util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
+    as_html = bool(bottle.request.forms.as_html)
+    print as_html
     if upload:
-        if syntax:
-            util.log.debug('Guessing lexer for explicit syntax %s' % (syntax,))
-            try:
-                lexer = lexers.get_lexer_by_name(syntax)
-            except lexers.ClassNotFound:
-                lexer = default_lexer
-        else:
-            if filename:
-                util.log.debug('Guessing lexer for filename %s' % (filename,))
+        if not as_html:
+            if syntax:
+                util.log.debug(
+                    'Guessing lexer for explicit syntax %s' % (syntax,)
+                )
                 try:
-                    lexer = lexers.guess_lexer_for_filename(filename, upload)
-                except lexers.ClassNotFound:
-                    lexer = lexers.guess_lexer(upload)
-            else:
-                util.log.debug('Best guess of lexer based on content')
-                try:
-                    lexer = lexers.guess_lexer(upload)
-                    util.log.debug(lexer)
+                    lexer = lexers.get_lexer_by_name(syntax)
                 except lexers.ClassNotFound:
                     lexer = default_lexer
-        util.log.debug(lexer.mimetypes)
-        lx = None
-        if lexer.mimetypes:
-            mime = lexer.mimetypes[0]
+            else:
+                if filename:
+                    util.log.debug(
+                        'Guessing lexer for filename %s' % (filename,)
+                    )
+                    try:
+                        lexer = lexers.guess_lexer_for_filename(
+                            filename, upload
+                        )
+                    except lexers.ClassNotFound:
+                        lexer = lexers.guess_lexer(upload)
+                else:
+                    util.log.debug('Best guess of lexer based on content')
+                    try:
+                        lexer = lexers.guess_lexer(upload)
+                        util.log.debug(lexer)
+                    except lexers.ClassNotFound:
+                        lexer = default_lexer
+            util.log.debug(lexer.mimetypes)
+            lx = None
+            if lexer.mimetypes:
+                mime = lexer.mimetypes[0]
+            else:
+                if lexer.aliases:
+                    lx = lexer.aliases[0]
+                mime = u'text/plain'
         else:
-            if lexer.aliases:
-                lx = lexer.aliases[0]
-            mime = u'text/plain'
+            mime = 'text/html'
+            lx = None
         ip = bottle.request.remote_addr
         if ip:
             # Try not to store crap in the database if it's not a valid IP
@@ -187,7 +199,7 @@ def post(db):
         paste = model.Paste(
             content=upload, mimetype=mime, encrypt=encrypt,
             password=password, ip=ip, filename=filename,
-            lexer=lx
+            lexer=lx, as_html=as_html
         )
         util.log.debug(paste)
         db.add(paste)
@@ -278,6 +290,7 @@ def showpaste(db, id, lang=None):
             hashlib.sha1(password).hexdigest() == paste.password,
         )
     )
+    results = paste.content if paste.as_html else _pygmentize(paste, lang)
     if paste.password:
         if not password:
             return template(
@@ -288,11 +301,11 @@ def showpaste(db, id, lang=None):
             )
         if hashlib.sha1(password).hexdigest() == paste.password:
             bottle.response.content_type = 'text/html'
-            return _pygmentize(paste, lang)
+            return results
         else:
             return bottle.HTTPError(401, output='Wrong password provided')
     else:
-        return _pygmentize(paste, lang)
+        return results
 
 
 @bottle.get('/<id:int>/<lang>')
