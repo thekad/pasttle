@@ -387,6 +387,7 @@ def edit(db, id):
         syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
         url=get_url(),
         version=pasttle.__version__,
+        as_html=paste.as_html,
     )
 
     if paste.password:
