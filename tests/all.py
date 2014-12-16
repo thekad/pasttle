@@ -13,6 +13,7 @@ def test_suites():
     allsuites = []
     for s in (
         suites.coding_style,
+        suites.functional,
     ):
         allsuites.append(s.test_cases())
     alltests = unittest.TestSuite(allsuites)

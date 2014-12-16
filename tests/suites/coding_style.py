@@ -16,7 +16,7 @@ class PEP8Test(unittest.TestCase):
 
     def __init__(self, methodname, filename):
         f = functools.partial(self.pep8, filename)
-        f.__doc__ = 'PEP8 for %s' % (filename,)
+        f.__doc__ = 'PEP8 for %s' % (filename.replace(util.TOP_DIR, ''),)
         self.__setattr__(methodname, f)
         unittest.TestCase.__init__(self, methodname)
 
@@ -38,7 +38,8 @@ class PEP8Test(unittest.TestCase):
 def test_cases():
     pep8_suite = unittest.TestSuite()
     for filename in util.get_source_filenames():
-        filekey = filename.replace('/', '_').replace('.', '_')
+        filekey = filename.replace(util.TOP_DIR, '')
+        filekey = filekey.replace('/', '_').replace('.', '_')
         pep8_suite.addTest(PEP8Test(filekey, filename))
     alltests = unittest.TestSuite([pep8_suite])
     return alltests

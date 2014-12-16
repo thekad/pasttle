@@ -5,5 +5,7 @@
 #
 
 import coding_style
+import functional
 
 assert coding_style
+assert functional

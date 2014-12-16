@@ -30,6 +30,9 @@ Get all python files so they can be tested.
 
     filenames = []
     for root, dirs, files in os.walk(TOP_DIR):
+        for nd in ['.git', 'build', 'dist']:
+            if nd in dirs:
+                dirs.remove(nd)
         for f in files:
             filename = os.path.join(root, f)
             if f.endswith('.py') and os.path.getsize(filename) > 0:
