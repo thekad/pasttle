@@ -217,7 +217,7 @@ def _pygmentize(paste, lang):
     Guess (or force if lang is given) highlight on a given paste via pygments
     """
 
-    util.log.debug(paste)
+    util.log.debug("%s in %s language" % (paste, lang,))
     if lang:
         try:
             lexer = lexers.get_lexer_by_name(lang)
@@ -261,7 +261,7 @@ def _pygmentize(paste, lang):
 
 @bottle.get('/<id:int>')
 @bottle.post('/<id:int>')
-def showpaste(db, id, lang=None):
+def showpaste(db, id):
     """
     Shows the highlighted entry on the browser. If the entry is protected
     with a password it will display a password entry and will compare against
@@ -269,6 +269,7 @@ def showpaste(db, id, lang=None):
     """
 
     paste = _get_paste(db, id)
+    lang = bottle.request.query.lang or None
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
