@@ -199,11 +199,12 @@ function pasttle() {
         -s (OPTIONAL) Force the syntax of the paste (var: syntax)\n\n
         -C (OPTIONAL) Don't check for updates from upstream (var: checkupdate)\n\n
         -x (OPTIONAL) Put resulting URL in clipboard, requires xclip in linux (var: clipboard)\n\n
+        -r (OPTIONAL) Display rendered html, rather than source html
     "
 
 #   load runtime options
     OPTIND=1;
-    while getopts ":a:s:np:f:hvCix" flag;
+    while getopts ":a:s:np:f:hvCixr" flag;
     do
         case $flag in
             h)
@@ -236,6 +237,9 @@ function pasttle() {
                 ;;
             C)
                 checkupdate="no"
+                ;;
+            r) 
+                ashtml="yes"
                 ;;
             \?)
                 echo "Invalid option: -${flag}"
@@ -290,6 +294,11 @@ function pasttle() {
     if [ "yes" == "$insecure" ];
     then
         command="${command} --insecure";
+    fi;
+
+    if [ "yes" == "$ashtml" ];
+    then 
+       command="${command} -F 'as_html=yes'";
     fi;
 
     command="${command} ${apiurl}/post";

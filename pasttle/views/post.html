@@ -10,6 +10,14 @@
           <input class="field" placeholder="text/plain" id="syntax" name="syntax" value="{{syntax}}" />
         </div>
         <div class="field">
+          <label for="as-html">Display as HTML: </label>
+          <input type="checkbox" id="as-html" 
+            %if as_html:
+                checked 
+            %end 
+            name="as_html"/>
+        </div>
+        <div class="field">
           <label for="password">Password protect this paste:</label>
           <input class="field" placeholder="Password" id="password" type="password" name="password" maxlength="40" value="{{password}}" />
         </div>
