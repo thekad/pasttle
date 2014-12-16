@@ -295,21 +295,14 @@ def showpaste(db, id, lang=None):
         return _pygmentize(paste, lang)
 
 
-@bottle.get('/<id:int>/<lang>')
-@bottle.post('/<id:int>/<lang>')
-def forcehighlight(db, id, lang):
-    """Forces a certain highlight against an entry"""
-
-    return showpaste(db, id, lang)
-
-
 @bottle.get('/raw/<id:int>')
 @bottle.post('/raw/<id:int>')
 def showraw(db, id):
     """
-    Returns the plain-text version of the entry. If the entry is protected
-    with a password it will display a simple password entry form until the
-    password is a match in the database
+    Returns the raw version of the entry with the content type set to the
+    entry's content type. If the entry is protected with a password it will
+    display a simple password entry form until the password is a match in
+    the database
     """
 
     paste = _get_paste(db, id)
@@ -333,12 +326,12 @@ def showraw(db, id):
                 version=pasttle.__version__,
             )
         if match == paste.password:
-            bottle.response.content_type = 'text/plain'
+            bottle.response.content_type = paste.mimetype
             return paste.content
         else:
             return bottle.HTTPError(401, output='Wrong password provided')
     else:
-        bottle.response.content_type = 'text/plain'
+        bottle.response.content_type = paste.mimetype
         return paste.content
 
 
