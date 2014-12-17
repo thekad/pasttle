@@ -201,7 +201,7 @@ def post(db):
         if redirect:
             bottle.redirect('{0}/{1}'.format(get_url(), paste.id, ))
         else:
-            return '{0}/{1}'.format(get_url(), paste.id, )
+            return bottle.HTTPResponse('{0}/{1}'.format(get_url(), paste.id, ))
     else:
         return bottle.HTTPError(400, output='No paste provided')
 
