@@ -8,19 +8,14 @@ import os
 
 
 TOP_DIR = os.path.realpath(
-    '%s/../../' % (
+    '{0}/../../'.format(
         os.path.dirname(
             os.path.realpath(__file__)
         ),
     )
 )
-TEST_DIR = os.path.realpath(
-    '%s/../' % (
-        os.path.dirname(
-            os.path.realpath(__file__)
-        ),
-    )
-)
+TEST_DIR = os.path.join(TOP_DIR, 'tests')
+SRC_DIR = os.path.join(TOP_DIR, 'src')
 
 
 def get_source_filenames():

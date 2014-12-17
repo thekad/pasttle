@@ -21,7 +21,7 @@ cfg_file, cfg_section = cfg[0], cfg[1]
 
 # Load configuration, or default
 default_ini = StringIO.StringIO("""
-[%s]
+[{0}]
 debug: true
 bind: localhost
 port: 9669
@@ -30,7 +30,7 @@ wsgi: wsgiref
 pool_recycle: 3600
 recent_items: 20
 pygments_style: tango
-""" % (cfg_section,))
+""".format(cfg_section,))
 
 conf = configparser.SafeConfigParser()
 conf.readfp(default_ini)
@@ -53,7 +53,7 @@ log.addHandler(ch)
 
 # This needs to be loaded eagerly
 pool_recycle = conf.getint(cfg_section, 'pool_recycle')
-log.debug('Running with configuration: %s' % (conf.items(cfg_section),))
+log.debug('Running with configuration: {0}'.format(conf.items(cfg_section),))
 log.debug(
-    'Recycling pool connections every %s seconds' % (pool_recycle,)
+    'Recycling pool connections every {0} seconds'.format(pool_recycle,)
 )

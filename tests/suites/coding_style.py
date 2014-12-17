@@ -16,7 +16,7 @@ class PEP8Test(unittest.TestCase):
 
     def __init__(self, methodname, filename):
         f = functools.partial(self.pep8, filename)
-        f.__doc__ = 'PEP8 for %s' % (filename.replace(util.TOP_DIR, ''),)
+        f.__doc__ = 'PEP8 for {0}'.format(filename.replace(util.TOP_DIR, ''),)
         self.__setattr__(methodname, f)
         unittest.TestCase.__init__(self, methodname)
 
@@ -28,7 +28,7 @@ class PEP8Test(unittest.TestCase):
         if report.total_errors != 0:
             report._deferred_print.sort()
             for line_number, offset, code, text, doc in report._deferred_print:
-                messages.append('Row %d Col %d: %s' % (
+                messages.append('Row {0} Col {1}: {2}'.format(
                     line_number, offset + 1, text,)
                 )
         self.assertEqual(

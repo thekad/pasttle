@@ -20,7 +20,7 @@ class FunctionalTest(unittest.TestCase):
 
     def setUp(self):
         self.test_ini = os.path.join(util.TEST_DIR, 'pasttle.ini')
-        os.environ['PASTTLECONF'] = '%s:test' % (self.test_ini,)
+        os.environ['PASTTLECONF'] = '{0}:test'.format(self.test_ini,)
         from pasttle import server
         self.app = webtest.TestApp(server.application)
 
@@ -65,7 +65,7 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
-        rsp = self.app.get('/raw%s' % (url.path,))
+        rsp = self.app.get('/raw{0}'.format(url.path,))
         assert rsp.status == '200 OK'
         assert rsp.body == text
 
@@ -76,7 +76,7 @@ class FunctionalTest(unittest.TestCase):
         for x in range(0, 20):
             rsp = self.app.post(
                 '/post', {
-                    'upload': '%s%s' % (text, x,)
+                    'upload': '{0}{1}'.format(text, x,)
                 }
             )
             assert rsp.status == '200 OK'

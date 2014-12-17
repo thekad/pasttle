@@ -45,9 +45,9 @@ application.install(db_plugin)
 def get_url(path=False):
     (scheme, host, q_path, qs, fragment) = bottle.request.urlparts
     if path:
-        return u'%s://%s%s' % (scheme, host, q_path)
+        return '{0}://{1}{2}'.format(scheme, host, q_path)
     else:
-        return u'%s://%s' % (scheme, host)
+        return '{0}://{1}'.format(scheme, host)
 
 
 @bottle.get('/')
@@ -70,7 +70,9 @@ def serve_language_css(style):
         fmt = formatters.get_formatter_by_name('html', style=style)
     except:
         util.log.warn(
-            'Style "%s" cannot be found, falling back to default' % (style,)
+            'Style "{0}" cannot be found, falling back to default'.format(
+                style,
+            )
         )
         fmt = formatters.get_formatter_by_name('html')
     bottle.response.content_type = 'text/css'
@@ -143,18 +145,22 @@ def post(db):
     password = bottle.request.forms.password
     encrypt = not bool(bottle.request.forms.is_encrypted)
     redirect = bool(bottle.request.forms.redirect)
-    util.log.debug('Filename: %s, Syntax: %s' % (filename, syntax,))
+    util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
         if syntax:
-            util.log.debug('Guessing lexer for explicit syntax %s' % (syntax,))
+            util.log.debug(
+                'Guessing lexer for explicit syntax {0}'.format(syntax,)
+            )
             try:
                 lexer = lexers.get_lexer_by_name(syntax)
             except lexers.ClassNotFound:
                 lexer = default_lexer
         else:
             if filename:
-                util.log.debug('Guessing lexer for filename %s' % (filename,))
+                util.log.debug(
+                    'Guessing lexer for filename {0}'.format(filename,)
+                )
                 try:
                     lexer = lexers.guess_lexer_for_filename(filename, upload)
                 except lexers.ClassNotFound:
@@ -181,7 +187,7 @@ def post(db):
                 ip = bin(IPy.IP(ip).int())
             except Exception as ex:
                 util.log.warn(
-                    'Impossible to store the source IP address: %s' % (ex,)
+                    'Impossible to store the source IP address: {0}'.format(ex)
                 )
                 ip = None
         paste = model.Paste(
@@ -193,9 +199,9 @@ def post(db):
         db.add(paste)
         db.commit()
         if redirect:
-            bottle.redirect('%s/%s' % (get_url(), paste.id, ))
+            bottle.redirect('{0}/{1}'.format(get_url(), paste.id, ))
         else:
-            return u'%s/%s' % (get_url(), paste.id, )
+            return '{0}/{1}'.format(get_url(), paste.id, )
     else:
         return bottle.HTTPError(400, output='No paste provided')
 
@@ -217,7 +223,7 @@ def _pygmentize(paste, lang):
     Guess (or force if lang is given) highlight on a given paste via pygments
     """
 
-    util.log.debug("%s in %s language" % (paste, lang,))
+    util.log.debug("{0} in {1} language".format(paste, lang,))
     if lang:
         try:
             lexer = lexers.get_lexer_by_name(lang)
@@ -230,15 +236,15 @@ def _pygmentize(paste, lang):
             util.log.debug(lexer)
         except lexers.ClassNotFound:
             lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
-    util.log.debug('Lexer is %s' % (lexer,))
+    util.log.debug('Lexer is {0}'.format(lexer,))
     if paste.ip:
         ip = IPy.IP(long(paste.ip, 2))
-        util.log.debug('Originally pasted from %s' % (ip,))
+        util.log.debug('Originally pasted from {0}'.format(ip,))
     if paste.filename:
-        title = u'%s, created on %s' % (paste.filename, paste.created, )
+        title = '{0}, created on {1}'.format(paste.filename, paste.created, )
     else:
-        title = u'created on %s' % (paste.created, )
-    title = '%s %s' % (paste.mimetype, title,)
+        title = 'created on {0}'.format(paste.created, )
+    title = '{0} {1}'.format(paste.mimetype, title,)
     util.log.debug(lexer)
     content = pygments.highlight(
         paste.content, lexer, formatters.HtmlFormatter(
@@ -274,7 +280,7 @@ def showpaste(db, id):
         return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
     util.log.debug(
-        '%s == %s ? %s' % (
+        '{0} == {1} ? {2}'.format(
             hashlib.sha1(password).hexdigest(), paste.password,
             hashlib.sha1(password).hexdigest() == paste.password,
         )
@@ -316,7 +322,9 @@ def showraw(db, id):
     else:
         match = password
     util.log.debug(
-        '%s == %s ? %s' % (match, paste.password, match == paste.password, )
+        '{0} == {1} ? {2}'.format(
+            match, paste.password, match == paste.password,
+        )
     )
     if paste.password:
         if not password:
@@ -354,14 +362,14 @@ def edit(db, id):
     else:
         match = password
     util.log.debug(
-        '%s == %s ? %s' % (
+        '{0} == {1} ? {2}'.format(
             match, paste.password,
             match == paste.password,
         )
     )
 
     post_args = dict(
-        title='Edit entry #%s' % (paste.id),
+        title='Edit entry #{0}'.format(paste.id),
         password=paste.password or u'',
         content=paste.content,
         checked=u'',
@@ -388,7 +396,7 @@ def edit(db, id):
 
 
 def main():
-    util.log.info('Using Python %s' % (sys.version, ))
+    util.log.info('Using Python {0}'.format(sys.version, ))
     bottle.run(
         application, host=util.conf.get(util.cfg_section, 'bind'),
         port=util.conf.getint(util.cfg_section, 'port'),
