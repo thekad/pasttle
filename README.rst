@@ -1,3 +1,11 @@
+.. image:: https://travis-ci.org/thekad/pasttle.svg?branch=master
+   :target: https://travis-ci.org/thekad/pasttle
+   :alt: Latest Travis CI Build
+
+.. image:: https://pypip.in/version/pasttle/badge.svg?text=version
+   :target: https://pypi.python.org/pypi/pasttle/
+   :alt: Latest Version
+
 Overview
 ========
 
@@ -66,7 +74,15 @@ After that:
 
 Should start the server. If you want to use a different config file, just set 
 the environment variable ``PASTTLECONF`` to the file you want to read before 
-starting the server.
+starting the server, like this:
+
+.. code:: bash
+
+   export PASTTLECONF=/etc/pasttle/mypasttle.ini
+   pasttle-server.py
+   # optionally, specify a different config section, e.g. [development]
+   export PASTTLECONF=/etc/pasttle/mypasttle.ini:development
+   pasttle-server.py
 
 
 Running the client
