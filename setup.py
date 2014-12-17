@@ -5,7 +5,7 @@
 #
 
 import os
-import pasttle
+from src import pasttle
 import sys
 from setuptools import setup
 
@@ -26,6 +26,9 @@ setup(
     packages=[
         'pasttle',
     ],
+    package_dir={
+        '': 'src',
+    },
     package_data={
         'pasttle': [
             'views/*.html',
