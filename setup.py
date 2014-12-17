@@ -34,7 +34,7 @@ setup(
         ],
     },
     version=pasttle.__version__,
-    url='http://github.com/thekad/pasttle/',
+    url='https://github.com/thekad/pasttle',
     description='Simple pastebin on top of bottle.',
     author='Jorge Gallegos',
     author_email='kad@blegh.net',
