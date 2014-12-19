@@ -358,20 +358,6 @@ def edit(db, id):
     paste = _get_paste(db, id)
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
-    form = bottle.request.forms
-    password = form.get('password')
-    is_encrypted = bool(form.get('is_encrypted'))
-    if not is_encrypted:
-        match = hashlib.sha1(password.encode()).hexdigest()
-    else:
-        match = password
-    util.log.debug(
-        '{0} == {1} ? {2}'.format(
-            match, paste.password,
-            match == paste.password,
-        )
-    )
-
     post_args = dict(
         title='Edit entry #{0}'.format(paste.id),
         password=paste.password or u'',
@@ -382,7 +368,10 @@ def edit(db, id):
         version=pasttle.__version__,
     )
 
+    form = bottle.request.forms
     if paste.password:
+        password = form.get('password')
+
         if not password:
             return template(
                 'password_protect',
@@ -390,6 +379,19 @@ def edit(db, id):
                 title=util.conf.get(util.cfg_section, 'title'),
                 version=pasttle.__version__,
             )
+
+        is_encrypted = bool(form.get('is_encrypted'))
+        if not is_encrypted:
+            match = hashlib.sha1(password.encode()).hexdigest()
+        else:
+            match = password
+        util.log.debug(
+            '{0} == {1} ? {2}'.format(
+                match, paste.password,
+                match == paste.password,
+            )
+        )
+
         if match == paste.password:
             post_args['checked'] = 'checked'
             return template('post', post_args)
