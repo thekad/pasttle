@@ -143,7 +143,7 @@ def post(db):
     if bottle.request.forms.syntax != '-':
         syntax = bottle.request.forms.syntax
     password = bottle.request.forms.password
-    encrypt = not bool(bottle.request.forms.is_encrypted)
+    is_encrypted = bool(bottle.request.forms.is_encrypted)
     redirect = bool(bottle.request.forms.redirect)
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
@@ -191,7 +191,7 @@ def post(db):
                 )
                 ip = None
         paste = model.Paste(
-            content=upload, mimetype=mime, encrypt=encrypt,
+            content=upload, mimetype=mime, is_encrypted=is_encrypted,
             password=password, ip=ip, filename=filename,
             lexer=lx
         )
@@ -317,10 +317,10 @@ def showraw(db, id):
         return bottle.HTTPError(404, output='This paste does not exist')
     password = bottle.request.forms.password
     is_encrypted = bool(bottle.request.forms.is_encrypted)
-    if not is_encrypted:
-        match = hashlib.sha1(password).hexdigest()
-    else:
+    if is_encrypted:
         match = password
+    else:
+        match = hashlib.sha1(password).hexdigest()
     util.log.debug(
         '{0} == {1} ? {2}'.format(
             match, paste.password, match == paste.password,

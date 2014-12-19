@@ -35,7 +35,7 @@ class Paste(Base):
 
     def __init__(
         self, content, mimetype, filename=None,
-        password=None, encrypt=True, ip=None,
+        password=None, is_encrypted=True, ip=None,
         lexer=None,
     ):
 
@@ -44,10 +44,10 @@ class Paste(Base):
         if filename and filename.strip():
             self.filename = filename.strip()[:128]
         if password:
-            if encrypt:
-                self.password = hashlib.sha1(password).hexdigest()
-            else:
+            if is_encrypted:
                 self.password = password[:40]
+            else:
+                self.password = hashlib.sha1(password).hexdigest()
         self.ip = ip
         self.lexer = lexer
 
