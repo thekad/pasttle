@@ -289,7 +289,7 @@ def showpaste(db, id):
         if is_encrypted:
             match = password
         else:
-            match = hashlib.sha1(password).hexdigest()
+            match = hashlib.sha1(password.encode()).hexdigest()
         util.log.debug(
             '{0} == {1} ? {2}'.format(
                 match, paste.password, match == paste.password,
@@ -331,7 +331,7 @@ def showraw(db, id):
         if is_encrypted:
             match = password
         else:
-            match = hashlib.sha1(password).hexdigest()
+            match = hashlib.sha1(password.encode()).hexdigest()
         util.log.debug(
             '{0} == {1} ? {2}'.format(
                 match, paste.password, match == paste.password,
@@ -362,7 +362,7 @@ def edit(db, id):
     password = form.get('password')
     is_encrypted = bool(form.get('is_encrypted'))
     if not is_encrypted:
-        match = hashlib.sha1(password).hexdigest()
+        match = hashlib.sha1(password.encode()).hexdigest()
     else:
         match = password
     util.log.debug(

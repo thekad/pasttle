@@ -48,8 +48,8 @@ class Paste(Base):
             if is_encrypted:
                 self.password = password[:40]
             else:
-                self.password = hashlib.sha1(password).hexdigest()
-        self.ip = ip
+                self.password = hashlib.sha1(password.encode()).hexdigest()
+        self.ip = ip.encode() if ip else None
         self.lexer = lexer
 
     def __repr__(self):
