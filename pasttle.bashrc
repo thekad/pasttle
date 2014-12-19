@@ -172,6 +172,7 @@ function pasttle() {
     local clipin="";
     local clipargs="";
     local command="";
+    local syntax=""
     local upstream_version="$SW_VERSION";
 #   You can override this via environment variable
     local rcfile=${PASTTLERC:-~/.pasttlerc}
@@ -267,6 +268,10 @@ function pasttle() {
     if [ -z "$syntax" ];
     then
         syntax="${filename#*.}"
+        if [ "yes" == "$verbose" ];
+        then
+            echo "Syntax is ${syntax}";
+        fi;
     fi;
 
     command="curl -s -A '${version}' -F 'upload=<${filename}' -F 'filename=${filename}' -F 'syntax=${syntax}'"
