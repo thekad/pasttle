@@ -91,7 +91,7 @@ class FunctionalTest(unittest.TestCase):
         rsp = self.app.post(
             '/post', {
                 'upload': text,
-                'password': password,
+                'password': password.encode(),
             }
         )
         assert rsp.status == '200 OK'
@@ -99,7 +99,7 @@ class FunctionalTest(unittest.TestCase):
         rsp = self.app.post(
             '/raw{0}'.format(url.path,),
             {
-                'password': password,
+                'password': password.encode(),
             }
         )
         assert rsp.status == '200 OK'
@@ -109,7 +109,7 @@ class FunctionalTest(unittest.TestCase):
         "Simple paste with an encrypted password, expect a 200 and a match"
 
         text = 'String for hashed password test'
-        password = hashlib.sha1('hashed password').hexdigest()
+        password = hashlib.sha1('hashed password'.encode()).hexdigest()
         rsp = self.app.post(
             '/post', {
                 'upload': text,
@@ -122,7 +122,7 @@ class FunctionalTest(unittest.TestCase):
         rsp = self.app.post(
             '/raw{0}'.format(url.path,),
             {
-                'password': password,
+                'password': password.encode(),
                 'is_encrypted': 'yes',
             }
         )
