@@ -121,8 +121,8 @@ def upload_file():
     Frontend for simple posting via web interface
     """
     return dict(
-        title=u'Paste New', content=u'', password=u'',
-        checked=u'', syntax=u'', url=get_url(),
+        title='Paste New', content='', password='',
+        checked='', syntax='', url=get_url(),
         version=pasttle.__version__,
     )
 
@@ -362,7 +362,7 @@ def edit(db, id):
         title='Edit entry #{0}'.format(paste.id),
         password=paste.password or u'',
         content=paste.content,
-        checked=u'',
+        checked='',
         syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
         url=get_url(),
         version=pasttle.__version__,
@@ -393,7 +393,7 @@ def edit(db, id):
         )
 
         if match == paste.password:
-            post_args['checked'] = 'checked'
+            post_args['checked'] = 'checked="checked"'
             return template('post', post_args)
         else:
             return bottle.HTTPError(401, output='Wrong password provided')
