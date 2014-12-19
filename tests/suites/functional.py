@@ -149,7 +149,7 @@ class FunctionalTest(unittest.TestCase):
             '/raw{0}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
-        assert rsp.body.decode() == text
+        assert rsp.body == text
         assert rsp.content_type == ct
 
     def test_upload_file_force_syntax(self):
@@ -172,7 +172,7 @@ class FunctionalTest(unittest.TestCase):
             '/raw{0}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
-        assert rsp.body.decode() == text
+        assert rsp.body == text
         assert rsp.content_type == ct
 
 
