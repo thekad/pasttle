@@ -81,7 +81,7 @@ class FunctionalTest(unittest.TestCase):
         url = urlparse.urlparse(rsp.body)
         rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
-        assert rsp.body == text
+        assert rsp.body.decode() == text
 
     def test_password_clear(self):
         "Simple paste with a clear-text password, expect a 200 and a match"
@@ -103,7 +103,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        assert rsp.body == text
+        assert rsp.body.decode() == text
 
     def test_password_encrypted(self):
         "Simple paste with an encrypted password, expect a 200 and a match"
@@ -127,7 +127,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        assert rsp.body == text
+        assert rsp.body.decode() == text
 
     def test_upload_file_auto_syntax(self):
         "Upload any file, expect a 200 and auto mime type"
@@ -149,7 +149,7 @@ class FunctionalTest(unittest.TestCase):
             '/raw{0}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
-        assert rsp.body == text
+        assert rsp.body.decode() == text
         assert rsp.content_type == ct
 
     def test_upload_file_force_syntax(self):
@@ -172,7 +172,7 @@ class FunctionalTest(unittest.TestCase):
             '/raw{0}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
-        assert rsp.body == text
+        assert rsp.body.decode() == text
         assert rsp.content_type == ct
 
 
