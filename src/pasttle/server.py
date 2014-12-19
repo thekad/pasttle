@@ -135,16 +135,17 @@ def post(db):
     your intended password does not fly insecure through the internet
     """
 
-    upload = bottle.request.forms.upload
+    form = bottle.request.forms
+    upload = form.upload
     filename = None
-    if bottle.request.forms.filename != '-':
-        filename = os.path.basename(bottle.request.forms.filename)
+    if form.filename != '-':
+        filename = os.path.basename(form.filename)
     syntax = None
-    if bottle.request.forms.syntax != '-':
-        syntax = bottle.request.forms.syntax
-    password = bottle.request.forms.password
-    is_encrypted = bool(bottle.request.forms.is_encrypted)
-    redirect = bool(bottle.request.forms.redirect)
+    if form.syntax != '-':
+        syntax = form.syntax
+    password = form.password
+    is_encrypted = bool(form.is_encrypted)
+    redirect = bool(form.redirect)
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
@@ -278,13 +279,8 @@ def showpaste(db, id):
     lang = bottle.request.query.lang or None
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
-    password = bottle.request.forms.password
-    util.log.debug(
-        '{0} == {1} ? {2}'.format(
-            hashlib.sha1(password).hexdigest(), paste.password,
-            hashlib.sha1(password).hexdigest() == paste.password,
-        )
-    )
+    form = bottle.request.forms
+    password = form.password
     if paste.password:
         if not password:
             return template(
@@ -293,7 +289,17 @@ def showpaste(db, id):
                 title=util.conf.get(util.cfg_section, 'title'),
                 version=pasttle.__version__,
             )
-        if hashlib.sha1(password).hexdigest() == paste.password:
+        is_encrypted = bool(form.is_encrypted)
+        if is_encrypted:
+            match = password
+        else:
+            match = hashlib.sha1(password).hexdigest()
+        util.log.debug(
+            '{0} == {1} ? {2}'.format(
+                match, paste.password, match == paste.password,
+            )
+        )
+        if match == paste.password:
             bottle.response.content_type = 'text/html'
             return _pygmentize(paste, lang)
         else:
@@ -315,8 +321,9 @@ def showraw(db, id):
     paste = _get_paste(db, id)
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
-    password = bottle.request.forms.password
-    is_encrypted = bool(bottle.request.forms.is_encrypted)
+    form = bottle.request.forms
+    password = form.password
+    is_encrypted = bool(form.is_encrypted)
     if is_encrypted:
         match = password
     else:
@@ -355,8 +362,9 @@ def edit(db, id):
     paste = _get_paste(db, id)
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
-    password = bottle.request.forms.password
-    is_encrypted = bool(bottle.request.forms.is_encrypted)
+    form = bottle.request.forms
+    password = form.password
+    is_encrypted = bool(form.is_encrypted)
     if not is_encrypted:
         match = hashlib.sha1(password).hexdigest()
     else:
