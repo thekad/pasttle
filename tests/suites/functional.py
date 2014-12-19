@@ -4,6 +4,7 @@
 # vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
 #
 
+import hashlib
 import os
 import sys
 import unittest
@@ -55,6 +56,19 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '302 Found'
 
+    def test_loop(self):
+        "Simple loop paste, expect 200 in all of them"
+
+        text = 'Attempt #'
+        for x in range(0, 20):
+            rsp = self.app.post(
+                '/post', {
+                    'upload': '{0}{1}'.format(text, x,)
+                }
+            )
+            assert rsp.status == '200 OK'
+        assert True
+
     def test_round_trip(self):
         "Upload some text, expect the text to come back the same"
         text = 'This is the sample text'
@@ -69,18 +83,97 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         assert rsp.body == text
 
-    def test_loop(self):
-        "Simple loop paste, expect 200 in all of them"
+    def test_password_clear(self):
+        "Simple paste with a clear-text password, expect a 200 and a match"
 
-        text = 'Attempt #'
-        for x in range(0, 20):
-            rsp = self.app.post(
-                '/post', {
-                    'upload': '{0}{1}'.format(text, x,)
-                }
-            )
-            assert rsp.status == '200 OK'
-        assert True
+        text = 'String for clear text password test'
+        password = 'plain text password'
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'password': password,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.post(
+            '/raw{0}'.format(url.path,),
+            {
+                'password': password,
+            }
+        )
+        assert rsp.status == '200 OK'
+        assert rsp.body == text
+
+    def test_password_encrypted(self):
+        "Simple paste with an encrypted password, expect a 200 and a match"
+
+        text = 'String for hashed password test'
+        password = hashlib.sha1('hashed password').hexdigest()
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'password': password,
+                'is_encrypted': 'yes',
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.post(
+            '/raw{0}'.format(url.path,),
+            {
+                'password': password,
+                'is_encrypted': 'yes',
+            }
+        )
+        assert rsp.status == '200 OK'
+        assert rsp.body == text
+
+    def test_upload_file_auto_syntax(self):
+        "Upload any file, expect a 200 and auto mime type"
+        fn = os.path.join(util.TEST_DIR, 'pasttle.ini')
+        # ini files have the content type text/x-ini
+        ct = 'text/x-ini'
+        fh = open(fn, 'rb')
+        text = fh.read()
+        fh.close()
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'filename': fn,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.get(
+            '/raw{0}'.format(url.path,),
+        )
+        assert rsp.status == '200 OK'
+        assert rsp.body == text
+        assert rsp.content_type == ct
+
+    def test_upload_file_force_syntax(self):
+        "Upload any file, expect a 200 and forced mime type"
+        fn = os.path.join(util.TEST_DIR, 'pasttle.ini')
+        ct = 'text/plain'
+        fh = open(fn, 'rb')
+        text = fh.read()
+        fh.close()
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'filename': fn,
+                'syntax': ct,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.get(
+            '/raw{0}'.format(url.path,),
+        )
+        assert rsp.status == '200 OK'
+        assert rsp.body == text
+        assert rsp.content_type == ct
 
 
 def test_cases():
