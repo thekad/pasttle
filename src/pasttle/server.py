@@ -215,6 +215,29 @@ def _get_paste(db, id):
     return paste
 
 
+def _add_header_metadata(paste):
+    """
+    Adds pasttle special headers for paste metadata
+    """
+
+    bottle.response.set_header('X-Pasttle-Creation-Date', paste.created)
+    bottle.response.set_header('X-Pasttle-Protected', bool(paste.password))
+    bottle.response.set_header('X-Pasttle-Mime-Type', paste.mimetype)
+    if paste.lexer:
+        bottle.response.set_header('X-Pasttle-Original-Lexer', paste.lexer)
+    if paste.filename:
+        bottle.response.set_header(
+            'X-Pasttle-Original-Filename', paste.filename
+        )
+    try:
+        ip = IPy.IP(long(paste.ip, 2))
+        bottle.response.set_header('X-Pasttle-Original-Source-IP', ip)
+    except Exception as ex:
+        util.log.warn(
+            'Impossible to set header for source IP address: {0}'.format(ex)
+        )
+
+
 def _pygmentize(paste, lang):
     """
     Guess (or force if lang is given) highlight on a given paste via pygments
@@ -251,6 +274,7 @@ def _pygmentize(paste, lang):
             anchorlinenos=True,
         )
     )
+    _add_header_metadata(paste)
     return template(
         'pygmentize.html',
         pygmentized=content,
@@ -338,11 +362,13 @@ def showraw(db, id):
             )
         )
         if match == paste.password:
+            _add_header_metadata(paste)
             bottle.response.content_type = paste.mimetype
             return paste.content
         else:
             return bottle.HTTPError(401, output='Wrong password provided')
     else:
+        _add_header_metadata(paste)
         bottle.response.content_type = paste.mimetype
         return paste.content
 
