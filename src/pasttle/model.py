@@ -5,6 +5,7 @@
 #
 
 import hashlib
+import os
 import sqlalchemy
 from sqlalchemy import func
 from sqlalchemy.ext import declarative
@@ -42,7 +43,7 @@ class Paste(Base):
         self.content = content
         self.mimetype = mimetype
         if filename and filename.strip():
-            self.filename = filename.strip()[:128]
+            self.filename = os.path.basename(filename).strip()[:128]
         if password:
             if is_encrypted:
                 self.password = password[:40]
