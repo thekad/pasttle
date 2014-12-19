@@ -79,7 +79,7 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
-        rsp = self.app.get('/raw{0}'.format(url.path,))
+        rsp = self.app.get('/raw{0}'.format(url.path.encode(),))
         assert rsp.status == '200 OK'
         assert rsp.body == text
 
@@ -97,7 +97,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         rsp = self.app.post(
-            '/raw{0}'.format(url.path,),
+            '/raw{0}'.format(url.path.encode(),),
             {
                 'password': password.encode(),
             }
@@ -120,7 +120,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         rsp = self.app.post(
-            '/raw{0}'.format(url.path,),
+            '/raw{0}'.format(url.path.encode(),),
             {
                 'password': password.encode(),
                 'is_encrypted': 'yes',
@@ -146,7 +146,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         rsp = self.app.get(
-            '/raw{0}'.format(url.path,),
+            '/raw{0}'.format(url.path.encode(),),
         )
         assert rsp.status == '200 OK'
         assert rsp.body == text
@@ -169,7 +169,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         rsp = self.app.get(
-            '/raw{0}'.format(url.path,),
+            '/raw{0}'.format(url.path.encode(),),
         )
         assert rsp.status == '200 OK'
         assert rsp.body == text
