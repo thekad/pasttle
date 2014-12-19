@@ -175,6 +175,38 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.body == text
         assert rsp.content_type == ct
 
+    def test_upload_and_edit(self):
+        "Upload some text, then edit it, expect a 200 in both cases"
+        text = 'This is the sample text'
+        newtext = 'This is the edited sample text'
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        assert rsp.status == '200 OK'
+        assert rsp.body.decode() == text
+        # Editing this entry should yield a 200, and pre-filled
+        # content should be the same content we submitted the 1st time
+        rsp = self.app.get('/edit{0}'.format(url.path.decode(),))
+        assert rsp.status == '200 OK'
+        assert rsp.form['upload'].value.decode() == text
+        # The "edit" page is just a new form page with pre-filled values,
+        # it still posts to the main /post endpoint
+        rsp = self.app.post(
+            '/post', {
+                'upload': newtext,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        assert rsp.status == '200 OK'
+        assert rsp.body.decode() == newtext
+
 
 def test_cases():
     suite = unittest.TestSuite()
