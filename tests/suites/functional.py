@@ -193,7 +193,7 @@ class FunctionalTest(unittest.TestCase):
         # content should be the same content we submitted the 1st time
         rsp = self.app.get('/edit{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
-        assert rsp.form['upload'].value.decode() == text
+        assert rsp.form['upload'].value == text
         # The "edit" page is just a new form page with pre-filled values,
         # it still posts to the main /post endpoint
         rsp = self.app.post(
