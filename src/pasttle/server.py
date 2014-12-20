@@ -163,20 +163,16 @@ def post(db):
                 except lexers.ClassNotFound:
                     lexer = lexers.guess_lexer(upload)
             else:
-                util.log.debug('Best guess of lexer based on content')
-                try:
-                    lexer = lexers.guess_lexer(upload)
-                    util.log.debug(lexer)
-                except lexers.ClassNotFound:
-                    lexer = default_lexer
+                util.log.debug('Use default lexer')
+                lexer = default_lexer
         util.log.debug(lexer.mimetypes)
         lx = None
-        if lexer.mimetypes:
-            mime = lexer.mimetypes[0]
+        if lexer.name:
+            lx = lexer.name
         else:
             if lexer.aliases:
                 lx = lexer.aliases[0]
-            mime = u'text/plain'
+        mime = lexer.mimetypes[0]
         ip = bottle.request.remote_addr
         if ip:
             # Try not to store crap in the database if it's not a valid IP
