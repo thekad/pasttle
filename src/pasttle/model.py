@@ -53,7 +53,7 @@ class Paste(Base):
         self.lexer = lexer
 
     def __repr__(self):
-        return u'<Paste "{0}" ({1}), protected={2}>'.format(
+        return u'<Paste {0} ({1}), protected={2}>'.format(
             self.filename, self.lexer or self.mimetype, bool(self.password))
 
 
