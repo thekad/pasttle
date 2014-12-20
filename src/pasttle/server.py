@@ -220,14 +220,14 @@ def _add_header_metadata(paste):
     bottle.response.set_header('X-Pasttle-Protected', bool(paste.password))
     bottle.response.set_header('X-Pasttle-Mime-Type', paste.mimetype)
     if paste.lexer:
-        bottle.response.set_header('X-Pasttle-Original-Lexer', paste.lexer)
+        bottle.response.set_header('X-Pasttle-Lexer', paste.lexer)
     if paste.filename:
         bottle.response.set_header(
-            'X-Pasttle-Original-Filename', paste.filename
+            'X-Pasttle-Filename', paste.filename
         )
     try:
         ip = IPy.IP(long(paste.ip, 2))
-        bottle.response.set_header('X-Pasttle-Original-Source-IP', ip)
+        bottle.response.set_header('X-Pasttle-Source-IP', ip)
     except Exception as ex:
         util.log.warn(
             'Impossible to set header for source IP address: {0}'.format(ex)
