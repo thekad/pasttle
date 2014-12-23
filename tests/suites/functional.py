@@ -179,9 +179,11 @@ class FunctionalTest(unittest.TestCase):
         "Upload some text, then edit it, expect a 200 in both cases"
         text = 'This is the sample text'
         newtext = 'This is the edited sample text'
+        ct = 'rst'
         rsp = self.app.post(
             '/post', {
                 'upload': text,
+                'syntax': ct,
             }
         )
         assert rsp.status == '200 OK'
@@ -194,6 +196,7 @@ class FunctionalTest(unittest.TestCase):
         rsp = self.app.get('/edit{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.form['upload'].value == text
+        assert rsp.form['syntax'].value == ct
         # The "edit" page is just a new form page with pre-filled values,
         # it still posts to the main /post endpoint
         rsp = self.app.post(
