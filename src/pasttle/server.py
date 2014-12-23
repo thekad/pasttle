@@ -382,10 +382,10 @@ def edit(db, id):
         return bottle.HTTPError(404, output='This paste does not exist')
     post_args = dict(
         title='Edit entry #{0}'.format(paste.id),
-        password=paste.password or u'',
+        password=paste.password or '',
         content=paste.content,
         checked='',
-        syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
+        syntax=paste.mimetype,
         url=get_url(),
         version=pasttle.__version__,
     )
