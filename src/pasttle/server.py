@@ -12,6 +12,7 @@ import IPy
 import model
 import os
 import pasttle
+import pkg_resources
 import pygments
 from pygments import formatters
 from pygments import lexers
@@ -30,7 +31,7 @@ if util.conf.has_option(util.cfg_section, 'templates'):
     STATIC_CONTENT = tpl_path
 
 # Load the templates shipped with the package
-tpl_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'views')
+tpl_path = pkg_resources.resource_filename('pasttle', 'views')
 STATIC_CONTENT = STATIC_CONTENT or tpl_path
 bottle.TEMPLATE_PATH.append(tpl_path)
 
