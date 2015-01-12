@@ -23,8 +23,8 @@ use to run one or the other.
 * Server: Runs on python and needs a database (defaults to using SQLite) to
   store all the data. You want this if you are setting your own private 
   pasttle instance
-* Client: These are just thin wrappers around curl, you can use this to post 
-  to a pasttle server
+* Client: Entirely written in bash. These are just thin wrappers around curl,
+  you can use this to post to a pasttle server
 
 
 Installing pasttle-server
@@ -36,7 +36,7 @@ Pasttle is part of PyPI, you can just:
 
     pip install pasttle
 
-and it should pull all the necessary components. Whether you want to install
+... and it should pull all the necessary components. Whether you want to install
 it in a virtual environment (which I recommend) or system-wide is totally up
 to you.
 
