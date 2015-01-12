@@ -50,6 +50,10 @@ then I suggest you execute:
 ... and be done with it. Again, if you do this in a virtual environment or
 not is up to you.
 
+In either case, if you want to add any other database drivers on top of the
+shipped SQLite driver, you need to install it separately depending on what
+method you used to install pasttle to begin with.
+
 
 Running the server
 ==================
