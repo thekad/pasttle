@@ -96,3 +96,6 @@ Running the client just requires 2 steps:
 
 * Source pasttle.bashrc
 * Run ``pasttle -h`` or ``gettle -h`` to check usage
+
+
+.. include:: CHANGELOG.rst
