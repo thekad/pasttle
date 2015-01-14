@@ -202,7 +202,7 @@ def post(db):
         else:
             return bottle.HTTPResponse('{0}/{1}'.format(get_url(), paste.id, ))
     else:
-        return bottle.HTTPError(400, output='No paste provided')
+        return bottle.HTTPError(400, 'No paste provided')
 
 
 def _get_paste(db, id):
@@ -293,11 +293,11 @@ def _pygmentize(paste, lang):
 def showdiff(db, parent, id):
     this = _get_paste(db, id)
     if not this:
-        return bottle.HTTPError(404, output='This paste does not exist')
+        return bottle.HTTPError(404, 'This paste does not exist')
 
     that = _get_paste(db, parent)
     if not that:
-        return bottle.HTTPError(404, output='Parent paste does not exist')
+        return bottle.HTTPError(404, 'Parent paste does not exist')
 
     if this.password or that.password:
         return bottle.HTTPError(
@@ -343,7 +343,7 @@ def showpaste(db, id):
     paste = _get_paste(db, id)
     lang = bottle.request.query.lang or None
     if not paste:
-        return bottle.HTTPError(404, output='This paste does not exist')
+        return bottle.HTTPError(404, 'This paste does not exist')
     form = bottle.request.forms
     password = form.get('password')
     if paste.password:
@@ -368,7 +368,7 @@ def showpaste(db, id):
             bottle.response.content_type = 'text/html'
             return _pygmentize(paste, lang)
         else:
-            return bottle.HTTPError(401, output='Wrong password provided')
+            return bottle.HTTPError(401, 'Wrong password provided')
     else:
         return _pygmentize(paste, lang)
 
@@ -385,7 +385,7 @@ def showraw(db, id):
 
     paste = _get_paste(db, id)
     if not paste:
-        return bottle.HTTPError(404, output='This paste does not exist')
+        return bottle.HTTPError(404, 'This paste does not exist')
     form = bottle.request.forms
     if paste.password:
         password = form.get('password')
@@ -411,7 +411,7 @@ def showraw(db, id):
             bottle.response.content_type = paste.mimetype
             return paste.content
         else:
-            return bottle.HTTPError(401, output='Wrong password provided')
+            return bottle.HTTPError(401, 'Wrong password provided')
     else:
         _add_header_metadata(paste)
         bottle.response.content_type = paste.mimetype
@@ -428,7 +428,7 @@ def edit(db, id):
 
     paste = _get_paste(db, id)
     if not paste:
-        return bottle.HTTPError(404, output='This paste does not exist')
+        return bottle.HTTPError(404, 'This paste does not exist')
     post_args = dict(
         title='Create new entry based on #{0}'.format(paste.id),
         password=paste.password or u'',
@@ -468,7 +468,7 @@ def edit(db, id):
             post_args['checked'] = 'checked="checked"'
             return template('post', post_args)
         else:
-            return bottle.HTTPError(401, output='Wrong password provided')
+            return bottle.HTTPError(401, 'Wrong password provided')
     else:
         return template('post', post_args)
 
