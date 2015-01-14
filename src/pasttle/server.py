@@ -298,6 +298,12 @@ def showdiff(db, parent, id):
     that = _get_paste(db, parent)
     if not that:
         return bottle.HTTPError(404, output='Parent paste does not exist')
+
+    if this.password or that.password:
+        return bottle.HTTPError(
+            403, 'Can only show differences between unprotected entries'
+        )
+
     diff = '\n'.join([_ for _ in difflib.unified_diff(
         that.content.splitlines(),
         this.content.splitlines(),
