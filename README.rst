@@ -27,8 +27,14 @@ use to run one or the other.
   you can use this to post to a pasttle server
 
 
-Installing pasttle-server
-=========================
+Installing/Upgrading pasttle-server
+===================================
+
+.. note::
+
+   If you are upgrading pasttle-server, you'd do well in reading CHANGELOG.rst
+   first so you make sure the version you are upgrading has any additional
+   steps.
 
 Pasttle is part of PyPI, you can just:
 
