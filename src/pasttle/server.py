@@ -7,6 +7,7 @@
 import bottle
 from bottle import template
 from bottle.ext import sqlalchemy as sqlaplugin
+import difflib
 import hashlib
 import IPy
 import model
@@ -141,6 +142,10 @@ def post(db):
     filename = form.get('filename') if form.get('filename') != '-' else None
     syntax = form.get('syntax') if form.get('syntax') != '-' else None
     password = form.get('password')
+    try:
+        parent = int(form.get('parent'))
+    except ValueError:
+        util.log.warn('Parent value does not seem like an int: %s' % (parent,))
     is_encrypted = bool(form.get('is_encrypted'))
     redirect = bool(form.get('redirect'))
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
@@ -187,7 +192,7 @@ def post(db):
         paste = model.Paste(
             content=upload, mimetype=mime, is_encrypted=is_encrypted,
             password=password, ip=ip, filename=filename,
-            lexer=lx
+            lexer=lx, parent=parent
         )
         util.log.debug(paste)
         db.add(paste)
@@ -279,6 +284,43 @@ def _pygmentize(paste, lang):
         version=pasttle.__version__,
         url=get_url(),
         id=paste.id,
+        parent=paste.parent or u'',
+        pygments_style=util.conf.get(util.cfg_section, 'pygments_style'),
+    )
+
+
+@bottle.get('/diff/<parent:int>..<id:int>')
+def showdiff(db, parent, id):
+    this = _get_paste(db, id)
+    if not this:
+        return bottle.HTTPError(404, output='This paste does not exist')
+
+    that = _get_paste(db, parent)
+    if not that:
+        return bottle.HTTPError(404, output='Parent paste does not exist')
+    diff = '\n'.join([_ for _ in difflib.unified_diff(
+        that.content.splitlines(),
+        this.content.splitlines(),
+        fromfile=that.filename or 'Paste #{0}'.format(that.id),
+        tofile=this.filename or 'Paste #{0}'.format(this.id)
+    )])
+    lexer = lexers.get_lexer_by_name('diff')
+    content = pygments.highlight(
+        diff, lexer, formatters.HtmlFormatter(
+            linenos='table',
+            encoding='utf-8',
+            lineanchors='ln',
+            anchorlinenos=True,
+        )
+    )
+    return template(
+        'pygmentize.html',
+        pygmentized=content,
+        title='Showing differences between #{0} and #{1}'.format(parent, id),
+        version=pasttle.__version__,
+        url=get_url(),
+        id=id,
+        parent=parent,
         pygments_style=util.conf.get(util.cfg_section, 'pygments_style'),
     )
 
@@ -382,11 +424,12 @@ def edit(db, id):
     if not paste:
         return bottle.HTTPError(404, output='This paste does not exist')
     post_args = dict(
-        title='Edit entry #{0}'.format(paste.id),
+        title='Create new entry based on #{0}'.format(paste.id),
         password=paste.password or u'',
         content=paste.content,
         checked='',
         syntax=lexers.get_lexer_for_mimetype(paste.mimetype).aliases[0],
+        parent=id,
         url=get_url(),
         version=pasttle.__version__,
     )
