@@ -144,7 +144,7 @@ def post(db):
     password = form.get('password')
     try:
         parent = form.get('parent')
-        parent = id(parent)
+        parent = int(parent)
     except ValueError:
         util.log.warn('Parent value does not seem like an int: %s' % (parent,))
     is_encrypted = bool(form.get('is_encrypted'))
