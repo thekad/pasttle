@@ -2,7 +2,7 @@
    :target: https://travis-ci.org/thekad/pasttle
    :alt: Latest Travis CI Build
 
-.. image:: https://pypip.in/version/pasttle/badge.svg?text=version
+.. image:: https://pypip.in/version/pasttle/badge.svg?text=version&style=flat
    :target: https://pypi.python.org/pypi/pasttle/
    :alt: Latest Version
 
