@@ -12,6 +12,8 @@ v0.9
 * Refined the look&feel
 * Now the "show paste" page is also styled
 * Reorganized the index page so the most used links appear at the top
+* Paste pages now return some extra metadata that might be useful in the
+  future. Comes in the form of response headers in both normal and raw mode
 
 
 v0.8
