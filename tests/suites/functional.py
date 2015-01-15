@@ -210,6 +210,46 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
 
+    def test_upload_and_edit_and_diff(self):
+        "Upload some text, then edit it, then show the diffs, expect 200"
+        text = 'This is the sample text'
+        newtext = 'This is the edited sample text'
+        ct = 'rst'
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'syntax': ct,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        item1 = url.path.decode().split('/')[-1]
+        rsp = self.app.get('/raw/{}'.format(item1,))
+        assert rsp.status == '200 OK'
+        assert rsp.body.decode() == text
+        # Editing this entry should yield a 200, and pre-filled
+        # content should be the same content we submitted the 1st time
+        rsp = self.app.get('/edit/{}'.format(item1,))
+        assert rsp.status == '200 OK'
+        assert rsp.form['upload'].value == text
+        assert rsp.form['syntax'].value == ct
+        assert rsp.form['parent'].value == item1
+        # The "edit" page is just a new form page with pre-filled values,
+        # it still posts to the main /post endpoint
+        rsp = self.app.post(
+            '/post', {
+                'upload': newtext,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        item2 = url.path.decode().split('/')[-1]
+        rsp = self.app.get('/raw/{}'.format(item2,))
+        assert rsp.status == '200 OK'
+        assert rsp.body.decode() == newtext
+        rsp = self.app.get('/diff/{}..{}'.format(item1, item2))
+        assert rsp.status == '200 OK'
+
 
 def test_cases():
     suite = unittest.TestSuite()
