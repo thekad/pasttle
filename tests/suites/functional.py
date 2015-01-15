@@ -224,12 +224,12 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         item1 = url.path.decode().split('/')[-1]
-        rsp = self.app.get('/raw/{}'.format(item1,))
+        rsp = self.app.get('/raw/{0}'.format(item1,))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
         # Editing this entry should yield a 200, and pre-filled
         # content should be the same content we submitted the 1st time
-        rsp = self.app.get('/edit/{}'.format(item1,))
+        rsp = self.app.get('/edit/{0}'.format(item1,))
         assert rsp.status == '200 OK'
         assert rsp.form['upload'].value == text
         assert rsp.form['syntax'].value == ct
@@ -244,10 +244,10 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urlparse.urlparse(rsp.body)
         item2 = url.path.decode().split('/')[-1]
-        rsp = self.app.get('/raw/{}'.format(item2,))
+        rsp = self.app.get('/raw/{0}'.format(item2,))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
-        rsp = self.app.get('/diff/{}..{}'.format(item1, item2))
+        rsp = self.app.get('/diff/{0}..{0}'.format(item1, item2))
         assert rsp.status == '200 OK'
 
 
