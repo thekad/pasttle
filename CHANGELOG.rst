@@ -1,6 +1,12 @@
 CHANGELOG
 =========
 
+v0.9.1
+------
+
+* Bugfix: the parent value was getting set to some weird integer
+
+
 v0.9
 ----
 
