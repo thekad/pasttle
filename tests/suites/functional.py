@@ -250,6 +250,40 @@ class FunctionalTest(unittest.TestCase):
         rsp = self.app.get('/diff/{0}..{0}'.format(item1, item2))
         assert rsp.status == '200 OK'
 
+    def test_404s(self):
+        "Test several invalid scenarios, expect 404s"
+
+        # Using .request() because .get() bails on 4xx
+        rsp = self.app.request('/x', 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/raw/x', 404)
+        assert rsp.status == '404 Not Found'
+
+        text = 'This is the sample text'
+        ct = 'rst'
+        rsp = self.app.post(
+            '/post', {
+                'upload': text,
+                'syntax': ct,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urlparse.urlparse(rsp.body)
+        item = url.path.decode().split('/')[-1]
+
+        rsp = self.app.request('/diff/{0}..x'.format(item), 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/diff/x..{0}'.format(item), 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/diff/{0}..'.format(item), 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/diff/x..', 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/diff/{0}..50000'.format(item), 404)
+        assert rsp.status == '404 Not Found'
+        rsp = self.app.request('/diff/50001..50000', 404)
+        assert rsp.status == '404 Not Found'
+
 
 def test_cases():
     suite = unittest.TestSuite()
