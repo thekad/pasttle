@@ -145,8 +145,8 @@ def post(db):
     try:
         parent = form.get('parent')
         parent = int(parent)
-    except ValueError:
-        util.log.warn('Parent value does not seem like an int: %s' % (parent,))
+    except Exception as e:
+        util.log.warn('Parent value does not seem like an int: %s' % (e,))
     is_encrypted = bool(form.get('is_encrypted'))
     redirect = bool(form.get('redirect'))
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
