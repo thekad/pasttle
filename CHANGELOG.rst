@@ -1,6 +1,13 @@
 CHANGELOG
 =========
 
+v0.9.2
+------
+
+* Bugfix: fixing a bug on postgres for parent value
+* Bugfix: fixing the copyright year
+
+
 v0.9.1
 ------
 
