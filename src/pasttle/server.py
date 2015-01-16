@@ -143,7 +143,7 @@ def post(db):
     syntax = form.get('syntax') if form.get('syntax') != '-' else None
     password = form.get('password')
     try:
-        parent = form.get('parent')
+        parent = form.get('parent') or None
         parent = int(parent)
     except Exception as e:
         util.log.warn('Parent value does not seem like an int: %s' % (e,))
