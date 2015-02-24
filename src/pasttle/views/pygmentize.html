@@ -1,5 +1,6 @@
 % rebase('base.html')
       <p><a href="{{url}}/edit/{{id}}">Edit as new paste</a></p>
+      <p><a href="{{url}}/raw/{{id}}">Get the raw version</a></p>
 % if defined('parent') and parent != '':
       <p><a href="{{url}}/diff/{{parent}}..{{id}}">Compare to previous version</a></p>
 % end
