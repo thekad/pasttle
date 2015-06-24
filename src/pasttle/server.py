@@ -143,8 +143,7 @@ def post(db):
     syntax = form.get('syntax') if form.get('syntax') != '-' else None
     password = form.get('password')
     try:
-        parent = form.get('parent') or None
-        parent = int(parent)
+        parent = int(form.get('parent')) if form.get('parent') else None
     except Exception as e:
         util.log.warn('Parent value does not seem like an int: %s' % (e,))
     is_encrypted = bool(form.get('is_encrypted'))
@@ -232,13 +231,9 @@ def _add_header_metadata(paste):
         bottle.response.set_header(
             'X-Pasttle-Filename', paste.filename
         )
-    try:
+    if paste.ip:
         ip = IPy.IP(long(paste.ip, 2))
         bottle.response.set_header('X-Pasttle-Source-IP', ip)
-    except Exception as ex:
-        util.log.warn(
-            'Impossible to set header for source IP address: {0}'.format(ex)
-        )
 
 
 def _pygmentize(paste, lang):
