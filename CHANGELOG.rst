@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+v0.9.4
+------
+
+* Bugfix: get rid of annoying cast-null warnings
+
+
+v0.9.3
+------
+
+* Enhancement: adding a link to the raw version on paste view
+
+
 v0.9.2
 ------
 
