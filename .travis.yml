@@ -6,9 +6,13 @@ python:
   - "2.7"
   - "3.3"
   - "3.4"
+before_install:
+  - "pip install codecov"
 install:
   - "pip install -r test-requirements.txt"
   - "python setup.py install"
 script:
   - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
   - "python setup.py test"
+after_success:
+  - "codecov"
