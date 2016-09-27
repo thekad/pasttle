@@ -1,10 +1,14 @@
+.. image:: https://img.shields.io/github/release/thekad/pasttle.svg
+   :target: https://github.com/thekad/pasttle
+   :alt: Github Release
+
 .. image:: https://travis-ci.org/thekad/pasttle.svg?branch=master
    :target: https://travis-ci.org/thekad/pasttle
    :alt: Latest Travis CI Build
 
-.. image:: https://pypip.in/version/pasttle/badge.svg?text=version&style=flat
-   :target: https://pypi.python.org/pypi/pasttle/
-   :alt: Latest Version
+.. image:: https://img.shields.io/pypi/v/pasttle.svg
+   :target: https://pypi.python.org/pypi/pasttle
+   :alt: PyPi release
 
 Overview
 ========
