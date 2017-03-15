@@ -1,25 +1,19 @@
-# -*- mode:python; sh-basic-offset:2; indent-tabs-mode:nil; coding:utf-8 -*-
-# vim:set tabstop=2 softtabstop=2 expandtab shiftwidth=2 fileencoding=utf-8:
 language: python
 python:
-  - "2.6"
-  - "2.7"
-  - "3.3"
-  - "3.4"
-before_install:
-  - "pip install codecov"
+- '2.6'
+- '2.7'
+- '3.3'
+- '3.4'
+- '3.5'
 install:
-  - "pip install -r test-requirements.txt"
-  - "python setup.py install"
+- pip install -r test-requirements.txt
+- python setup.py install
 script:
-  - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
-  - "python setup.py test"
-after_success:
-  - "codecov"
+- "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
+- python setup.py test
 notifications:
-  webhooks:
-    urls:
-      - https://webhooks.gitter.im/e/d0f0feb0eb0b65ca71e6
-    on_success: always
-    on_failure: always
-    on_start: always
+  pushover:
+    api_key:
+      secure: KwYOzxjdE7Pg4H93MN8nIYyFXRnCULgU222AILxt6KZCfw2gDkksZQZboxZ0wewilYTCdIY4ApEyJBFClIJyHPcrNa/YRL8bF7Av4kfmQVJZLXTyzo5shzL/Zi+cBiafXGXkqdqNJN6j7Nk6FS5bxduBJvqfBP3Bd1ostcHqyDU=
+    users:
+    - secure: OPCiwZeVkBlkAlFDdTWB3UaC0mWKjak0JWmY7Nsa85jioo745OiAoEoX5ikE2OWgRvLn79kwMNdgenkhSKHfatAdVdtbN03a9/5wffF4Zh4c+ZXZLfRpe+G6AKkf8y6jchEJxejS9EIK/LM1Fr0r8Pp859LsCVgbjD3IZeMz5L0=
