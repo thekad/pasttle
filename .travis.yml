@@ -4,13 +4,14 @@ python:
 - '3.3'
 - '3.4'
 - '3.5'
+- '3.6'
 before_install:
 - pip install -r test-requirements.txt
 install:
 - python setup.py install
 script:
 - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
-- python tests/all.py
+- python setup.py test
 notifications:
   pushover:
     api_key:
