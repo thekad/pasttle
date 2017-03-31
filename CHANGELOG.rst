@@ -1,6 +1,14 @@
 CHANGELOG
 =========
 
+v0.9.5
+------
+
+* NOTICE: Dropping support for python 2.6 as it is no longer maintained by
+  the core team
+* Updating the dependencies to the latest stable versions from upstream
+
+
 v0.9.4
 ------
 
