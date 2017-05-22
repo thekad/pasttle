@@ -7,6 +7,7 @@
 import bottle
 from bottle import template
 from bottle.ext import sqlalchemy as sqlaplugin
+import datetime
 import difflib
 import hashlib
 import IPy
@@ -325,6 +326,64 @@ def showdiff(db, parent, id):
         parent=parent,
         pygments_style=util.conf.get(util.cfg_section, 'pygments_style'),
     )
+
+
+@bottle.get('/delete/<id:int>')
+def deletepasteconfirm(db, id):
+    """ Shows a confirmation form before letting you delete your paste."""
+
+    return template(
+        'delete',
+        url=get_url(),
+        title=util.conf.get(util.cfg_section, 'title'),
+        version=pasttle.__version__,
+    )
+
+
+@bottle.post('/delete/<id:int>')
+def deletepaste(db, id):
+    """ Clears the contents of a paste. """
+
+    def _delete_and_return(paste):
+        db.delete(paste)
+        db.commit()
+
+        return bottle.redirect('{0}/{1}'.format(get_url(), paste.id, ))
+
+    paste = _get_paste(db, id)
+    form = bottle.request.forms
+    if form.get('confirm') and form.get('confirm') == 'No':
+        return bottle.redirect('{0}/{1}'.format(get_url(), paste.id, ))
+
+    if not paste:
+        return bottle.HTTPError(404, 'This paste does not exist')
+    password = form.get('password')
+    if paste.password:
+        if not password:
+            return template(
+                'password_protect',
+                url=get_url(),
+                title=util.conf.get(util.cfg_section, 'title'),
+                version=pasttle.__version__,
+            )
+        is_encrypted = bool(form.get('is_encrypted'))
+        if is_encrypted:
+            match = password
+        else:
+            match = hashlib.sha1(password.encode()).hexdigest()
+        util.log.debug(
+            '{0} == {1} ? {2}'.format(
+                match, paste.password, match == paste.password,
+            )
+        )
+        if match == paste.password:
+            bottle.response.content_type = 'text/html'
+
+            return _delete_and_return(paste)
+        else:
+            return bottle.HTTPError(401, 'Wrong password provided')
+    else:
+        return _delete_and_return(paste)
 
 
 @bottle.get('/<id:int>')
