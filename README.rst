@@ -106,6 +106,36 @@ starting the server, like this:
    export PASTTLECONF=/etc/pasttle/mypasttle.ini:development
    pasttle-server.py
 
+Available configuration options
+-------------------------------
+
+.. code:: ini
+
+    [main]
+    debug: <true or false>
+    bind: <address>
+    port: 9669
+    title: Simple paste bin
+    wsgi: <wsgi server to use>*
+    pool_recycle: <db connection age>*
+    recent_items: <number to show on main page>
+    pygments_style: <coloration theme>
+
+
+.. note::
+
+    pool_recycle
+            See documentation of ``sqlalchemy.create_engine`` for details
+    wsgi
+            Look at ``bottle.server_names``
+
+            .. code:: python
+
+                    import bottle
+                    print(bottle.server_names.keys())
+                    ['cgi', 'gunicorn', 'cherrypy', 'eventlet', 'tornado', 'geventSocketIO', 'rocket', 'diesel', 'twisted', 'wsgiref', 'fapws3', 'bjoern', 'gevent', 'meinheld', 'auto', 'flup', 'gae', 'paste', 'waitress']
+
+
 
 Running the client
 ==================
