@@ -13,14 +13,15 @@
         <h2>CLI Examples:</h2>
         <script>
         function show_examples() {
-            document.querySelector('#cli_examples').style.visibility = "visible"
-            document.querySelector('#cli_examples_holder').style.visibility = "hidden"
+            document.querySelector('#cli_examples').style.display = "block"
+            document.querySelector('#cli_helpers').style.display = "block"
+            document.querySelector('#cli_examples_holder').style.display = "none"
         }
         </script>
         <div id="cli_examples_holder" onclick="show_examples()" style="cursor: pointer">
         Click to show CLI operations
         </div>
-        <div id="cli_examples" style="visibility: hidden">
+        <div id="cli_examples" style="display: none">
           <h3>To post the output of a given command:</h3>
           <p class="terminal">&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
           <h3>To post the contents of a file:</h3>
@@ -45,7 +46,7 @@
           {{url}}/raw/7</p>
         </div><!--end of examples-->
       </div><!--end of section-->
-      <div class="section separator">
+      <div id="cli_helpers" class="section separator" style="display: none">
         <h2>Helpers</h2>
         <p>There are a couple of helper functions in the link below for pasting and
         getting pastes. Import it from your <span class="terminal">~/.bash_profile</span>
