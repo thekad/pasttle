@@ -127,7 +127,7 @@ Available configuration options
     pool_recycle
             See documentation of ``sqlalchemy.create_engine`` for details
     wsgi
-            Look at ``bottle.server_names``
+            WSGI server to use, look at ``bottle.server_names`` for the list
 
             .. code:: python
 
