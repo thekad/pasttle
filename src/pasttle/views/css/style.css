@@ -9,8 +9,12 @@ html,body {
   color: #ecf0f1;
 }
 
+h3 {
+  color: #c2c2c2;
+}
+
 body {
-  background-color: #27ae60;
+  background-color: #2c4f74;
   padding: 40px;
 }
 
@@ -38,7 +42,7 @@ a {
 }
 
 a:hover {
-  color: #444;
+  color: #ffdb00;
   text-decoration: none;
 }
 
@@ -73,10 +77,12 @@ a:hover {
 
 .terminal {
   font-size: smaller;
-  background-color: #000;
-  padding: 2px;
+  background-color: #222;
+  padding: 2px 1ex;
   margin: 3px;
-  color: #0f0;
+  color: #f1d39d;
+  border-radius: 3px;
+
 }
 
 .separator {
