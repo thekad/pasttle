@@ -11,7 +11,16 @@
       </div><!--end of section-->
       <div class="section separator">
         <h2>CLI Examples:</h2>
-        <div>
+        <script>
+        function show_examples() {
+            document.querySelector('#cli_examples').style.visibility = "visible"
+            document.querySelector('#cli_examples_holder').style.visibility = "hidden"
+        }
+        </script>
+        <div id="cli_examples_holder" onclick="show_examples()" style="cursor: pointer">
+        Click to show CLI operations
+        </div>
+        <div id="cli_examples" style="visibility: hidden">
           <h3>To post the output of a given command:</h3>
           <p class="terminal">&lt;command&gt; | curl -F "upload=&lt;-" {{url}}/post && echo</p>
           <h3>To post the contents of a file:</h3>
