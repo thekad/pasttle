@@ -18,6 +18,10 @@
    :target: https://pypi.python.org/pypi/pasttle
    :alt: Python Versions
 
+.. image:: https://badges.gitter.im/Join%20Chat.svg
+   :alt: Join the chat at https://gitter.im/thekad/pasttle
+   :target: https://gitter.im/thekad/pasttle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
+
 Overview
 ========
 
@@ -115,7 +119,3 @@ Running the client just requires 2 steps:
 * Source pasttle.bashrc
 * Run ``pasttle -h`` or ``gettle -h`` to check usage
 
-
-.. image:: https://badges.gitter.im/Join%20Chat.svg
-   :alt: Join the chat at https://gitter.im/thekad/pasttle
-   :target: https://gitter.im/thekad/pasttle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
