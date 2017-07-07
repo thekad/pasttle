@@ -9,7 +9,7 @@ import os
 import sqlalchemy
 from sqlalchemy import func
 from sqlalchemy.ext import declarative
-import util
+from pasttle import util
 
 
 # Subclass declarative base for sqla objects

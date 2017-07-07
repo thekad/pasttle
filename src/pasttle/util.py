@@ -10,7 +10,13 @@ except ImportError:
     import configparser
 import logging
 import os
-import StringIO
+
+try:
+    import StringIO as py2StringIO
+    StringIO = py2StringIO.StringIO
+except ImportError:
+    import io
+    StringIO = io.StringIO
 
 
 cfg = os.environ.get('PASTTLECONF', 'pasttle.ini').split(':')
@@ -20,7 +26,7 @@ if len(cfg) < 2:
 cfg_file, cfg_section = cfg[0], cfg[1]
 
 # Load configuration, or default
-default_ini = StringIO.StringIO("""
+default_ini = StringIO("""
 [{0}]
 debug: true
 bind: localhost
