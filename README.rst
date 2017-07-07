@@ -109,17 +109,19 @@ starting the server, like this:
 Available configuration options
 -------------------------------
 
+Defaults are inside `[brackets]`:
+
 .. code:: ini
 
     [main]
-    debug: <true or false>
-    bind: <address>
+    debug: <true/false> [true]
+    bind: <address> [localhost]
     port: 9669
-    title: Simple paste bin
-    wsgi: <wsgi server to use>*
-    pool_recycle: <db connection age>*
-    recent_items: <number to show on main page>
-    pygments_style: <coloration theme>
+    title: Punchy title
+    wsgi: <wsgi server to use>* [auto]
+    pool_recycle: <db connection age>* [3600]
+    recent_items: <number to show on main page> [20]
+    pygments_style: <coloration theme> [tango]
 
 
 .. note::
