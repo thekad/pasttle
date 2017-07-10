@@ -12,8 +12,7 @@ import logging
 import os
 
 try:
-    import StringIO as py2StringIO
-    StringIO = py2StringIO.StringIO
+    from StringIO import StringIO
 except ImportError:
     import io
     StringIO = io.StringIO
