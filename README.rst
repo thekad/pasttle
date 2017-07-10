@@ -106,6 +106,20 @@ starting the server, like this:
    export PASTTLECONF=/etc/pasttle/mypasttle.ini:development
    pasttle-server.py
 
+Alternatively, an uWSGI configuration is provided in the ``.ini`` file.
+Here is a script to run the server with virtualenv option:
+
+.. code:: bash
+
+    #!/usr/bin/sh
+
+    if [ -n "$VIRTUAL_ENV" ]; then
+        OPT="-H $VIRTUAL_ENV"
+    fi
+
+    exec uwsgi pasttle.ini --plugin python $OPT
+
+
 Available configuration options
 -------------------------------
 
