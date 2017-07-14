@@ -10,15 +10,15 @@ from bottle.ext import sqlalchemy as sqlaplugin
 import difflib
 import hashlib
 import IPy
-import model
 import os
-import pasttle
 import pkg_resources
 import pygments
 from pygments import formatters
 from pygments import lexers
 import sys
-import util
+import pasttle
+from pasttle import util
+from pasttle import model
 
 
 application = bottle.app()

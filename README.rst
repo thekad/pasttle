@@ -110,6 +110,52 @@ starting the server, like this:
    export PASTTLECONF=/etc/pasttle/mypasttle.ini:development
    pasttle-server.py
 
+Alternatively, an uWSGI configuration is provided in the ``.ini`` file.
+Here is a script to run the server with virtualenv option:
+
+.. code:: bash
+
+    #!/usr/bin/sh
+
+    if [ -n "$VIRTUAL_ENV" ]; then
+        OPT="-H $VIRTUAL_ENV"
+    fi
+
+    exec uwsgi pasttle.ini --plugin python $OPT
+
+
+Available configuration options
+-------------------------------
+
+Defaults are inside `[brackets]`:
+
+.. code:: ini
+
+    [main]
+    debug: <true/false> [true]
+    bind: <address> [localhost]
+    port: 9669
+    title: Punchy title
+    wsgi: <wsgi server to use>* [auto]
+    pool_recycle: <db connection age>* [3600]
+    recent_items: <number to show on main page> [20]
+    pygments_style: <coloration theme> [tango]
+
+
+.. note::
+
+    pool_recycle
+            See documentation of ``sqlalchemy.create_engine`` for details
+    wsgi
+            WSGI server to use, look at ``bottle.server_names`` for the list
+
+            .. code:: python
+
+                    import bottle
+                    print(bottle.server_names.keys())
+                    ['cgi', 'gunicorn', 'cherrypy', 'eventlet', 'tornado', 'geventSocketIO', 'rocket', 'diesel', 'twisted', 'wsgiref', 'fapws3', 'bjoern', 'gevent', 'meinheld', 'auto', 'flup', 'gae', 'paste', 'waitress']
+
+
 
 Running the client
 ==================
