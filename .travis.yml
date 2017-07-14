@@ -12,7 +12,7 @@ install:
   - python setup.py install
 script:
   - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
-  - coverage run tests/all.py
+  - pytest
 after_success:
   - codecov
 notifications:
