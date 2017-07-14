@@ -1,24 +1,26 @@
 ---
 language: python
 python:
-- '2.7'
-- '3.3'
-- '3.4'
-- '3.5'
-- '3.6'
+  - '2.7'
+  - '3.3'
+  - '3.4'
+  - '3.5'
+  - '3.6'
 before_install:
-- pip install -r test-requirements.txt
+  - pip install -r test-requirements.txt
 install:
-- python setup.py install
+  - python setup.py install
 script:
-- "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
-- python setup.py test
+  - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
+  - coverage run tests/all.py
+after_success:
+  - codecov
 notifications:
   pushover:
     api_key:
       secure: KwYOzxjdE7Pg4H93MN8nIYyFXRnCULgU222AILxt6KZCfw2gDkksZQZboxZ0wewilYTCdIY4ApEyJBFClIJyHPcrNa/YRL8bF7Av4kfmQVJZLXTyzo5shzL/Zi+cBiafXGXkqdqNJN6j7Nk6FS5bxduBJvqfBP3Bd1ostcHqyDU=
     users:
-    - secure: OPCiwZeVkBlkAlFDdTWB3UaC0mWKjak0JWmY7Nsa85jioo745OiAoEoX5ikE2OWgRvLn79kwMNdgenkhSKHfatAdVdtbN03a9/5wffF4Zh4c+ZXZLfRpe+G6AKkf8y6jchEJxejS9EIK/LM1Fr0r8Pp859LsCVgbjD3IZeMz5L0=
+      - secure: OPCiwZeVkBlkAlFDdTWB3UaC0mWKjak0JWmY7Nsa85jioo745OiAoEoX5ikE2OWgRvLn79kwMNdgenkhSKHfatAdVdtbN03a9/5wffF4Zh4c+ZXZLfRpe+G6AKkf8y6jchEJxejS9EIK/LM1Fr0r8Pp859LsCVgbjD3IZeMz5L0=
   webhooks:
     urls:
       - https://webhooks.gitter.im/e/52bf7df76c08d80a9b80

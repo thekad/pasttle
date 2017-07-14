@@ -1,3 +1,4 @@
 -r requirements.txt
 pep8==1.7.0
 WebTest==2.0.27
+codecov==2.0.9
