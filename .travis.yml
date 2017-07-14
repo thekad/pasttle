@@ -12,6 +12,7 @@ install:
   - python setup.py install
 script:
   - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w tests/"
+  - "( python --version 2>&1 | grep -q '^Python 2' ) || 2to3 -w src/"
   - pytest
 after_success:
   - codecov
