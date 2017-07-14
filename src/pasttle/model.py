@@ -23,7 +23,7 @@ class Paste(Base):
 
     __tablename__ = 'paste'
 
-    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True, index=True, unique=True)
+    id = sqlalchemy.Column(sqlalchemy.Integer, primary_key=True)
     content = sqlalchemy.Column(sqlalchemy.Text, nullable=False)
     filename = sqlalchemy.Column(sqlalchemy.String(128))
     password = sqlalchemy.Column(sqlalchemy.String(40))
