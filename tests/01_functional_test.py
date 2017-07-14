@@ -11,7 +11,7 @@ import unittest
 import urlparse
 import webtest
 
-import util
+THIS_PATH = os.path.dirname(__file__)
 
 
 class FunctionalTest(unittest.TestCase):
@@ -20,7 +20,7 @@ class FunctionalTest(unittest.TestCase):
         unittest.TestCase.__init__(self, *args, **kwargs)
 
     def setUp(self):
-        self.test_ini = os.path.join(util.TEST_DIR, 'pasttle.ini')
+        self.test_ini = os.path.join(THIS_PATH, 'pasttle.ini')
         os.environ['PASTTLECONF'] = '{0}:test'.format(self.test_ini,)
         from pasttle import server
         self.app = webtest.TestApp(server.application)
@@ -131,7 +131,7 @@ class FunctionalTest(unittest.TestCase):
 
     def test_upload_file_auto_syntax(self):
         "Upload any file, expect a 200 and auto mime type"
-        fn = os.path.join(util.TEST_DIR, 'pasttle.ini')
+        fn = os.path.join(THIS_PATH, 'pasttle.ini')
         # ini files have the content type text/x-ini
         ct = 'text/x-ini'
         fh = open(fn, 'rb')
@@ -154,7 +154,7 @@ class FunctionalTest(unittest.TestCase):
 
     def test_upload_file_force_syntax(self):
         "Upload any file, expect a 200 and forced mime type"
-        fn = os.path.join(util.TEST_DIR, 'pasttle.ini')
+        fn = os.path.join(THIS_PATH, 'pasttle.ini')
         ct = 'text/plain'
         fh = open(fn, 'rb')
         text = fh.read()
