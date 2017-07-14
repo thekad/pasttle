@@ -7,3 +7,7 @@ dist
 *.egg-info
 *.db
 *.bak
+.coverage
+coverage.xml
+pytestdebug.log
+.cache
