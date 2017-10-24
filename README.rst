@@ -26,6 +26,10 @@
    :alt: Join the chat at https://gitter.im/thekad/pasttle
    :target: https://gitter.im/thekad/pasttle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
+.. image:: https://img.shields.io/docker/automated/thekad/pasttle.svg
+   :alt: Automated docker builds
+   :target: https://hub.docker.com/r/thekad/pasttle
+
 Overview
 ========
 
