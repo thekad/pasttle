@@ -131,19 +131,17 @@ Here is a script to run the server with virtualenv option:
 Available configuration options
 -------------------------------
 
-Defaults are inside `[brackets]`:
-
 .. code:: ini
 
     [main]
-    debug: <true/false> [true]
-    bind: <address> [localhost]
-    port: 9669
-    title: Punchy title
-    wsgi: <wsgi server to use>* [auto]
-    pool_recycle: <db connection age>* [3600]
-    recent_items: <number to show on main page> [20]
-    pygments_style: <coloration theme> [tango]
+    debug: <true/false> [default=true]
+    bind: <address> [default=localhost]
+    port: <port> [default=9669]
+    title: <title>
+    wsgi: <wsgi server to use> [default=wsgiref]
+    pool_recycle: <db connection age> [default=3600]
+    recent_items: <number to show on main page> [default=20]
+    pygments_style: <coloration theme> [default=tango]
 
 
 .. note::
@@ -153,11 +151,11 @@ Defaults are inside `[brackets]`:
     wsgi
             WSGI server to use, look at ``bottle.server_names`` for the list
 
-            .. code:: python
+.. code:: python
 
-                    import bottle
-                    print(bottle.server_names.keys())
-                    ['cgi', 'gunicorn', 'cherrypy', 'eventlet', 'tornado', 'geventSocketIO', 'rocket', 'diesel', 'twisted', 'wsgiref', 'fapws3', 'bjoern', 'gevent', 'meinheld', 'auto', 'flup', 'gae', 'paste', 'waitress']
+    import bottle
+    print(bottle.server_names.keys())
+    ['cgi', 'gunicorn', 'cherrypy', 'eventlet', 'tornado', 'geventSocketIO', 'rocket', 'diesel', 'twisted', 'wsgiref', 'fapws3', 'bjoern', 'gevent', 'meinheld', 'auto', 'flup', 'gae', 'paste', 'waitress']
 
 
 
