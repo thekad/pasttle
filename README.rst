@@ -2,6 +2,10 @@
    :target: https://travis-ci.org/thekad/pasttle
    :alt: Latest Travis CI Build
 
+.. image:: https://img.shields.io/codecov/c/github/thekad/pasttle.svg
+   :target: https://codecov.io/gh/thekad/pasttle
+   :alt: Code Coverage
+
 .. image:: https://img.shields.io/github/tag/thekad/pasttle.svg
    :target: https://github.com/thekad/pasttle
    :alt: Github Tag
