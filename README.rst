@@ -1,3 +1,7 @@
+.. image:: https://img.shields.io/github/tag/thekad/pasttle.svg
+   :target: https://github.com/thekad/pasttle/releases
+   :alt: Github
+
 .. image:: https://img.shields.io/travis/thekad/pasttle/master.svg
    :target: https://travis-ci.org/thekad/pasttle
    :alt: Latest Travis CI Build
@@ -6,16 +10,12 @@
    :target: https://codecov.io/gh/thekad/pasttle
    :alt: Code Coverage
 
-.. image:: https://img.shields.io/github/tag/thekad/pasttle.svg
-   :target: https://github.com/thekad/pasttle
-   :alt: Github Tag
-
 .. image:: https://img.shields.io/pypi/v/pasttle.svg
    :target: https://pypi.python.org/pypi/pasttle
    :alt: PyPi Release
 
 .. image:: https://img.shields.io/pypi/l/pasttle.svg
-   :target: https://pypi.python.org/pypi/pasttle
+   :target: https://opensource.org/licenses/MIT
    :alt: License
 
 .. image:: https://img.shields.io/pypi/pyversions/pasttle.svg
