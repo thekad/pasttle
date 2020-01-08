@@ -70,7 +70,7 @@ def index():
 def serve_language_css(style):
     try:
         fmt = formatters.get_formatter_by_name('html', style=style)
-    except:
+    except Exception:
         util.log.warn(
             'Style "{0}" cannot be found, falling back to default'.format(
                 style,
@@ -212,7 +212,7 @@ def _get_paste(db, id):
 
     try:
         paste = db.query(model.Paste).filter_by(id=id).one()
-    except:
+    except Exception:
         paste = None
     return paste
 
@@ -232,7 +232,7 @@ def _add_header_metadata(paste):
             'X-Pasttle-Filename', paste.filename
         )
     if paste.ip:
-        ip = IPy.IP(long(paste.ip, 2))
+        ip = IPy.IP(int(paste.ip, 2))
         bottle.response.set_header('X-Pasttle-Source-IP', ip)
 
 
@@ -256,7 +256,7 @@ def _pygmentize(paste, lang):
             lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     util.log.debug('Lexer is {0}'.format(lexer,))
     if paste.ip:
-        ip = IPy.IP(long(paste.ip, 2))
+        ip = IPy.IP(int(paste.ip, 2))
         util.log.debug('Originally pasted from {0}'.format(ip,))
     if paste.filename:
         title = '{0}, created on {1}'.format(paste.filename, paste.created, )
@@ -477,6 +477,7 @@ def main():
         reloader=util.is_debug,
         server=util.conf.get(util.cfg_section, 'wsgi')
     )
+
 
 if __name__ == '__main__':
     sys.exit(main())
