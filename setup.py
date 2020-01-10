@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
 import os
-from src import pasttle
 import sys
-from setuptools import setup
+import setuptools
+
+import src.pasttle as pasttle
 
 
 readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.rst')
 requirements = os.path.join(os.path.dirname(sys.argv[0]), 'requirements.txt')
 
-install_requires = open(requirements).readlines(),
+install_requires = open(requirements).readlines()
 
-
-setup(
+setuptools.setup(
     name='pasttle',
     packages=[
         'pasttle',
