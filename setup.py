@@ -1,25 +1,16 @@
-#!/usr/bin/env python
-#
-# -*- mode:python; sh-basic-offset:4; indent-tabs-mode:nil; coding:utf-8 -*-
-# vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
-#
+#!/usr/bin/env python3
 
 import os
 from src import pasttle
 import sys
 from setuptools import setup
 
-extra = {}
 
 readme = os.path.join(os.path.dirname(sys.argv[0]), 'README.rst')
 requirements = os.path.join(os.path.dirname(sys.argv[0]), 'requirements.txt')
 
 install_requires = open(requirements).readlines(),
 
-if sys.version_info >= (3,):
-    extra['use_2to3'] = True
-else:
-    pass
 
 setup(
     name='pasttle',
@@ -54,6 +45,8 @@ setup(
         'Programming Language :: Python :: 3.6',
         'Programming Language :: Python :: 3.7',
         'Programming Language :: Python :: 3.8',
+        'Development Status :: 4 - Beta',
+        'Environment :: Console',
         'Environment :: Web Environment',
         'Intended Audience :: Developers',
         'License :: OSI Approved :: MIT License',
@@ -65,5 +58,4 @@ setup(
     long_description=open(readme).read(),
     install_requires=install_requires,
     test_suite='tests.all.test_suites',
-    **extra
 )
