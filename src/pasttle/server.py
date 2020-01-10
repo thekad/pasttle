@@ -138,16 +138,18 @@ def post(db):
     """
 
     form = bottle.request.forms
-    upload = form.get('upload')
-    filename = form.get('filename') if form.get('filename') != '-' else None
-    syntax = form.get('syntax') if form.get('syntax') != '-' else None
-    password = form.get('password')
+    upload = form.upload
+    util.log.debug('In post')
+    util.log.debug('Upload: {}'.format(upload))
+    filename = form.filename if form.filename != '-' else None
+    syntax = form.syntax if form.syntax != '-' else None
+    password = form.password
     try:
-        parent = int(form.get('parent')) if form.get('parent') else None
+        parent = int(form.parent) if form.parent else None
     except Exception as e:
         util.log.warn('Parent value does not seem like an int: %s' % (e,))
-    is_encrypted = bool(form.get('is_encrypted'))
-    redirect = bool(form.get('redirect'))
+    is_encrypted = bool(form.is_encrypted)
+    redirect = bool(form.redirect)
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
