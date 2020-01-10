@@ -139,8 +139,6 @@ def post(db):
 
     form = bottle.request.forms
     upload = form.upload
-    util.log.debug('In post')
-    util.log.debug('Upload: {}'.format(upload))
     filename = form.filename if form.filename != '-' else None
     syntax = form.syntax if form.syntax != '-' else None
     password = form.password
