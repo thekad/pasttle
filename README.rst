@@ -1,32 +1,32 @@
-.. image:: https://img.shields.io/github/tag/thekad/pasttle.svg
+.. image:: https://img.shields.io/github/tag/thekad/pasttle?style=for-the-badge
    :target: https://github.com/thekad/pasttle/releases
    :alt: Github
 
-.. image:: https://img.shields.io/pypi/v/pasttle.svg
+.. image:: https://img.shields.io/pypi/v/pasttle?style=for-the-badge
    :target: https://pypi.python.org/pypi/pasttle
    :alt: PyPi Release
 
-.. image:: https://img.shields.io/travis/thekad/pasttle/master.svg
+.. image:: https://img.shields.io/travis/thekad/pasttle/master?style=for-the-badge
    :target: https://travis-ci.org/thekad/pasttle
    :alt: Latest Travis CI Build
 
-.. image:: https://img.shields.io/codecov/c/github/thekad/pasttle.svg
+.. image:: https://img.shields.io/codecov/c/github/thekad/pasttle?style=for-the-badge
    :target: https://codecov.io/gh/thekad/pasttle
    :alt: Code Coverage
 
-.. image:: https://img.shields.io/pypi/l/pasttle.svg
+.. image:: https://img.shields.io/pypi/l/pasttle?style=for-the-badge
    :target: https://opensource.org/licenses/MIT
    :alt: License
 
-.. image:: https://img.shields.io/pypi/pyversions/pasttle.svg
+.. image:: https://img.shields.io/pypi/pyversions/pasttle?style=for-the-badge
    :target: https://pypi.python.org/pypi/pasttle
    :alt: Python Versions
 
-.. image:: https://badges.gitter.im/Join%20Chat.svg
+.. image:: https://img.shields.io/gitter/room/thekad/pasttle?style=for-the-badge
    :alt: Join the chat at https://gitter.im/thekad/pasttle
    :target: https://gitter.im/thekad/pasttle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-.. image:: https://img.shields.io/docker/build/thekad/pasttle.svg
+.. image:: https://img.shields.io/docker/build/thekad/pasttle?style=for-the-badge
    :alt: Docker build status
    :target: https://hub.docker.com/r/thekad/pasttle
 
