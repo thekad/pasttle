@@ -8,7 +8,7 @@ import hashlib
 import os
 import sys
 import unittest
-import urlparse
+import urllib.parse
 import webtest
 
 THIS_PATH = os.path.dirname(__file__)
@@ -78,7 +78,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
@@ -95,7 +95,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.post(
             '/raw{0}'.format(url.path.decode(),),
             {
@@ -118,7 +118,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.post(
             '/raw{0}'.format(url.path.decode(),),
             {
@@ -144,7 +144,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get(
             '/raw{0}'.format(url.path.decode(),),
         )
@@ -167,7 +167,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get(
             '/raw{0}'.format(url.path.decode(),),
         )
@@ -187,7 +187,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
@@ -205,7 +205,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
@@ -222,7 +222,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         item1 = url.path.decode().split('/')[-1]
         rsp = self.app.get('/raw/{0}'.format(item1,))
         assert rsp.status == '200 OK'
@@ -242,13 +242,28 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         item2 = url.path.decode().split('/')[-1]
         rsp = self.app.get('/raw/{0}'.format(item2,))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
         rsp = self.app.get('/diff/{0}..{0}'.format(item1, item2))
         assert rsp.status == '200 OK'
+
+    def test_unicode(self):
+        "Test unicode support"
+
+        emoji = "🐍 🍾"
+        rsp = self.app.post(
+            '/post', {
+                'upload': emoji,
+            }
+        )
+        assert rsp.status == '200 OK'
+        url = urllib.parse.urlparse(rsp.body)
+        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        assert rsp.status == '200 OK'
+        assert rsp.body.decode() == emoji
 
     def test_404s(self):
         "Test several invalid scenarios, expect 404s"
@@ -268,7 +283,7 @@ class FunctionalTest(unittest.TestCase):
             }
         )
         assert rsp.status == '200 OK'
-        url = urlparse.urlparse(rsp.body)
+        url = urllib.parse.urlparse(rsp.body)
         item = url.path.decode().split('/')[-1]
 
         rsp = self.app.request('/diff/{0}..x'.format(item), 404)

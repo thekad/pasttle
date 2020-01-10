@@ -70,7 +70,7 @@ def index():
 def serve_language_css(style):
     try:
         fmt = formatters.get_formatter_by_name('html', style=style)
-    except:
+    except Exception:
         util.log.warn(
             'Style "{0}" cannot be found, falling back to default'.format(
                 style,
@@ -138,16 +138,16 @@ def post(db):
     """
 
     form = bottle.request.forms
-    upload = form.get('upload')
-    filename = form.get('filename') if form.get('filename') != '-' else None
-    syntax = form.get('syntax') if form.get('syntax') != '-' else None
-    password = form.get('password')
+    upload = form.upload
+    filename = form.filename if form.filename != '-' else None
+    syntax = form.syntax if form.syntax != '-' else None
+    password = form.password
     try:
-        parent = int(form.get('parent')) if form.get('parent') else None
+        parent = int(form.parent) if form.parent else None
     except Exception as e:
         util.log.warn('Parent value does not seem like an int: %s' % (e,))
-    is_encrypted = bool(form.get('is_encrypted'))
-    redirect = bool(form.get('redirect'))
+    is_encrypted = bool(form.is_encrypted)
+    redirect = bool(form.redirect)
     util.log.debug('Filename: {0}, Syntax: {1}'.format(filename, syntax,))
     default_lexer = lexers.get_lexer_for_mimetype('text/plain')
     if upload:
@@ -212,7 +212,7 @@ def _get_paste(db, id):
 
     try:
         paste = db.query(model.Paste).filter_by(id=id).one()
-    except:
+    except Exception:
         paste = None
     return paste
 
@@ -232,7 +232,7 @@ def _add_header_metadata(paste):
             'X-Pasttle-Filename', paste.filename
         )
     if paste.ip:
-        ip = IPy.IP(long(paste.ip, 2))
+        ip = IPy.IP(int(paste.ip, 2))
         bottle.response.set_header('X-Pasttle-Source-IP', ip)
 
 
@@ -256,7 +256,7 @@ def _pygmentize(paste, lang):
             lexer = lexers.get_lexer_for_mimetype(paste.mimetype)
     util.log.debug('Lexer is {0}'.format(lexer,))
     if paste.ip:
-        ip = IPy.IP(long(paste.ip, 2))
+        ip = IPy.IP(int(paste.ip, 2))
         util.log.debug('Originally pasted from {0}'.format(ip,))
     if paste.filename:
         title = '{0}, created on {1}'.format(paste.filename, paste.created, )
@@ -477,6 +477,7 @@ def main():
         reloader=util.is_debug,
         server=util.conf.get(util.cfg_section, 'wsgi')
     )
+
 
 if __name__ == '__main__':
     sys.exit(main())
