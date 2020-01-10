@@ -4,18 +4,10 @@
 # vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
 #
 
-try:
-    import ConfigParser as configparser
-except ImportError:
-    import configparser
+import configparser
+import io
 import logging
 import os
-
-try:
-    from StringIO import StringIO
-except ImportError:
-    import io
-    StringIO = io.StringIO
 
 
 cfg = os.environ.get('PASTTLECONF', 'pasttle.ini').split(':')
@@ -25,7 +17,7 @@ if len(cfg) < 2:
 cfg_file, cfg_section = cfg[0], cfg[1]
 
 # Load configuration, or default
-default_ini = StringIO("""
+default_ini = io.StringIO("""
 [{0}]
 debug: true
 bind: localhost
@@ -37,8 +29,8 @@ recent_items: 20
 pygments_style: tango
 """.format(cfg_section,))
 
-conf = configparser.SafeConfigParser()
-conf.readfp(default_ini)
+conf = configparser.ConfigParser()
+conf.read_file(default_ini)
 conf.read(os.path.realpath(cfg_file))
 
 is_debug = conf.getboolean(cfg_section, 'debug')
