@@ -1,0 +1,19 @@
+# top-most EditorConfig file
+root = true
+
+# Unix-style newlines with a newline ending every file and indentation style
+# for most files in the repo
+[*]
+end_of_line = lf
+insert_final_newline = true
+indent_style = space
+indent_size = 2
+
+# Matches multiple files with brace expansion notation
+# Set default charset
+[*.{bashrc,html,ini,py,yml}]
+charset = utf-8
+
+# 4 space indentation for python files
+[*.py]
+indent_size = 4

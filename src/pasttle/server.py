@@ -1,25 +1,25 @@
-#!/usr/bin/env python
-#
-# -*- mode:python; sh-basic-offset:4; indent-tabs-mode:nil; coding:utf-8 -*-
-# vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
-#
+#!/usr/bin/env python3
 
-import bottle
-from bottle import template
-from bottle.ext import sqlalchemy as sqlaplugin
+import datetime
 import difflib
 import hashlib
-import IPy
 import os
 import pkg_resources
-import pygments
-from pygments import formatters
-from pygments import lexers
 import sys
-import pasttle
-from pasttle import util
-from pasttle import model
 
+import bottle
+import bottle.ext.sqlalchemy as sqlaplugin
+import IPy
+import pygments
+import pygments.formatters as formatters
+import pygments.lexers as lexers
+
+import pasttle
+import pasttle.util as util
+import pasttle.model as model
+
+
+CURRENT_YEAR = datetime.date.today().year
 
 application = bottle.app()
 
@@ -63,6 +63,7 @@ def index():
         url=get_url(),
         title=util.conf.get(util.cfg_section, 'title'),
         version=pasttle.__version__,
+        current_year=CURRENT_YEAR,
     )
 
 
@@ -100,7 +101,7 @@ def recent(db):
     """
 
     items = util.conf.get(util.cfg_section, 'recent_items')
-    return template(
+    return bottle.template(
         'recent', dict(
             pastes=db.query(
                 model.Paste.id, model.Paste.filename, model.Paste.mimetype,
@@ -112,6 +113,7 @@ def recent(db):
             title=util.conf.get(util.cfg_section, 'title'),
             recent=items,
             version=pasttle.__version__,
+            current_year=CURRENT_YEAR,
         )
     )
 
@@ -126,6 +128,7 @@ def upload_file():
         title='Paste New', content='', password='',
         checked='', syntax='', url=get_url(),
         version=pasttle.__version__,
+        current_year=CURRENT_YEAR,
     )
 
 
@@ -273,11 +276,12 @@ def _pygmentize(paste, lang):
         )
     )
     _add_header_metadata(paste)
-    return template(
+    return bottle.template(
         'pygmentize.html',
         pygmentized=content,
         title=title,
         version=pasttle.__version__,
+        current_year=CURRENT_YEAR,
         url=get_url(),
         id=paste.id,
         parent=paste.parent or u'',
@@ -315,11 +319,12 @@ def showdiff(db, parent, id):
             anchorlinenos=True,
         )
     )
-    return template(
+    return bottle.template(
         'pygmentize.html',
         pygmentized=content,
         title='Showing differences between #{0} and #{1}'.format(parent, id),
         version=pasttle.__version__,
+        current_year=CURRENT_YEAR,
         url=get_url(),
         id=id,
         parent=parent,
@@ -344,11 +349,12 @@ def showpaste(db, id):
     password = form.get('password')
     if paste.password:
         if not password:
-            return template(
+            return bottle.template(
                 'password_protect',
                 url=get_url(),
                 title=util.conf.get(util.cfg_section, 'title'),
                 version=pasttle.__version__,
+                current_year=CURRENT_YEAR,
             )
         is_encrypted = bool(form.get('is_encrypted'))
         if is_encrypted:
@@ -386,11 +392,12 @@ def showraw(db, id):
     if paste.password:
         password = form.get('password')
         if not password:
-            return template(
+            return bottle.template(
                 'password_protect',
                 url=get_url(),
                 title=util.conf.get(util.cfg_section, 'title'),
                 version=pasttle.__version__,
+                current_year=CURRENT_YEAR,
             )
         is_encrypted = bool(form.get('is_encrypted'))
         if is_encrypted:
@@ -434,6 +441,7 @@ def edit(db, id):
         parent=id,
         url=get_url(),
         version=pasttle.__version__,
+        current_year=CURRENT_YEAR,
     )
 
     form = bottle.request.forms
@@ -441,11 +449,12 @@ def edit(db, id):
         password = form.get('password')
 
         if not password:
-            return template(
+            return bottle.template(
                 'password_protect',
                 url=get_url(),
                 title=util.conf.get(util.cfg_section, 'title'),
                 version=pasttle.__version__,
+                current_year=CURRENT_YEAR,
             )
 
         is_encrypted = bool(form.get('is_encrypted'))
@@ -462,11 +471,11 @@ def edit(db, id):
 
         if match == paste.password:
             post_args['checked'] = 'checked="checked"'
-            return template('post', post_args)
+            return bottle.template('post', post_args)
         else:
             return bottle.HTTPError(401, 'Wrong password provided')
     else:
-        return template('post', post_args)
+        return bottle.template('post', post_args)
 
 
 def main():

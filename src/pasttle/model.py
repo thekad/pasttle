@@ -1,15 +1,10 @@
-#!/usr/bin/env python
-#
-# -*- mode:python; sh-basic-offset:4; indent-tabs-mode:nil; coding:utf-8 -*-
-# vim:set tabstop=4 softtabstop=4 expandtab shiftwidth=4 fileencoding=utf-8:
-#
-
 import hashlib
 import os
+
 import sqlalchemy
-from sqlalchemy import func
-from sqlalchemy.ext import declarative
-from pasttle import util
+import sqlalchemy.ext.declarative as declarative
+
+import pasttle.util as util
 
 
 # Subclass declarative base for sqla objects
@@ -30,7 +25,7 @@ class Paste(Base):
     mimetype = sqlalchemy.Column(sqlalchemy.String(64), nullable=False)
     lexer = sqlalchemy.Column(sqlalchemy.String(64))
     created = sqlalchemy.Column(
-        sqlalchemy.DateTime, default=func.now(), nullable=False
+        sqlalchemy.DateTime, default=sqlalchemy.func.now(), nullable=False
     )
     ip = sqlalchemy.Column(sqlalchemy.LargeBinary(16))
     parent = sqlalchemy.Column(sqlalchemy.Integer)
