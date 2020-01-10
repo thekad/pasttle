@@ -4,3 +4,4 @@ pytest-cov==2.7.1
 pytest-flakes==4.0.0
 pytest-pycodestyle==2.0.0
 WebTest==2.0.33
+codecov==2.0.15
