@@ -15,7 +15,7 @@ VOLUME /app/config
 VOLUME /app/data
 WORKDIR /app
 
-RUN /entrypoint.sh -a dumb-init -r requirements.txt -p gunicorn && python setup.py install
+RUN /entrypoint.sh -r requirements.txt -p gunicorn && python setup.py install
 RUN rm /requirements.installed
 
 EXPOSE 9669

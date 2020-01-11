@@ -1,6 +1,18 @@
 CHANGELOG
 =========
 
+v0.10.0
+------
+
+* NOTICE: Dropping support for python2 as it is no longer maintained by
+  the core team (EOL on 1/1/2020)
+* Bugfix: Fixed unicode support ingestion
+* Enhancement: Docker image is now based on python 3.8 and ships with gunicorn
+* Dev change: Using pytest as the testing framework now (with codestyle and flake8 plugins)
+* Updating the dependencies to the latest stable versions from upstream
+* Slight style tweaks
+
+
 v0.9.5
 ------
 
