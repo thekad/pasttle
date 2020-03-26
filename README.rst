@@ -132,12 +132,66 @@ Here is a script to run the server with virtualenv option:
     exec uwsgi pasttle.ini --plugin python $OPT
 
 
+Running via docker
+------------------
+
+There is a docker container published you can use to run pasttle, if you want
+to try out you can just:
+
+.. code:: bash
+
+  docker run --rm -p 9669:9669 thekad/pasttle:latest
+
+This pulls and runs the docker image and publishes the ports on your localhost,
+you can just open http://localhost:9669 at this point. If you CTRL+C your docker
+run it will clean everything up and leave no trace.
+
+If you want to customize the configuration a bit, you can mount your configuration
+file `/app/config/pasttle.ini` inside the container:
+
+.. code:: bash
+
+  docker run --rm -p 9669:9669 -v /my/config.ini:/app/config/pasttle.ini thekad/pasttle:latest
+
+If you want to persist your data, there are a few ways to accomplish this. The
+first one is to run the pasttle docker image as is and make sure the sqlite
+database is written to a volume that can survive docker restarts, by default
+the docker container writes its sqlite db to `/app/data` so you can:
+
+.. code:: bash
+
+  docker run --rm -p 9669:9669 -v /some/persistent/location:/app/data:rw thekad/pasttle:latest
+
+Some people may already have a database server around, in that case you will
+need to consider a few things: you have to customize your config and also
+install the necessary driver. Here's an example running with a postgresql
+server using the psycopg2 driver:
+
+.. code:: ini
+
+  [main]
+  bind: 0.0.0.0 ; so we can publish the port outside the container
+  title: My dockerized pasttle
+  dsn: postgresql+psycopg2://user:pass@postgres.host.tld:5432/pasttle
+  wsgi: gunicorn ; already shipped in the docker image
+
+Then we have to run our container taking into account the build-time
+dependencies:
+
+.. code:: bash
+
+  docker run --rm -p 9669:9669 -v /my/custom.ini:/app/config/pasttle.ini thekad/pasttle:latest -b build-base -b postgresql-dev -p psycopg2 pasttle-server.py
+
+The above will install the pre-requisites to build psycopg2, then install
+psycopg2, and then finally run the pasttle server.
+
 Available configuration options
 -------------------------------
 
 .. code:: ini
 
     [main]
+    dsn: <database url> [default=sqlite:///]
     debug: <true/false> [default=true]
     bind: <address> [default=localhost]
     port: <port> [default=9669]
