@@ -411,13 +411,17 @@ def showraw(db, id):
         )
         if match == paste.password:
             _add_header_metadata(paste)
-            bottle.response.content_type = paste.mimetype
+            bottle.response.content_type = "{}; charset=UTF-8".format(
+                paste.mimetype
+            )
             return paste.content
         else:
             return bottle.HTTPError(401, 'Wrong password provided')
     else:
         _add_header_metadata(paste)
-        bottle.response.content_type = paste.mimetype
+        bottle.response.content_type = "{}; charset=UTF-8".format(
+            paste.mimetype
+        )
         return paste.content
 
 
