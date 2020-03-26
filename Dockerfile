@@ -1,4 +1,4 @@
-FROM docker.io/jfloff/alpine-python:3.8-slim
+FROM jfloff/alpine-python:3.8-slim
 
 ENV PASTTLECONF=/app/config/pasttle.ini
 # blank these so they don't reinstall on next runs
@@ -15,8 +15,8 @@ VOLUME /app/config
 VOLUME /app/data
 WORKDIR /app
 
-RUN /entrypoint.sh -r requirements.txt -p gunicorn && python setup.py install
-RUN rm /requirements.installed
+RUN /entrypoint.sh -r requirements.txt -p gunicorn python setup.py install && \
+  rm -fv /requirements.installed
 
 EXPOSE 9669
 
