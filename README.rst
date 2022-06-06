@@ -6,9 +6,9 @@
    :target: https://pypi.python.org/pypi/pasttle
    :alt: PyPi Release
 
-.. image:: https://img.shields.io/travis/thekad/pasttle/master?style=for-the-badge
-   :target: https://travis-ci.org/thekad/pasttle
-   :alt: Latest Travis CI Build
+.. image:: https://img.shields.io/circleci/build/github/thekad/pasttle?style=for-the-badge
+   :target: https://app.circleci.com/pipelines/github/thekad/pasttle
+   :alt: Latest CircleCI Build
 
 .. image:: https://img.shields.io/codecov/c/github/thekad/pasttle?style=for-the-badge
    :target: https://codecov.io/gh/thekad/pasttle
