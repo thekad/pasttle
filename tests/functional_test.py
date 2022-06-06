@@ -17,7 +17,7 @@ class FunctionalTest(unittest.TestCase):
 
     def setUp(self):
         self.test_ini = os.path.join(THIS_PATH, 'pasttle.ini')
-        os.environ['PASTTLECONF'] = '{0}:test'.format(self.test_ini,)
+        os.environ['PASTTLECONF'] = '{}:test'.format(self.test_ini,)
         from pasttle import server
         self.app = webtest.TestApp(server.application)
 
@@ -59,7 +59,7 @@ class FunctionalTest(unittest.TestCase):
         for x in range(0, 20):
             rsp = self.app.post(
                 '/post', {
-                    'upload': '{0}{1}'.format(text, x,)
+                    'upload': '{}{}'.format(text, x,)
                 }
             )
             assert rsp.status == '200 OK'
@@ -75,7 +75,7 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
-        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        rsp = self.app.get('/raw{}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
 
@@ -93,7 +93,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.post(
-            '/raw{0}'.format(url.path.decode(),),
+            '/raw{}'.format(url.path.decode(),),
             {
                 'password': password.encode(),
             }
@@ -116,7 +116,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.post(
-            '/raw{0}'.format(url.path.decode(),),
+            '/raw{}'.format(url.path.decode(),),
             {
                 'password': password.encode(),
                 'is_encrypted': 'yes',
@@ -142,7 +142,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get(
-            '/raw{0}'.format(url.path.decode(),),
+            '/raw{}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
         assert rsp.body == text
@@ -165,7 +165,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         rsp = self.app.get(
-            '/raw{0}'.format(url.path.decode(),),
+            '/raw{}'.format(url.path.decode(),),
         )
         assert rsp.status == '200 OK'
         assert rsp.body == text
@@ -175,7 +175,7 @@ class FunctionalTest(unittest.TestCase):
         "Upload some text, then edit it, expect a 200 in both cases"
         text = 'This is the sample text'
         newtext = 'This is the edited sample text'
-        ct = 'rst'
+        ct = 'restructuredtext'
         rsp = self.app.post(
             '/post', {
                 'upload': text,
@@ -184,12 +184,12 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
-        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        rsp = self.app.get('/raw{}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
         # Editing this entry should yield a 200, and pre-filled
         # content should be the same content we submitted the 1st time
-        rsp = self.app.get('/edit{0}'.format(url.path.decode(),))
+        rsp = self.app.get('/edit{}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.form['upload'].value == text
         assert rsp.form['syntax'].value == ct
@@ -202,7 +202,7 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
-        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        rsp = self.app.get('/raw{}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
 
@@ -210,7 +210,7 @@ class FunctionalTest(unittest.TestCase):
         "Upload some text, then edit it, then show the diffs, expect 200"
         text = 'This is the sample text'
         newtext = 'This is the edited sample text'
-        ct = 'rst'
+        ct = 'restructuredtext'
         rsp = self.app.post(
             '/post', {
                 'upload': text,
@@ -220,12 +220,12 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         item1 = url.path.decode().split('/')[-1]
-        rsp = self.app.get('/raw/{0}'.format(item1,))
+        rsp = self.app.get('/raw/{}'.format(item1,))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == text
         # Editing this entry should yield a 200, and pre-filled
         # content should be the same content we submitted the 1st time
-        rsp = self.app.get('/edit/{0}'.format(item1,))
+        rsp = self.app.get('/edit/{}'.format(item1,))
         assert rsp.status == '200 OK'
         assert rsp.form['upload'].value == text
         assert rsp.form['syntax'].value == ct
@@ -240,10 +240,10 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
         item2 = url.path.decode().split('/')[-1]
-        rsp = self.app.get('/raw/{0}'.format(item2,))
+        rsp = self.app.get('/raw/{}'.format(item2,))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == newtext
-        rsp = self.app.get('/diff/{0}..{0}'.format(item1, item2))
+        rsp = self.app.get('/diff/{}..{}'.format(item1, item2))
         assert rsp.status == '200 OK'
 
     def test_unicode(self):
@@ -257,7 +257,7 @@ class FunctionalTest(unittest.TestCase):
         )
         assert rsp.status == '200 OK'
         url = urllib.parse.urlparse(rsp.body)
-        rsp = self.app.get('/raw{0}'.format(url.path.decode(),))
+        rsp = self.app.get('/raw{}'.format(url.path.decode(),))
         assert rsp.status == '200 OK'
         assert rsp.body.decode() == emoji
 
@@ -271,7 +271,7 @@ class FunctionalTest(unittest.TestCase):
         assert rsp.status == '404 Not Found'
 
         text = 'This is the sample text'
-        ct = 'rst'
+        ct = 'restructuredtext'
         rsp = self.app.post(
             '/post', {
                 'upload': text,
@@ -282,15 +282,15 @@ class FunctionalTest(unittest.TestCase):
         url = urllib.parse.urlparse(rsp.body)
         item = url.path.decode().split('/')[-1]
 
-        rsp = self.app.request('/diff/{0}..x'.format(item), 404)
+        rsp = self.app.request('/diff/{}..x'.format(item), 404)
         assert rsp.status == '404 Not Found'
-        rsp = self.app.request('/diff/x..{0}'.format(item), 404)
+        rsp = self.app.request('/diff/x..{}'.format(item), 404)
         assert rsp.status == '404 Not Found'
-        rsp = self.app.request('/diff/{0}..'.format(item), 404)
+        rsp = self.app.request('/diff/{}..'.format(item), 404)
         assert rsp.status == '404 Not Found'
         rsp = self.app.request('/diff/x..', 404)
         assert rsp.status == '404 Not Found'
-        rsp = self.app.request('/diff/{0}..50000'.format(item), 404)
+        rsp = self.app.request('/diff/{}..50000'.format(item), 404)
         assert rsp.status == '404 Not Found'
         rsp = self.app.request('/diff/50001..50000', 404)
         assert rsp.status == '404 Not Found'
