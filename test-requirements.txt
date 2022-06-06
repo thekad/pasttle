@@ -1,7 +1,7 @@
 -r requirements.txt
-pytest==4.6.9
-pytest-cov==2.8.1
-pytest-flake8==1.0.4
-pytest-pycodestyle==2.0.0
-WebTest==2.0.34
-codecov==2.0.22
+pytest==7.1.2
+pytest-pycodestyle==2.0.1
+pytest-cov==3.0.0
+pytest-flake8==1.1.1
+WebTest==3.0.0
+codecov==2.1.12
