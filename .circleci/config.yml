@@ -4,9 +4,12 @@ orbs:
   python: circleci/python@1.5.0
 
 jobs:
-  build-and-test:
+  test:
+    parameters:
+      python-version:
+        type: string
     docker:
-      - image: cimg/python:3.7
+      - image: cimg/python:<< parameters.python-version >>
     steps:
       - checkout
       - python/install-packages:
@@ -19,6 +22,9 @@ jobs:
           command: pytest
 
 workflows:
-  merge:
+  matrix-test:
     jobs:
-      - build-and-test
+      - test:
+          matrix:
+            parameters:
+              python-version: ["3.7", "3.8", "3.9"]
