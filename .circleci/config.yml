@@ -4,7 +4,7 @@ orbs:
   python: circleci/python@1.5.0
 
 jobs:
-  test:
+  pytest:
     parameters:
       python-version:
         type: string
@@ -20,11 +20,28 @@ jobs:
       - run:
           name: Run tests
           command: pytest
+  codecov:
+    docker:
+      - image: cimg/python:3.7
+    steps:
+      - checkout
+      - python/install-packages:
+          pkg-manager: pip
+          pip-dependency-file: test-requirements.txt
+      - python/install-packages:
+          pkg-manager: pip-dist
+      - run:
+          name: Run tests
+          command: pytest --cov=./
+      - run:
+          name: Upload code coverage results
+          command: codecov
 
 workflows:
-  matrix-test:
+  all-tests:
     jobs:
-      - test:
+      - pytest:
           matrix:
             parameters:
               python-version: ["3.7", "3.8", "3.9"]
+      - codecov
