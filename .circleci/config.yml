@@ -1,8 +1,8 @@
+---
 version: 2.1
-
 orbs:
   python: circleci/python@1.5.0
-
+  docker: circleci/docker@2.1.2
 jobs:
   pytest:
     parameters:
@@ -22,7 +22,7 @@ jobs:
           command: pytest
   codecov:
     docker:
-      - image: cimg/python:3.7
+      - image: cimg/python:3.9
     steps:
       - checkout
       - python/install-packages:
@@ -36,9 +36,8 @@ jobs:
       - run:
           name: Upload code coverage results
           command: codecov
-
 workflows:
-  all-tests:
+  test-build-and-push:
     jobs:
       - pytest:
           matrix:
@@ -46,4 +45,24 @@ workflows:
               python-version: ["3.7", "3.8", "3.9"]
       - codecov:
           requires:
-            - pytest-3.7
+            - pytest-3.9
+      - docker/publish:
+          requires:
+            - pytest-3.9
+          context:
+            - docker
+          dockerfile: Containerfile
+          readme: README.rst
+          image: thekad/pasttle
+          tag: latest
+      - docker/publish:
+          requires:
+            - pytest-3.9
+          context:
+            - quay
+          dockerfile: Containerfile
+          readme: README.rst
+          image: thekad/pasttle
+          tag: latest
+          registry: quay.io
+...
