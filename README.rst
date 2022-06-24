@@ -26,10 +26,6 @@
    :alt: Join the chat at https://gitter.im/thekad/pasttle
    :target: https://gitter.im/thekad/pasttle?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge
 
-.. image:: https://img.shields.io/docker/build/thekad/pasttle?style=for-the-badge
-   :alt: Docker build status
-   :target: https://hub.docker.com/r/thekad/pasttle
-
 Overview
 ========
 
@@ -41,11 +37,11 @@ Pasttle is based upon http://sprunge.us, born out of the necessity to:
 
 Also, I wanted to play more with http://bottlepy.org
 
-Pasttle is split in server and client, it depends on what you are trying to 
+Pasttle is split in server and client, it depends on what you are trying to
 use to run one or the other.
 
 * Server: Runs on python and needs a database (defaults to using SQLite) to
-  store all the data. You want this if you are setting your own private 
+  store all the data. You want this if you are setting your own private
   pasttle instance
 * Client: Entirely written in bash. These are just thin wrappers around curl,
   you can use this to post to a pasttle server
@@ -70,7 +66,7 @@ Pasttle is part of PyPI, you can just:
 it in a virtual environment (which I recommend) or system-wide is totally up
 to you.
 
-If you instead want to try from source code (i.e. by cloning the git repo) 
+If you instead want to try from source code (i.e. by cloning the git repo)
 then I suggest you execute:
 
 .. code:: bash
@@ -88,17 +84,17 @@ method you used to install pasttle to begin with.
 Running the server
 ==================
 
-Once you have it installed you need a database and (optionally) a different 
-WSGI runner (bottle, which pasttle runs on top of, runs on wsgiref by default) 
+Once you have it installed you need a database and (optionally) a different
+WSGI runner (bottle, which pasttle runs on top of, runs on wsgiref by default)
 but can run on Paste, tornado, CherryPy, and several others.
 
-Also, since pasttle uses SQLAlchemy as the backend, you have your pick of any 
-database that SQLAlchemy supports: SQLite (the default), MySQL and Postgres 
+Also, since pasttle uses SQLAlchemy as the backend, you have your pick of any
+database that SQLAlchemy supports: SQLite (the default), MySQL and Postgres
 being the most famous.
 
-Once you have your database all setup, you just need to create a pasttle.ini 
-(like the one in the repo) and change the values to whatever matches your 
-environment. 
+Once you have your database all setup, you just need to create a pasttle.ini
+(like the one in the repo) and change the values to whatever matches your
+environment.
 
 After that:
 
@@ -106,8 +102,8 @@ After that:
 
     pasttle-server.py
 
-Should start the server. If you want to use a different config file, just set 
-the environment variable ``PASTTLECONF`` to the file you want to read before 
+Should start the server. If you want to use a different config file, just set
+the environment variable ``PASTTLECONF`` to the file you want to read before
 starting the server, like this:
 
 .. code:: bash
@@ -180,7 +176,7 @@ dependencies:
 
 .. code:: bash
 
-  docker run --rm -p 9669:9669 -v /my/custom.ini:/app/config/pasttle.ini thekad/pasttle:latest -b build-base -b postgresql-dev -p psycopg2 pasttle-server.py
+  docker run --rm -p 9669:9669 -v /my/custom.ini:/app/config/pasttle.ini -e BUILD_PACKAGES="build-base postgresql-dev" -e PYTHON_PACKAGES="psycopg2" thekad/pasttle:latest
 
 The above will install the pre-requisites to build psycopg2, then install
 psycopg2, and then finally run the pasttle server.
@@ -224,4 +220,3 @@ Running the client just requires 2 steps:
 
 * Source pasttle.bashrc
 * Run ``pasttle -h`` or ``gettle -h`` to check usage
-
