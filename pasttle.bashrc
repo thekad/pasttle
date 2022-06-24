@@ -1,7 +1,7 @@
 #!/bin/bash
 
 SW_VERSION="0.7"
-UPSTREAM_URL="https://raw.github.com/thekad/pasttle/master/pasttle.bashrc"
+UPSTREAM_URL="https://raw.github.com/thekad/pasttle/main/pasttle.bashrc"
 
 function gettle() {
 #   default values
@@ -50,7 +50,7 @@ function gettle() {
                 echo -e $usage;
                 return 0;
                 ;;
-            a) 
+            a)
                 apiurl="$OPTARG"
                 ;;
             n)
@@ -213,10 +213,10 @@ function pasttle() {
                 echo -e $usage;
                 return 0;
                 ;;
-            a) 
+            a)
                 apiurl="$OPTARG"
                 ;;
-            s) 
+            s)
                 syntax="$OPTARG"
                 ;;
             n)
