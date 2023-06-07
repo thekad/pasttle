@@ -28,9 +28,7 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.7", "3.8", "3.9"]
-      - codecov/upload:
-          requires:
-            - pytest-3.9
+      - codecov/upload
       - docker/publish:
           requires:
             - pytest-3.9
