@@ -20,16 +20,22 @@ jobs:
       - run:
           name: Run tests
           command: pytest
+      - python/install-packages:
+          args: flake8
+          pkg-manager: pip
+      - run:
+          name: Lint code
+          command: flake8
 workflows:
   test-build-and-push:
     jobs:
       - pytest:
           matrix:
             parameters:
-              python-version: ["3.7", "3.8", "3.9"]
+              python-version: ["3.7", "3.8", "3.9", "3.10"]
       - docker/publish:
           requires:
-            - pytest-3.9
+            - pytest-3.10
           context:
             - docker
           dockerfile: Containerfile
@@ -38,7 +44,7 @@ workflows:
           tag: latest
       - docker/publish:
           requires:
-            - pytest-3.9
+            - pytest-3.10
           context:
             - quay
           dockerfile: Containerfile
