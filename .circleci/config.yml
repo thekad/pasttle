@@ -3,6 +3,7 @@ version: 2.1
 orbs:
   python: circleci/python@1.5.0
   docker: circleci/docker@2.1.2
+  codecov: codecov/codecov@3.2.5
 jobs:
   pytest:
     parameters:
@@ -21,21 +22,9 @@ jobs:
           name: Run tests
           command: pytest
   codecov:
-    docker:
-      - image: cimg/python:3.9
     steps:
       - checkout
-      - python/install-packages:
-          pkg-manager: pip
-          pip-dependency-file: test-requirements.txt
-      - python/install-packages:
-          pkg-manager: pip-dist
-      - run:
-          name: Run tests
-          command: pytest --cov=./
-      - run:
-          name: Upload code coverage results
-          command: codecov
+      - codecov/upload
 workflows:
   test-build-and-push:
     jobs:
