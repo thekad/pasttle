@@ -23,6 +23,7 @@ jobs:
       - python/install-packages:
           args: flake8
           pkg-manager: pip
+          pypi-cache: false
       - run:
           name: Lint code
           command: flake8
@@ -35,7 +36,7 @@ workflows:
               python-version: ["3.7", "3.8", "3.9", "3.10"]
       - docker/publish:
           requires:
-            - pytest-3.10
+            - pytest-3.9
           context:
             - docker
           dockerfile: Containerfile
@@ -44,7 +45,7 @@ workflows:
           tag: latest
       - docker/publish:
           requires:
-            - pytest-3.10
+            - pytest-3.9
           context:
             - quay
           dockerfile: Containerfile
