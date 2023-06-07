@@ -21,10 +21,6 @@ jobs:
       - run:
           name: Run tests
           command: pytest
-  codecov:
-    steps:
-      - checkout
-      - codecov/upload
 workflows:
   test-build-and-push:
     jobs:
@@ -32,7 +28,7 @@ workflows:
           matrix:
             parameters:
               python-version: ["3.7", "3.8", "3.9"]
-      - codecov:
+      - codecov/upload:
           requires:
             - pytest-3.9
       - docker/publish:
