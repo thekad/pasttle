@@ -1,5 +1,5 @@
 -r requirements.txt
-pytest==7.1.2
+pytest==9.0.3
 pytest-pycodestyle==2.3.0
 pytest-cov==3.0.0
 WebTest==3.0.0
